@@ -1,0 +1,97 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+enum JobType {
+  PERMANENT
+  CONTRACT
+  TEMPORARY
+}
+
+enum JobSector {
+  CENTRAL
+  STATE
+  PSU
+}
+
+model State {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  jobs      Job[]
+  createdAt DateTime @default(now())
+}
+
+model Qualification {
+  id        String   @id @default(uuid())
+  name      String   @unique // e.g. 10th, 12th, Graduate, B.Tech, PG
+  slug      String   @unique
+  jobs      Job[]
+  createdAt DateTime @default(now())
+}
+
+model Department {
+  id        String   @id @default(uuid())
+  name      String   @unique // e.g. SSC, UPSC, Railway, Bank
+  slug      String   @unique
+  jobs      Job[]
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique // e.g. Latest Job, Admit Card, Result, Syllabus
+  slug      String   @unique
+  jobs      Job[]
+  createdAt DateTime @default(now())
+}
+
+model Job {
+  id                  String         @id @default(uuid())
+  title               String
+  slug                String         @unique
+  departmentId        String
+  department          Department     @relation(fields: [departmentId], references: [id])
+  stateId             String?
+  state               State?         @relation(fields: [stateId], references: [id])
+  qualificationId     String
+  qualification       Qualification  @relation(fields: [qualificationId], references: [id])
+  categoryId          String
+  category            Category       @relation(fields: [categoryId], references: [id])
+  
+  // Job Specifics
+  vacancy             Int            @default(0)
+  eligibility         String         @db.Text
+  ageLimit            String?
+  salary              String?
+  selectionProcess    String?        @db.Text
+  applicationFees     String?        @db.Text
+  importantDates      Json           // JSON structured dates (start, end, exam date)
+  examPattern         String?        @db.Text
+  syllabus            String?        @db.Text
+  
+  // Links & Attachments
+  pdfUrl              String?        // S3 or Wasabi URL
+  officialWebsite     String?
+  applyLink           String?
+  
+  // Meta/SEO & Classification
+  jobType             JobType        @default(PERMANENT)
+  jobSector           JobSector      @default(STATE)
+  isFeatured          Boolean        @default(false)
+  metaTitle           String?
+  metaDescription     String?
+  faqSchema           Json?          // Array of QA objects for Google Rich Snippets
+  
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@index([slug])
+}

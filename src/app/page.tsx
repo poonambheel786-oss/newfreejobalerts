@@ -14,52 +14,62 @@ function formatDate(date: Date) {
 }
 
 export default async function Home() {
-  // Fetch dynamic notifications, admit cards, and results from Supabase
-  const notifications = await prisma.job.findMany({
-    where: {
-      category: {
-        name: {
-          notIn: ["Admit Cards", "Results"]
+  let notifications: any[] = [];
+  let admitCards: any[] = [];
+  let results: any[] = [];
+  let consolidatedJobs: any[] = [];
+  let dbError = false;
+
+  try {
+    notifications = await prisma.job.findMany({
+      where: {
+        category: {
+          name: {
+            notIn: ["Admit Cards", "Results"]
+          }
         }
-      }
-    },
-    include: { category: true },
-    orderBy: { createdAt: "desc" },
-    take: 5
-  });
+      },
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+      take: 5
+    });
 
-  const admitCards = await prisma.job.findMany({
-    where: {
-      category: {
-        name: "Admit Cards"
-      }
-    },
-    include: { category: true },
-    orderBy: { createdAt: "desc" },
-    take: 5
-  });
+    admitCards = await prisma.job.findMany({
+      where: {
+        category: {
+          name: "Admit Cards"
+        }
+      },
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+      take: 5
+    });
 
-  const results = await prisma.job.findMany({
-    where: {
-      category: {
-        name: "Results"
-      }
-    },
-    include: { category: true },
-    orderBy: { createdAt: "desc" },
-    take: 5
-  });
+    results = await prisma.job.findMany({
+      where: {
+        category: {
+          name: "Results"
+        }
+      },
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+      take: 5
+    });
 
-  const consolidatedJobs = await prisma.job.findMany({
-    include: {
-      department: true,
-      category: true,
-      state: true,
-      qualification: true
-    },
-    orderBy: { createdAt: "desc" },
-    take: 15
-  });
+    consolidatedJobs = await prisma.job.findMany({
+      include: {
+        department: true,
+        category: true,
+        state: true,
+        qualification: true
+      },
+      orderBy: { createdAt: "desc" },
+      take: 15
+    });
+  } catch (e) {
+    console.error("Database connection failed:", e);
+    dbError = true;
+  }
 
   return (
     <div className="flex flex-col flex-grow">
@@ -97,6 +107,12 @@ export default async function Home() {
             </div>
           </div>
         </div>
+
+        {dbError && (
+          <div className="bg-amber-500/10 border border-amber-500/20 text-amber-800 p-4 rounded-xl text-xs font-semibold flex items-center gap-2">
+            ⚠️ The connection to your Supabase database failed. Please verify that the DATABASE_URL environment variable has been correctly configured under "Environment Variables" in your Vercel Project Settings.
+          </div>
+        )}
 
         {/* Simplified Home Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -14,12 +14,18 @@ const getConnectionString = () => {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  const pool = new Pool({ connectionString: getConnectionString() })
+  const pool = new Pool({ 
+    connectionString: getConnectionString(),
+    ssl: { rejectUnauthorized: false }
+  })
   const adapter = new PrismaPg(pool)
   prisma = new PrismaClient({ adapter })
 } else {
   if (!globalForPrisma.prisma) {
-    const pool = new Pool({ connectionString: getConnectionString() })
+    const pool = new Pool({ 
+      connectionString: getConnectionString(),
+      ssl: { rejectUnauthorized: false }
+    })
     const adapter = new PrismaPg(pool)
     globalForPrisma.prisma = new PrismaClient({ adapter })
   }

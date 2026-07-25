@@ -34,19 +34,28 @@ export default function RootLayout({
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white shadow-md">
                     <Briefcase className="h-5 w-5" />
                   </div>
-                  <span>Gov<span className="text-on-background">Careers</span></span>
+                  <span>New<span className="text-on-background">FreeJobAlert</span></span>
                 </Link>
               </div>
 
               {/* Horizontal Category Navigation */}
               <div className="hidden lg:flex items-center gap-6">
-                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/jobs?category=teaching">Teaching Exam</Link>
-                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/jobs?category=all-india">All India Govt Job</Link>
-                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/jobs?category=bank">Bank Exam</Link>
-                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/jobs?category=railway">Railway Exam</Link>
-                <div className="relative group cursor-pointer">
-                  <div className="flex items-center gap-1 text-on-surface hover:text-primary font-semibold text-sm transition-colors">
-                    More
+                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/">Home</Link>
+                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/jobs?category=all-india-govt-jobs">All India Govt Jobs</Link>
+                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/jobs?category=state-govt-jobs">State Govt Jobs</Link>
+                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/jobs?category=bank-jobs">Bank Jobs</Link>
+                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/jobs?category=teaching-jobs">Teaching Jobs</Link>
+                <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors" href="/jobs?category=railway-jobs">Railway Jobs</Link>
+                <div className="relative group py-2">
+                  <div className="flex items-center gap-1 text-on-surface hover:text-primary font-semibold text-sm transition-colors cursor-pointer">
+                    More <span className="text-[10px]">▼</span>
+                  </div>
+                  <div className="absolute left-0 top-full w-52 rounded-lg shadow-xl bg-white border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 divide-y divide-slate-100 py-1">
+                    <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=nursing-jobs">Nursing Jobs</Link>
+                    <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=engineering-jobs">Engineering Jobs</Link>
+                    <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=police-defence-jobs">Police/Defence Jobs</Link>
+                    <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=agriculture-jobs">Agriculture Jobs</Link>
+                    <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=college-entrance-exams">College Entrance Exams</Link>
                   </div>
                 </div>
               </div>
@@ -77,7 +86,7 @@ export default function RootLayout({
           {/* Footer */}
           <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/30 mt-auto">
             <div className="max-w-[1280px] mx-auto px-6 py-4 text-center">
-              <p className="text-xs text-on-surface-variant opacity-70">&copy; {new Date().getFullYear()} GovCareers. All rights reserved.</p>
+              <p className="text-xs text-on-surface-variant opacity-70">&copy; {new Date().getFullYear()} NewFreeJobAlert. All rights reserved.</p>
             </div>
           </footer>
         </Providers>

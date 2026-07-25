@@ -4,6 +4,23 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Save, AlertCircle } from "lucide-react";
 
+const states = [
+  "All India", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", 
+  "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", 
+  "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", 
+  "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", 
+  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", 
+  "Uttar Pradesh", "Uttarakhand", "West Bengal", "Andaman and Nicobar Islands", 
+  "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi (NCT)", 
+  "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+];
+
+const categories = [
+  "All India Govt Jobs", "State Govt Jobs", "Nursing Jobs", "Bank Jobs", 
+  "Teaching Jobs", "Railway Jobs", "Engineering Jobs", "Police/Defence Jobs", 
+  "Agriculture Jobs", "College Entrance Exams"
+];
+
 export default function CreateJobPage() {
   const [formData, setFormData] = useState({
     title: "",
@@ -24,12 +41,15 @@ export default function CreateJobPage() {
     pdfUrl: "",
     officialWebsite: "",
     applyLink: "",
+    status: "Published",
+    state: "All India",
+    category: "All India Govt Jobs"
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -155,6 +175,47 @@ export default function CreateJobPage() {
                         placeholder="e.g. Graduate" 
                         className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
                       />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">Status *</label>
+                      <select 
+                        name="status" 
+                        value={formData.status} 
+                        onChange={handleChange}
+                        className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                      >
+                        <option value="Published">Published</option>
+                        <option value="Draft">Draft</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">Category *</label>
+                      <select 
+                        name="category" 
+                        value={formData.category} 
+                        onChange={handleChange}
+                        className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                      >
+                        {categories.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">State *</label>
+                      <select 
+                        name="state" 
+                        value={formData.state} 
+                        onChange={handleChange}
+                        className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                      >
+                        {states.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </div>

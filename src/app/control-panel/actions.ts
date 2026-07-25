@@ -51,6 +51,7 @@ export async function createJob(state: any, formData: FormData) {
     const officialWebsite = formData.get('officialWebsite') as string
     const stateName = formData.get('state') as string || "All India"
     const categoryName = formData.get('category') as string
+    const postType = (formData.get('postType') as string) || "Latest Notifications"
 
     if (!title || !departmentName || !qualificationName || !categoryName) {
       return { success: false, error: 'Please fill in all required fields marked with *.' }
@@ -100,6 +101,7 @@ export async function createJob(state: any, formData: FormData) {
         stateId: dbState?.id || null,
         qualificationId: qualification.id,
         categoryId: category.id,
+        postType,
         vacancy,
         eligibility,
         ageLimit,

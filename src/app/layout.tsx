@@ -68,12 +68,6 @@ export default function RootLayout({
                   <Sparkles className="h-3.5 w-3.5" />
                   Admin Panel
                 </Link>
-                <button className="p-2 text-outline hover:text-primary rounded-full hover:bg-slate-100 transition-colors">
-                  <Search className="h-5 w-5" />
-                </button>
-                <button className="p-2 text-outline hover:text-primary rounded-full hover:bg-slate-100 transition-colors">
-                  <Bell className="h-5 w-5" />
-                </button>
               </div>
             </div>
           </nav>

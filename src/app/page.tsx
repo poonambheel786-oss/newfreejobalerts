@@ -23,11 +23,7 @@ export default async function Home() {
   try {
     notifications = await prisma.job.findMany({
       where: {
-        category: {
-          name: {
-            notIn: ["Admit Cards", "Results"]
-          }
-        }
+        postType: "Latest Notifications"
       },
       include: { category: true },
       orderBy: { createdAt: "desc" },
@@ -36,9 +32,7 @@ export default async function Home() {
 
     admitCards = await prisma.job.findMany({
       where: {
-        category: {
-          name: "Admit Cards"
-        }
+        postType: "Admit Cards"
       },
       include: { category: true },
       orderBy: { createdAt: "desc" },
@@ -47,9 +41,7 @@ export default async function Home() {
 
     results = await prisma.job.findMany({
       where: {
-        category: {
-          name: "Results"
-        }
+        postType: "Results"
       },
       include: { category: true },
       orderBy: { createdAt: "desc" },
@@ -121,11 +113,7 @@ export default async function Home() {
             <div className="p-6 bg-primary-container text-white flex justify-between items-center">
               <div>
                 <h2 className="font-semibold text-lg">Latest Notifications</h2>
-                <Link className="text-[12px] font-bold text-white/90 hover:underline flex items-center gap-1 mt-1" href="/jobs">
-                  Exam Dashboard <ArrowForwardIcon className="h-3 w-3" />
-                </Link>
               </div>
-              <CampaignIcon className="h-6 w-6 opacity-80" />
             </div>
             <div className="p-0 flex-grow divide-y divide-outline-variant/10">
               {notifications.length === 0 ? (
@@ -148,7 +136,7 @@ export default async function Home() {
               )}
             </div>
             <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/jobs" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
+              <Link href="/jobs?type=latest-notifications" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
                 View Full List
                 <ArrowForwardIcon className="h-4 w-4" />
               </Link>
@@ -160,11 +148,7 @@ export default async function Home() {
             <div className="p-6 bg-surface-container-high text-primary flex justify-between items-center border-b border-outline-variant/10">
               <div>
                 <h2 className="font-semibold text-lg text-primary">Admit Cards</h2>
-                <Link className="text-[12px] font-bold text-primary/80 hover:underline flex items-center gap-1 mt-1" href="/jobs">
-                  Exam Dashboard <ArrowForwardIcon className="h-3 w-3" />
-                </Link>
               </div>
-              <AssignmentIndIcon className="h-6 w-6 opacity-80" />
             </div>
             <div className="p-0 flex-grow divide-y divide-outline-variant/10">
               {admitCards.length === 0 ? (
@@ -186,7 +170,7 @@ export default async function Home() {
               )}
             </div>
             <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/jobs" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
+              <Link href="/jobs?type=admit-cards" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
                 View All Hall Tickets
               </Link>
             </div>
@@ -197,11 +181,7 @@ export default async function Home() {
             <div className="p-6 bg-surface-container-high text-on-surface flex justify-between items-center border-b border-outline-variant/10">
               <div>
                 <h2 className="font-semibold text-lg">Results</h2>
-                <Link className="text-[12px] font-bold text-on-surface/70 hover:underline flex items-center gap-1 mt-1" href="/jobs">
-                  Exam Dashboard <ArrowForwardIcon className="h-3 w-3" />
-                </Link>
               </div>
-              <VerifiedIcon className="h-6 w-6 opacity-80 text-primary" />
             </div>
             <div className="p-0 flex-grow divide-y divide-outline-variant/10">
               {results.length === 0 ? (
@@ -224,7 +204,7 @@ export default async function Home() {
               )}
             </div>
             <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/jobs" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
+              <Link href="/jobs?type=results" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
                 Check Merit Lists
               </Link>
             </div>

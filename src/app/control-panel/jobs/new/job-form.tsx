@@ -111,7 +111,7 @@ export default function JobForm({ states, categories }: Props) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1">Status *</label>
                   <select 
@@ -120,6 +120,17 @@ export default function JobForm({ states, categories }: Props) {
                   >
                     <option value="Published">Published</option>
                     <option value="Draft">Draft</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Post Type *</label>
+                  <select 
+                    name="postType" 
+                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                  >
+                    <option value="Latest Notifications">Latest Notifications</option>
+                    <option value="Admit Cards">Admit Cards</option>
+                    <option value="Results">Results</option>
                   </select>
                 </div>
                 <div>

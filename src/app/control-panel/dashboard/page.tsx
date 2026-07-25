@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Briefcase, FileText, CheckCircle, FolderHeart, Plus, Activity, BellRing, Settings, LogOut, Search } from "lucide-react";
+import { logout } from "../actions";
 
 // Mock stats for dashboard
 const stats = [
@@ -30,9 +31,11 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-4 text-xs font-semibold text-slate-300">
               <Link href="/" className="hover:text-white transition-colors">View Live Website</Link>
               <span>|</span>
-              <button className="flex items-center gap-1 hover:text-white transition-all text-rose-400">
-                <LogOut className="h-3.5 w-3.5" /> Logout
-              </button>
+              <form action={logout}>
+                <button type="submit" className="flex items-center gap-1 hover:text-white transition-all text-rose-400 cursor-pointer">
+                  <LogOut className="h-3.5 w-3.5" /> Logout
+                </button>
+              </form>
             </div>
           </div>
         </div>

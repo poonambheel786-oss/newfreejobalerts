@@ -26,7 +26,7 @@ const statesList = [
 const categoriesList = [
   "All India Govt Jobs", "State Govt Jobs", "Nursing Jobs", "Bank Jobs", 
   "Teaching Jobs", "Railway Jobs", "Engineering Jobs", "Police/Defence Jobs", 
-  "Agriculture Jobs", "College Entrance Exams"
+  "Agriculture Jobs", "College Entrance Exams", "Admit Cards", "Results"
 ]
 
 async function main() {

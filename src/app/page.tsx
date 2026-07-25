@@ -1,104 +1,66 @@
 import Link from "next/link";
 import { CampaignIcon, AssignmentIndIcon, VerifiedIcon, DownloadIcon, ArrowForwardIcon, FilterIcon } from "./icons";
+import { prisma } from "@/lib/db";
 
-// Mock data to match user's custom layout
-const mockNotifications = [
-  {
-    id: "notif-1",
-    tag: "NEW",
-    time: "2h ago",
-    title: "UPSC Civil Services Prelims 2026",
-    description: "Detailed notification for 1,056 vacancies released officially.",
-    slug: "upsc-civil-services-prelims-2026"
-  },
-  {
-    id: "notif-2",
-    time: "5h ago",
-    title: "RRB Assistant Loco Pilot",
-    description: "Zone-wise vacancy list updated. Last date for registration extended.",
-    slug: "rrb-assistant-loco-pilot"
-  },
-  {
-    id: "notif-3",
-    time: "Yesterday",
-    title: "IBPS Clerk Recruitment 2026",
-    description: "Online application link is now active for over 6,000 posts.",
-    slug: "ibps-clerk-recruitment-2026"
-  }
-];
+export const dynamic = 'force-dynamic';
 
-const mockAdmitCards = [
-  {
-    id: "ac-1",
-    title: "SSC CGL Tier-1 Download",
-    description: "Available for Western and Southern Regions.",
-    slug: "ssc-cgl-recruitment-2026"
-  },
-  {
-    id: "ac-2",
-    title: "SBI PO Interview Call",
-    description: "Download links sent to registered emails.",
-    slug: "sbi-po-interview"
-  },
-  {
-    id: "ac-3",
-    title: "CDS (II) Examination 2026",
-    description: "Admit cards available from Next Monday.",
-    slug: "cds-2-exam"
-  }
-];
+// Helper to format date
+function formatDate(date: Date) {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+}
 
-const mockResults = [
-  {
-    id: "res-1",
-    status: "Released",
-    statusColor: "bg-emerald-500 text-emerald-600",
-    title: "UPSC CSE 2025 Final List",
-    description: "Roll number-wise merit list PDF (4.2 MB).",
-    slug: "upsc-cse-2025"
-  },
-  {
-    id: "res-2",
-    status: "Pending",
-    statusColor: "bg-orange-500 text-orange-600",
-    title: "CSIR NET Life Sciences",
-    description: "Result processing. Expected in 48 hours.",
-    slug: "csir-net-life-sciences"
-  },
-  {
-    id: "res-3",
-    status: "Released",
-    statusColor: "bg-emerald-500 text-emerald-600",
-    title: "GATE 2026 Scorecards",
-    description: "Login to view and download individual scores.",
-    slug: "gate-2026"
-  }
-];
+export default async function Home() {
+  // Fetch dynamic notifications, admit cards, and results from Supabase
+  const notifications = await prisma.job.findMany({
+    where: {
+      category: {
+        name: {
+          notIn: ["Admit Cards", "Results"]
+        }
+      }
+    },
+    include: { category: true },
+    orderBy: { createdAt: "desc" },
+    take: 5
+  });
 
-const tableJobs = [
-  {
-    date: "05-06-2026",
-    board: "UPSC",
-    name: "Civil Services Exam 2026",
-    qualification: "Any Degree",
-    advtNo: "05/2026-CSP",
-    lastDate: "15-06-2026",
-    isLastDateUrgent: true,
-    slug: "upsc-civil-services-prelims-2026"
-  },
-  {
-    date: "04-06-2026",
-    board: "SSC",
-    name: "Combined Graduate Level (CGL)",
-    qualification: "Graduation",
-    advtNo: "HQ-RHQ-01-2026",
-    lastDate: "30-06-2026",
-    isLastDateUrgent: false,
-    slug: "ssc-cgl-recruitment-2026"
-  }
-];
+  const admitCards = await prisma.job.findMany({
+    where: {
+      category: {
+        name: "Admit Cards"
+      }
+    },
+    include: { category: true },
+    orderBy: { createdAt: "desc" },
+    take: 5
+  });
 
-export default function Home() {
+  const results = await prisma.job.findMany({
+    where: {
+      category: {
+        name: "Results"
+      }
+    },
+    include: { category: true },
+    orderBy: { createdAt: "desc" },
+    take: 5
+  });
+
+  const consolidatedJobs = await prisma.job.findMany({
+    include: {
+      department: true,
+      category: true,
+      state: true,
+      qualification: true
+    },
+    orderBy: { createdAt: "desc" },
+    take: 15
+  });
+
   return (
     <div className="flex flex-col flex-grow">
       {/* Breaking News Marquee */}
@@ -107,10 +69,9 @@ export default function Home() {
           BREAKING NEWS
         </div>
         <div className="marquee-content whitespace-nowrap flex items-center gap-8 pl-40">
+          <span className="text-sm font-medium">• Welcome to NewFreeJobAlert. Access real-time government recruitment updates.</span>
           <span className="text-sm font-medium">• Civil Services Examination 2026 results released today. Check the "Results" section for the merit list.</span>
           <span className="text-sm font-medium">• New vacancies for Senior Technical Officers at NITI Aayog. Application window opens tomorrow.</span>
-          <span className="text-sm font-medium">• Important update regarding SSC CGL Admit Card download link. Site maintenance scheduled at midnight.</span>
-          <span className="text-sm font-medium">• Civil Services Examination 2026 results released today. Check the "Results" section for the merit list.</span>
         </div>
       </div>
 
@@ -151,22 +112,24 @@ export default function Home() {
               <CampaignIcon className="h-6 w-6 opacity-80" />
             </div>
             <div className="p-0 flex-grow divide-y divide-outline-variant/10">
-              {mockNotifications.map((n) => (
-                <div key={n.id} className="p-4 hover:bg-surface-container-low transition-colors group">
-                  <div className="flex items-start justify-between mb-1">
-                    {n.tag && (
-                      <span className="text-[10px] font-bold text-secondary-container px-2 py-0.5 bg-secondary-container/10 rounded-full">
-                        {n.tag}
+              {notifications.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-400 font-medium">No active notifications. Add via Control Panel.</div>
+              ) : (
+                notifications.map((n) => (
+                  <div key={n.id} className="p-4 hover:bg-surface-container-low transition-colors group">
+                    <div className="flex items-start justify-between mb-1">
+                      <span className="text-[10px] font-bold text-secondary-container px-2 py-0.5 bg-secondary-container/10 rounded-full uppercase">
+                        {n.category.name}
                       </span>
-                    )}
-                    <span className="text-xs text-outline italic ml-auto">{n.time}</span>
+                      <span className="text-xs text-outline italic ml-auto">{formatDate(n.createdAt)}</span>
+                    </div>
+                    <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block" href={`/jobs/${n.slug}`}>
+                      {n.title}
+                    </Link>
+                    <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">{n.eligibility}</p>
                   </div>
-                  <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block" href={`/jobs/${n.slug}`}>
-                    {n.title}
-                  </Link>
-                  <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">{n.description}</p>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <div className="p-4 border-t border-outline-variant/10">
               <Link href="/jobs" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
@@ -181,29 +144,33 @@ export default function Home() {
             <div className="p-6 bg-surface-container-high text-primary flex justify-between items-center border-b border-outline-variant/10">
               <div>
                 <h2 className="font-semibold text-lg text-primary">Admit Cards</h2>
-                <Link className="text-[12px] font-bold text-primary/80 hover:underline flex items-center gap-1 mt-1" href="/admit-cards">
+                <Link className="text-[12px] font-bold text-primary/80 hover:underline flex items-center gap-1 mt-1" href="/jobs">
                   Exam Dashboard <ArrowForwardIcon className="h-3 w-3" />
                 </Link>
               </div>
               <AssignmentIndIcon className="h-6 w-6 opacity-80" />
             </div>
             <div className="p-0 flex-grow divide-y divide-outline-variant/10">
-              {mockAdmitCards.map((ac) => (
-                <div key={ac.id} className="p-4 hover:bg-surface-container-low transition-colors">
-                  <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block mb-2" href={`/jobs/${ac.slug}`}>
-                    {ac.title}
-                  </Link>
-                  <div className="flex items-center gap-2">
-                    <div className="bg-secondary-container/10 p-1.5 rounded-lg text-secondary-container">
-                      <DownloadIcon className="h-4 w-4" />
+              {admitCards.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-400 font-medium">No active admit cards. Add via Control Panel.</div>
+              ) : (
+                admitCards.map((ac) => (
+                  <div key={ac.id} className="p-4 hover:bg-surface-container-low transition-colors">
+                    <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block mb-2" href={`/jobs/${ac.slug}`}>
+                      {ac.title}
+                    </Link>
+                    <div className="flex items-center gap-2">
+                      <div className="bg-secondary-container/10 p-1.5 rounded-lg text-secondary-container">
+                        <DownloadIcon className="h-4 w-4" />
+                      </div>
+                      <p className="text-xs text-on-surface-variant font-medium">Click to check details & download hall ticket</p>
                     </div>
-                    <p className="text-xs text-on-surface-variant">{ac.description}</p>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/admit-cards" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
+              <Link href="/jobs" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
                 View All Hall Tickets
               </Link>
             </div>
@@ -214,30 +181,34 @@ export default function Home() {
             <div className="p-6 bg-surface-container-high text-on-surface flex justify-between items-center border-b border-outline-variant/10">
               <div>
                 <h2 className="font-semibold text-lg">Results</h2>
-                <Link className="text-[12px] font-bold text-on-surface/70 hover:underline flex items-center gap-1 mt-1" href="/results">
+                <Link className="text-[12px] font-bold text-on-surface/70 hover:underline flex items-center gap-1 mt-1" href="/jobs">
                   Exam Dashboard <ArrowForwardIcon className="h-3 w-3" />
                 </Link>
               </div>
               <VerifiedIcon className="h-6 w-6 opacity-80 text-primary" />
             </div>
             <div className="p-0 flex-grow divide-y divide-outline-variant/10">
-              {mockResults.map((r) => (
-                <div key={r.id} className="p-4 hover:bg-surface-container-low transition-colors">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className={`w-2 h-2 rounded-full ${r.status === "Released" ? "bg-emerald-500" : "bg-orange-500"}`}></div>
-                    <span className={`text-[10px] font-bold uppercase ${r.status === "Released" ? "text-emerald-600" : "text-orange-600"}`}>
-                      {r.status}
-                    </span>
+              {results.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-400 font-medium">No active results declared. Add via Control Panel.</div>
+              ) : (
+                results.map((r) => (
+                  <div key={r.id} className="p-4 hover:bg-surface-container-low transition-colors">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                      <span className="text-[10px] font-bold uppercase text-emerald-600">
+                        Released
+                      </span>
+                    </div>
+                    <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block" href={`/jobs/${r.slug}`}>
+                      {r.title}
+                    </Link>
+                    <p className="text-xs text-on-surface-variant mt-1">Merit list and scorecard link active.</p>
                   </div>
-                  <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block" href={`/jobs/${r.slug}`}>
-                    {r.title}
-                  </Link>
-                  <p className="text-xs text-on-surface-variant mt-1">{r.description}</p>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/results" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
+              <Link href="/jobs" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
                 Check Merit Lists
               </Link>
             </div>
@@ -268,19 +239,37 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10 text-xs sm:text-sm">
-                {tableJobs.map((tj, i) => (
-                  <tr key={i} className="hover:bg-primary-container/5 transition-colors">
-                    <td className="px-6 py-4 text-on-surface-variant">{tj.date}</td>
-                    <td className="px-6 py-4 font-bold text-on-surface">{tj.board}</td>
-                    <td className="px-6 py-4">{tj.name}</td>
-                    <td className="px-6 py-4">{tj.qualification}</td>
-                    <td className="px-6 py-4 text-outline">{tj.advtNo}</td>
-                    <td className={`px-6 py-4 font-medium ${tj.isLastDateUrgent ? "text-error" : "text-on-surface"}`}>{tj.lastDate}</td>
-                    <td className="px-6 py-4 text-center">
-                      <Link className="text-primary font-bold hover:underline" href={`/jobs/${tj.slug}`}>More Info</Link>
+                {consolidatedJobs.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center text-xs text-slate-400 font-bold">
+                      No recruitment notices found in the database.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  consolidatedJobs.map((tj, i) => {
+                    let lastDateStr = "N/A";
+                    try {
+                      const dates = tj.importantDates as any;
+                      if (dates && dates.end) {
+                        lastDateStr = dates.end;
+                      }
+                    } catch (e) {}
+
+                    return (
+                      <tr key={i} className="hover:bg-primary-container/5 transition-colors">
+                        <td className="px-6 py-4 text-on-surface-variant">{formatDate(tj.createdAt)}</td>
+                        <td className="px-6 py-4 font-bold text-on-surface">{tj.department.name}</td>
+                        <td className="px-6 py-4">{tj.title}</td>
+                        <td className="px-6 py-4">{tj.qualification.name}</td>
+                        <td className="px-6 py-4 text-outline">{tj.advtNumber || "N/A"}</td>
+                        <td className="px-6 py-4 text-rose-600 font-medium">{lastDateStr}</td>
+                        <td className="px-6 py-4 text-center">
+                          <Link className="text-primary font-bold hover:underline" href={`/jobs/${tj.slug}`}>More Info</Link>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
@@ -290,7 +279,7 @@ export default function Home() {
   );
 }
 
-// Simple fallback SVG icons to avoid external library mismatches
+// Simple fallback SVG search icon
 function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">

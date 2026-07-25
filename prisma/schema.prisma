@@ -65,6 +65,7 @@ model Job {
   qualification       Qualification  @relation(fields: [qualificationId], references: [id])
   categoryId          String
   category            Category       @relation(fields: [categoryId], references: [id])
+  advtNumber          String?
   
   // Job Specifics
   vacancy             Int            @default(0)

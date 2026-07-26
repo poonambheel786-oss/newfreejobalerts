@@ -160,7 +160,7 @@ export default async function Home({ searchParams }: Props) {
             </div>
             <div className="p-4 border-t border-slate-100">
               <Link href="/jobs?type=latest-notifications" className="w-full text-primary font-bold text-xs flex items-center justify-center gap-1 hover:underline cursor-pointer">
-                View Full List
+                View Notification List
                 <ArrowForwardIcon className="h-3 w-3" />
               </Link>
             </div>
@@ -186,7 +186,7 @@ export default async function Home({ searchParams }: Props) {
             </div>
             <div className="p-4 border-t border-slate-100">
               <Link href="/jobs?type=admit-cards" className="w-full text-primary font-bold text-xs flex items-center justify-center gap-1 hover:underline cursor-pointer">
-                View All Hall Tickets
+                View admit Card List
               </Link>
             </div>
           </section>
@@ -211,7 +211,7 @@ export default async function Home({ searchParams }: Props) {
             </div>
             <div className="p-4 border-t border-slate-100">
               <Link href="/jobs?type=results" className="w-full text-primary font-bold text-xs flex items-center justify-center gap-1 hover:underline cursor-pointer">
-                Check Merit Lists
+                View Result List
               </Link>
             </div>
           </section>

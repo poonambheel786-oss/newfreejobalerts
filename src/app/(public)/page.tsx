@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CampaignIcon, AssignmentIndIcon, VerifiedIcon, DownloadIcon, ArrowForwardIcon, FilterIcon } from "@/app/icons";
 import { prisma } from "@/lib/db";
+import { Search } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -34,14 +35,28 @@ export default async function Home({ searchParams }: Props) {
   let dbError = false;
 
   try {
-    // 1. Fetch Marquee updates (Latest Notifications)
-    marqueeJobs = await prisma.job.findMany({
-      where: {
-        postType: "Latest Notifications"
-      },
-      orderBy: { createdAt: "desc" },
-      take: 6
-    });
+    // 1. Fetch Marquee updates (3 latest Notifications, 2 Admit Cards, 2 Results)
+    const [latestNotifs, latestAdmitCards, latestResults] = await Promise.all([
+      prisma.job.findMany({
+        where: { postType: "Latest Notifications" },
+        orderBy: { createdAt: "desc" },
+        take: 3
+      }),
+      prisma.job.findMany({
+        where: { postType: "Admit Cards" },
+        orderBy: { createdAt: "desc" },
+        take: 2
+      }),
+      prisma.job.findMany({
+        where: { postType: "Results" },
+        orderBy: { createdAt: "desc" },
+        take: 2
+      }),
+    ]);
+
+    marqueeJobs = [...latestNotifs, ...latestAdmitCards, ...latestResults].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
     // 2. Fetch Latest Notifications for Column Card
     notifications = await prisma.job.findMany({
@@ -106,7 +121,7 @@ export default async function Home({ searchParams }: Props) {
       {/* Dynamic Marquee */}
       <div className="bg-secondary-container text-white py-2 overflow-hidden flex items-center relative z-10 border-b border-secondary">
         <div className="bg-secondary px-6 py-2 absolute left-0 z-20 font-bold text-sm shadow-xl italic whitespace-nowrap">
-          New Vacancies
+          Latest Updates
         </div>
         <div className="marquee-content whitespace-nowrap flex items-center gap-8 pl-44">
           {marqueeJobs.length === 0 ? (
@@ -129,6 +144,24 @@ export default async function Home({ searchParams }: Props) {
             <p className="text-base text-on-surface-variant max-w-2xl">
               Access real-time recruitment notifications, official admit cards, and merit lists from all government departments in one place.
             </p>
+          </div>
+          {/* Search bar */}
+          <div className="w-full md:w-80 shrink-0">
+            <form action="/jobs" method="GET" className="relative flex items-center">
+              <input
+                type="text"
+                name="q"
+                placeholder="Search jobs, admit cards, results..."
+                className="w-full h-12 pl-4 pr-12 rounded-2xl border border-outline-variant/30 bg-white text-sm focus:border-primary focus:outline-none shadow-sm transition-all focus:ring-1 focus:ring-primary"
+              />
+              <button
+                type="submit"
+                className="absolute right-2 p-2 bg-primary hover:bg-primary/95 text-white rounded-xl shadow-md shadow-primary/10 transition-all cursor-pointer"
+                title="Search"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            </form>
           </div>
         </div>
 

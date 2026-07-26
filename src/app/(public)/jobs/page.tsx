@@ -10,6 +10,7 @@ interface Props {
     category?: string;
     type?: string;
     page?: string;
+    q?: string;
   }>;
 }
 
@@ -17,6 +18,7 @@ export default async function JobsListingPage({ searchParams }: Props) {
   const params = await searchParams;
   const categorySlug = params.category;
   const postTypeQuery = params.type;
+  const searchQuery = params.q;
   const currentPage = parseInt(params.page || "1") || 1;
   const limit = 15;
   const skip = (currentPage - 1) * limit;
@@ -43,6 +45,16 @@ export default async function JobsListingPage({ searchParams }: Props) {
     if (mappedType) {
       whereClause.postType = mappedType;
     }
+  }
+
+  if (searchQuery) {
+    whereClause.OR = [
+      { title: { contains: searchQuery, mode: "insensitive" } },
+      { department: { name: { contains: searchQuery, mode: "insensitive" } } },
+      { qualification: { name: { contains: searchQuery, mode: "insensitive" } } },
+      { category: { name: { contains: searchQuery, mode: "insensitive" } } },
+      { advtNumber: { contains: searchQuery, mode: "insensitive" } }
+    ];
   }
 
   // Fetch entries
@@ -91,17 +103,20 @@ export default async function JobsListingPage({ searchParams }: Props) {
   }
 
   const totalPages = Math.ceil(totalCount / limit);
-  const titleText = typeLabel 
-    ? `${typeLabel} List` 
-    : categoryName 
-      ? `${categoryName} Jobs` 
-      : "All Notifications & Updates";
+  const titleText = searchQuery
+    ? `Search Results for "${searchQuery}"`
+    : typeLabel 
+      ? `${typeLabel} List` 
+      : categoryName 
+        ? `${categoryName} Jobs` 
+        : "All Notifications & Updates";
 
   // Build pagination query helper
   const getPageUrl = (pageNumber: number) => {
     const q: string[] = [];
     if (categorySlug) q.push(`category=${categorySlug}`);
     if (postTypeQuery) q.push(`type=${postTypeQuery}`);
+    if (searchQuery) q.push(`q=${encodeURIComponent(searchQuery)}`);
     q.push(`page=${pageNumber}`);
     return `/jobs?${q.join("&")}`;
   };

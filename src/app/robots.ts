@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/control-panel/',
     },
-    sitemap: 'https://poonamsir.com/sitemap.xml',
+    sitemap: 'https://www.newfreejobalerts.com/sitemap.xml',
   }
 }

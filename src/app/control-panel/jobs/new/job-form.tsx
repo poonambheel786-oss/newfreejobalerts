@@ -30,6 +30,10 @@ export default function JobForm({ states, categories, initialJob }: Props) {
     }
   };
 
+  const handleEditorInput = (e: React.FormEvent<HTMLDivElement>) => {
+    setHtmlContent(e.currentTarget.innerHTML);
+  };
+
   const handleCommand = (command: string, value: string = "") => {
     document.execCommand(command, false, value);
     if (editorRef.current) {
@@ -262,6 +266,7 @@ export default function JobForm({ states, categories, initialJob }: Props) {
                   ref={editorRef}
                   contentEditable
                   onBlur={handleEditorBlur}
+                  onInput={handleEditorInput}
                   dangerouslySetInnerHTML={{ __html: initialJob?.eligibility || "" }}
                   className="w-full min-h-[220px] p-4 border border-slate-200 rounded-b-xl text-sm focus:bg-white focus:border-primary focus:outline-none transition-all resize-y prose prose-sm max-w-none bg-white"
                   style={{ outline: 'none' }}

@@ -10,13 +10,20 @@ interface Props {
   states: string[];
   categories: string[];
   initialJob?: any;
+  initialType?: string;
 }
 
-export default function JobForm({ states, categories, initialJob }: Props) {
+export default function JobForm({ states, categories, initialJob, initialType }: Props) {
   const [state, formAction, isPending] = useActionState(createJob, null);
-  const [postType, setPostType] = useState(initialJob?.postType || "Latest Notifications");
+  const [postType, setPostType] = useState(initialJob?.postType || initialType || "Latest Notifications");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [htmlContent, setHtmlContent] = useState(initialJob?.eligibility || "");
+
+  useEffect(() => {
+    if (initialType && !initialJob) {
+      setPostType(initialType);
+    }
+  }, [initialType, initialJob]);
 
   useEffect(() => {
     if (state?.success) {

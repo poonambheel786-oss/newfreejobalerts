@@ -58,29 +58,7 @@ export default async function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50/50">
-      {/* Admin Nav */}
-      <div className="bg-slate-900 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-14 items-center justify-between">
-            <div className="flex items-center gap-2 font-bold text-sm">
-              <span className="bg-primary px-2 py-0.5 rounded text-white">ADMIN</span>
-              <span>NewFreeJobAlert Control Panel</span>
-            </div>
-            <div className="flex items-center gap-4 text-xs font-semibold text-slate-300">
-              <Link href="/" className="hover:text-white transition-colors">View Live Website</Link>
-              <span>|</span>
-              <form action={logout}>
-                <button type="submit" className="flex items-center gap-1 hover:text-white transition-all text-rose-400 cursor-pointer">
-                  <LogOut className="h-3.5 w-3.5" /> Logout
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="space-y-8 animate-fade-in">
         {/* Title and Action */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -175,6 +153,5 @@ export default async function AdminDashboard() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

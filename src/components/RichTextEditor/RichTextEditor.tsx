@@ -141,6 +141,13 @@ export default function RichTextEditor({
     return { words, chars };
   };
 
+  // Sync editor content with value prop without triggering resets on typing
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = value;
+    }
+  }, [value]);
+
   const { words, chars } = getCounts();
 
   return (
@@ -173,7 +180,7 @@ export default function RichTextEditor({
           contentEditable={!readOnly && !disabled}
           onBlur={triggerChange}
           onInput={triggerChange}
-          dangerouslySetInnerHTML={{ __html: value }}
+          suppressContentEditableWarning
           data-placeholder={placeholder}
           className={`${styles.editorArea} prose prose-sm max-w-none bg-white`}
           style={{ minHeight: isFullscreen ? 'calc(100vh - 100px)' : '250px' }}

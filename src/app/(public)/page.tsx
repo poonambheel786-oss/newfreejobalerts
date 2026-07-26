@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CampaignIcon, AssignmentIndIcon, VerifiedIcon, DownloadIcon, ArrowForwardIcon, FilterIcon } from "./icons";
+import { CampaignIcon, AssignmentIndIcon, VerifiedIcon, DownloadIcon, ArrowForwardIcon, FilterIcon } from "@/app/icons";
 import { prisma } from "@/lib/db";
 
 export const revalidate = 3600;

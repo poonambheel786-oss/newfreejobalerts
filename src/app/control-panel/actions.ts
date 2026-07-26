@@ -135,9 +135,15 @@ export async function createJob(state: any, formData: FormData) {
         where: { id },
         data: jobData
       })
-      revalidatePath("/")
-      revalidatePath("/jobs")
-      revalidatePath(`/jobs/${updated.slug}`)
+      
+      // Defer revalidation to background
+      Promise.resolve().then(() => {
+        try {
+          revalidatePath("/", "layout")
+        } catch (e) {
+          console.error("Background revalidation failed:", e)
+        }
+      })
     } else {
       // Save new Job
       await prisma.job.create({
@@ -146,9 +152,15 @@ export async function createJob(state: any, formData: FormData) {
           slug
         }
       })
-      revalidatePath("/")
-      revalidatePath("/jobs")
-      revalidatePath(`/jobs/${slug}`)
+
+      // Defer revalidation to background
+      Promise.resolve().then(() => {
+        try {
+          revalidatePath("/", "layout")
+        } catch (e) {
+          console.error("Background revalidation failed:", e)
+        }
+      })
     }
 
     return { success: true }

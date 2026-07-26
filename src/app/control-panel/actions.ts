@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
+import { revalidatePath } from 'next/cache'
 
 export async function login(state: any, formData: FormData) {
   const username = formData.get('username')
@@ -130,10 +131,13 @@ export async function createJob(state: any, formData: FormData) {
 
     if (id) {
       // Update existing job
-      await prisma.job.update({
+      const updated = await prisma.job.update({
         where: { id },
         data: jobData
       })
+      revalidatePath("/")
+      revalidatePath("/jobs")
+      revalidatePath(`/jobs/${updated.slug}`)
     } else {
       // Save new Job
       await prisma.job.create({
@@ -142,6 +146,9 @@ export async function createJob(state: any, formData: FormData) {
           slug
         }
       })
+      revalidatePath("/")
+      revalidatePath("/jobs")
+      revalidatePath(`/jobs/${slug}`)
     }
 
     return { success: true }

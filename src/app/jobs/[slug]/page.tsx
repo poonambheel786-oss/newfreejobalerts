@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Calendar, MapPin, GraduationCap, Building2, Download, ExternalLink, HelpCircle, Briefcase, ShieldCheck } from "lucide-react";
 import { prisma } from "@/lib/db";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ slug: string }>;

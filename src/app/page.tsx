@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CampaignIcon, AssignmentIndIcon, VerifiedIcon, DownloadIcon, ArrowForwardIcon, FilterIcon } from "./icons";
 import { prisma } from "@/lib/db";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 // Helper to format date
 function formatDate(date: Date) {
@@ -225,7 +225,7 @@ export default async function Home({ searchParams }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-surface-container-low/50 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
+                <tr className="bg-slate-800 text-[11px] font-bold text-white uppercase tracking-wider">
                   <th className="px-6 py-4 border-b border-outline-variant/20">Post Date</th>
                   <th className="px-6 py-4 border-b border-outline-variant/20">Recruitment Board</th>
                   <th className="px-6 py-4 border-b border-outline-variant/20">Exam / Post Name</th>

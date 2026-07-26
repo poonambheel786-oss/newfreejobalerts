@@ -258,14 +258,14 @@ export default async function Home({ searchParams }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-800 text-[11px] font-bold text-white uppercase tracking-wider">
-                  <th className="px-6 py-4 border border-slate-200">Post Date</th>
-                  <th className="px-6 py-4 border border-slate-200">Recruitment Board</th>
-                  <th className="px-6 py-4 border border-slate-200">Exam / Post Name</th>
-                  <th className="px-6 py-4 border border-slate-200">Qualification</th>
-                  <th className="px-6 py-4 border border-slate-200">Advt No</th>
-                  <th className="px-6 py-4 border border-slate-200">Last Date</th>
-                  <th className="px-6 py-4 border border-slate-200 text-center">Action</th>
+                <tr className="text-[11px] font-bold uppercase tracking-wider">
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Post Date</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Recruitment Board</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Exam / Post Name</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Qualification</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Advt No</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Last Date</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200 text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="text-xs sm:text-sm">

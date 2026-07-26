@@ -185,17 +185,17 @@ export default async function JobsListingPage({ searchParams }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-800 text-[11px] font-bold text-white uppercase tracking-wider">
-                  <th className="px-6 py-4 border border-slate-200">Posted Date</th>
-                  <th className="px-6 py-4 border border-slate-200">Organization / Department</th>
-                  <th className="px-6 py-4 border border-slate-200">Notification Title</th>
+                <tr className="text-[11px] font-bold uppercase tracking-wider">
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Posted Date</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Organization / Department</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Notification Title</th>
                   {typeLabel === "Latest Notifications" || !typeLabel ? (
                     <>
-                      <th className="px-6 py-4 border border-slate-200">Eligibility</th>
-                      <th className="px-6 py-4 border border-slate-200">Total Posts</th>
+                      <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Eligibility</th>
+                      <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Total Posts</th>
                     </>
                   ) : null}
-                  <th className="px-6 py-4 border border-slate-200 text-right">Details</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200 text-right">Details</th>
                 </tr>
               </thead>
               <tbody className="text-sm">

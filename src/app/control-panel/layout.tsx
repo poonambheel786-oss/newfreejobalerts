@@ -23,7 +23,7 @@ export default function ControlPanelLayout({
       <header className="sticky top-0 z-40 bg-white border-b border-slate-200/80 h-16 flex items-center justify-between px-6 shadow-sm">
         <div className="flex items-center gap-3">
           <Link href="/control-panel/dashboard" className="flex items-center gap-2.5 font-extrabold text-lg text-primary tracking-tight">
-            <img src="/logo.png" alt="Logo" className="h-8 w-8 object-contain rounded-lg shadow-sm" />
+            <img src="/logo.png" alt="Logo" className="h-8 w-8 object-contain mix-blend-multiply" />
             <span>New<span className="text-slate-900">FreeJobAlert</span> <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[10px] font-bold align-middle ml-1">ADMIN</span></span>
           </Link>
         </div>

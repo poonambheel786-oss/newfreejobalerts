@@ -28,7 +28,7 @@ export default async function PublicLayout({
               <Menu className="h-5 w-5" />
             </button>
             <Link href="/" className="flex items-center gap-3 font-bold text-xl text-primary tracking-tight shrink-0">
-              <img src="/logo.png" alt="PR Deep Solution Logo" className="h-9 w-9 object-contain rounded-lg shadow-sm" />
+              <img src="/logo.png" alt="PR Deep Solution Logo" className="h-9 w-9 object-contain mix-blend-multiply" />
               <span>New<span className="text-on-background">FreeJobAlert</span></span>
             </Link>
           </div>

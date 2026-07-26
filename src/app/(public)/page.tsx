@@ -253,7 +253,7 @@ export default async function Home({ searchParams }: Props) {
         {/* Detailed View Table (Only contains Jobs) */}
         <section className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden">
           <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low/30">
-            <h2 className="font-semibold text-lg text-on-surface">One View All Recruitment</h2>
+            <h2 className="font-semibold text-lg text-on-surface">Recruitment Dashboard</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

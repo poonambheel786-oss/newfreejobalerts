@@ -124,6 +124,7 @@ export async function createJob(state: any, formData: FormData) {
       pdfUrl,
       applyLink,
       officialWebsite,
+      advtNumber: advtNumber || null,
       metaTitle: customMetaTitle || `${title} - Vacancy Eligibility Apply Details`,
       metaDescription: customMetaDescription || `Apply for ${vacancy} posts in ${finalDepartmentName}. Qualification required: ${finalQualificationName}. Last date to apply: ${endDate || 'N/A'}.`,
       searchTags: searchTags || null

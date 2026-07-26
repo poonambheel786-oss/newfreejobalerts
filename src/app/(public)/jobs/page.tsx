@@ -246,26 +246,31 @@ export default async function JobsListingPage({ searchParams }: Props) {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="bg-slate-50/80 px-6 py-4 border-t border-slate-100 flex items-center justify-between">
-              <Link 
-                href={currentPage > 1 ? getPageUrl(currentPage - 1) : "#"} 
-                className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
-                  currentPage > 1 ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
-                }`}
-              >
-                Previous
-              </Link>
-              <span className="text-xs font-semibold text-slate-500">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Link 
-                href={currentPage < totalPages ? getPageUrl(currentPage + 1) : "#"} 
-                className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
-                  currentPage < totalPages ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
-                }`}
-              >
-                Next
-              </Link>
+            <div className="bg-slate-50/50 px-6 py-3 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
+              <div>
+                Showing <span className="font-bold text-slate-800">{(currentPage - 1) * limit + 1}</span> – <span className="font-bold text-slate-800">{Math.min(currentPage * limit, totalCount)}</span> of <span className="font-bold text-slate-800">{totalCount}</span> records
+              </div>
+              <div className="flex items-center gap-3">
+                <Link 
+                  href={currentPage > 1 ? getPageUrl(currentPage - 1) : "#"} 
+                  className={`inline-flex items-center justify-center px-3 py-1.5 border border-slate-200 bg-white rounded-lg text-[11px] font-bold transition-all shadow-sm ${
+                    currentPage > 1 ? "text-slate-700 hover:bg-slate-50 active:scale-95 cursor-pointer" : "text-slate-300 pointer-events-none"
+                  }`}
+                >
+                  Prev
+                </Link>
+                <span>
+                  Page <span className="font-bold text-slate-700">{currentPage}</span> of <span className="font-bold text-slate-700">{totalPages}</span>
+                </span>
+                <Link 
+                  href={currentPage < totalPages ? getPageUrl(currentPage + 1) : "#"} 
+                  className={`inline-flex items-center justify-center px-3 py-1.5 border border-slate-200 bg-white rounded-lg text-[11px] font-bold transition-all shadow-sm ${
+                    currentPage < totalPages ? "text-slate-700 hover:bg-slate-50 active:scale-95 cursor-pointer" : "text-slate-300 pointer-events-none"
+                  }`}
+                >
+                  Next
+                </Link>
+              </div>
             </div>
           )}
         </div>

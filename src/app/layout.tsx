@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/components/providers";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: "NewFreeJobAlert | Official Government Recruitment Portal",
@@ -25,6 +26,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-background text-on-background min-h-screen flex flex-col font-sans antialiased">
+        <GoogleAnalytics />
         <Providers>
           {children}
         </Providers>

@@ -185,7 +185,7 @@ export default async function JobsListingPage({ searchParams }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-800 text-[11px] font-bold text-white uppercase tracking-wider">
+                <tr className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
                   <th className="px-6 py-4">Posted Date</th>
                   <th className="px-6 py-4">Organization / Department</th>
                   <th className="px-6 py-4">Notification Title</th>

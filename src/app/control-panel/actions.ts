@@ -33,6 +33,7 @@ export async function logout() {
 
 export async function createJob(state: any, formData: FormData) {
   try {
+    const id = formData.get('id') as string | null
     const title = formData.get('title') as string
     const departmentName = formData.get('department') as string
     const advtNumber = formData.get('advtNumber') as string
@@ -53,6 +54,11 @@ export async function createJob(state: any, formData: FormData) {
     const categoryName = formData.get('category') as string
     const postType = (formData.get('postType') as string) || "Latest Notifications"
 
+    // SEO Parameters
+    const customMetaTitle = formData.get('metaTitle') as string
+    const customMetaDescription = formData.get('metaDescription') as string
+    const searchTags = formData.get('searchTags') as string
+
     const isJob = postType === "Latest Notifications";
     const finalDepartmentName = isJob ? departmentName : "General Board";
     const finalQualificationName = isJob ? qualificationName : "General Eligibility";
@@ -61,7 +67,7 @@ export async function createJob(state: any, formData: FormData) {
       return { success: false, error: 'Please fill in all required fields marked with *.' }
     }
 
-    // Generate unique slug
+    // Generate unique slug (only for new jobs, if editing, we keep the original slug or regenerate)
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Math.floor(Math.random() * 1000)
 
     // Find or Create Department
@@ -96,34 +102,47 @@ export async function createJob(state: any, formData: FormData) {
       return { success: false, error: 'Selected category does not exist in database.' }
     }
 
-    // Save Job to Supabase
-    await prisma.job.create({
-      data: {
-        title,
-        slug,
-        departmentId: department.id,
-        stateId: dbState?.id || null,
-        qualificationId: qualification.id,
-        categoryId: category.id,
-        postType,
-        vacancy,
-        eligibility,
-        ageLimit,
-        salary,
-        selectionProcess,
-        applicationFees,
-        importantDates: {
-          start: startDate,
-          end: endDate,
-          examDate: examDate
-        },
-        pdfUrl,
-        applyLink,
-        officialWebsite,
-        metaTitle: `${title} - Vacancy Eligibility Apply Details`,
-        metaDescription: `Apply for ${vacancy} posts in ${departmentName}. Qualification required: ${qualificationName}. Last date to apply: ${endDate}.`
-      }
-    })
+    const jobData = {
+      title,
+      departmentId: department.id,
+      stateId: dbState?.id || null,
+      qualificationId: qualification.id,
+      categoryId: category.id,
+      postType,
+      vacancy,
+      eligibility,
+      ageLimit,
+      salary,
+      selectionProcess,
+      applicationFees,
+      importantDates: {
+        start: startDate,
+        end: endDate,
+        examDate: examDate
+      },
+      pdfUrl,
+      applyLink,
+      officialWebsite,
+      metaTitle: customMetaTitle || `${title} - Vacancy Eligibility Apply Details`,
+      metaDescription: customMetaDescription || `Apply for ${vacancy} posts in ${finalDepartmentName}. Qualification required: ${finalQualificationName}. Last date to apply: ${endDate || 'N/A'}.`,
+      searchTags: searchTags || null
+    }
+
+    if (id) {
+      // Update existing job
+      await prisma.job.update({
+        where: { id },
+        data: jobData
+      })
+    } else {
+      // Save new Job
+      await prisma.job.create({
+        data: {
+          ...jobData,
+          slug
+        }
+      })
+    }
 
     return { success: true }
   } catch (e: any) {

@@ -90,6 +90,7 @@ model Job {
   isFeatured          Boolean        @default(false)
   metaTitle           String?
   metaDescription     String?
+  searchTags          String?
   faqSchema           Json?          // Array of QA objects for Google Rich Snippets
   
   createdAt           DateTime       @default(now())

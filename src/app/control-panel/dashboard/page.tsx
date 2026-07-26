@@ -138,6 +138,9 @@ export default async function AdminDashboard() {
                       <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset bg-emerald-50 text-emerald-700 ring-emerald-600/10">
                         {job.status}
                       </span>
+                      <Link href={`/control-panel/jobs/edit/${job.id}`} className="text-xs font-bold text-primary hover:underline cursor-pointer">
+                        Edit
+                      </Link>
                     </div>
                   </div>
                 ))

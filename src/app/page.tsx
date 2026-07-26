@@ -142,67 +142,50 @@ export default async function Home({ searchParams }: Props) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Latest Notifications */}
           <section className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col h-full border border-outline-variant/20 hover:shadow-md transition-shadow">
-            <div className="p-6 bg-primary-container text-white flex justify-between items-center">
-              <div>
-                <h2 className="font-semibold text-lg">Latest Notifications</h2>
-              </div>
+            <div className="p-5 bg-blue-600 text-white flex justify-between items-center">
+              <h2 className="font-bold text-base">Latest Notifications</h2>
             </div>
-            <div className="p-0 flex-grow divide-y divide-outline-variant/10">
+            <div className="p-0 flex-grow divide-y divide-slate-100">
               {notifications.length === 0 ? (
                 <div className="p-8 text-center text-xs text-slate-400 font-medium">No active notifications. Add via Control Panel.</div>
               ) : (
                 notifications.map((n) => (
-                  <div key={n.id} className="p-4 hover:bg-surface-container-low transition-colors group">
-                    <div className="flex items-start justify-between mb-1">
-                      <span className="text-[10px] font-bold text-secondary-container px-2 py-0.5 bg-secondary-container/10 rounded-full uppercase">
-                        {n.category.name}
-                      </span>
-                      <span className="text-xs text-outline italic ml-auto">{formatDate(n.createdAt)}</span>
-                    </div>
-                    <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block" href={`/jobs/${n.slug}`}>
+                  <div key={n.id} className="p-4 hover:bg-slate-50/50 transition-colors">
+                    <Link className="font-bold text-sm text-blue-600 hover:text-blue-800 hover:underline block leading-snug" href={`/jobs/${n.slug}`}>
                       {n.title}
                     </Link>
-                    <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">{n.eligibility.replace(/<[^>]*>/g, '')}</p>
                   </div>
                 ))
               )}
             </div>
-            <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/jobs?type=latest-notifications" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline cursor-pointer">
+            <div className="p-4 border-t border-slate-100">
+              <Link href="/jobs?type=latest-notifications" className="w-full text-primary font-bold text-xs flex items-center justify-center gap-1 hover:underline cursor-pointer">
                 View Full List
-                <ArrowForwardIcon className="h-4 w-4" />
+                <ArrowForwardIcon className="h-3 w-3" />
               </Link>
             </div>
           </section>
 
           {/* Admit Cards */}
           <section className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col h-full border border-outline-variant/20 hover:shadow-md transition-shadow">
-            <div className="p-6 bg-surface-container-high text-primary flex justify-between items-center border-b border-outline-variant/10">
-              <div>
-                <h2 className="font-semibold text-lg text-primary">Admit Cards</h2>
-              </div>
+            <div className="p-5 bg-amber-500 text-white flex justify-between items-center">
+              <h2 className="font-bold text-base">Admit Cards</h2>
             </div>
-            <div className="p-0 flex-grow divide-y divide-outline-variant/10">
+            <div className="p-0 flex-grow divide-y divide-slate-100">
               {admitCards.length === 0 ? (
                 <div className="p-8 text-center text-xs text-slate-400 font-medium">No active admit cards. Add via Control Panel.</div>
               ) : (
                 admitCards.map((ac) => (
-                  <div key={ac.id} className="p-4 hover:bg-surface-container-low transition-colors">
-                    <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block mb-2" href={`/jobs/${ac.slug}`}>
+                  <div key={ac.id} className="p-4 hover:bg-slate-50/50 transition-colors">
+                    <Link className="font-bold text-sm text-blue-600 hover:text-blue-800 hover:underline block leading-snug" href={`/jobs/${ac.slug}`}>
                       {ac.title}
                     </Link>
-                    <div className="flex items-center gap-2">
-                      <div className="bg-secondary-container/10 p-1.5 rounded-lg text-secondary-container">
-                        <DownloadIcon className="h-4 w-4" />
-                      </div>
-                      <p className="text-xs text-on-surface-variant font-medium">Click to check details & download hall ticket</p>
-                    </div>
                   </div>
                 ))
               )}
             </div>
-            <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/jobs?type=admit-cards" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline cursor-pointer">
+            <div className="p-4 border-t border-slate-100">
+              <Link href="/jobs?type=admit-cards" className="w-full text-primary font-bold text-xs flex items-center justify-center gap-1 hover:underline cursor-pointer">
                 View All Hall Tickets
               </Link>
             </div>
@@ -210,33 +193,24 @@ export default async function Home({ searchParams }: Props) {
 
           {/* Results */}
           <section className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col h-full border border-outline-variant/20 hover:shadow-md transition-shadow">
-            <div className="p-6 bg-surface-container-high text-on-surface flex justify-between items-center border-b border-outline-variant/10">
-              <div>
-                <h2 className="font-semibold text-lg">Results</h2>
-              </div>
+            <div className="p-5 bg-emerald-600 text-white flex justify-between items-center">
+              <h2 className="font-bold text-base">Results</h2>
             </div>
-            <div className="p-0 flex-grow divide-y divide-outline-variant/10">
+            <div className="p-0 flex-grow divide-y divide-slate-100">
               {results.length === 0 ? (
                 <div className="p-8 text-center text-xs text-slate-400 font-medium">No active results declared. Add via Control Panel.</div>
               ) : (
                 results.map((r) => (
-                  <div key={r.id} className="p-4 hover:bg-surface-container-low transition-colors">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                      <span className="text-[10px] font-bold uppercase text-emerald-600">
-                        Released
-                      </span>
-                    </div>
-                    <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block" href={`/jobs/${r.slug}`}>
+                  <div key={r.id} className="p-4 hover:bg-slate-50/50 transition-colors">
+                    <Link className="font-bold text-sm text-blue-600 hover:text-blue-800 hover:underline block leading-snug" href={`/jobs/${r.slug}`}>
                       {r.title}
                     </Link>
-                    <p className="text-xs text-on-surface-variant mt-1">Merit list and scorecard link active.</p>
                   </div>
                 ))
               )}
             </div>
-            <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/jobs?type=results" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline cursor-pointer">
+            <div className="p-4 border-t border-slate-100">
+              <Link href="/jobs?type=results" className="w-full text-primary font-bold text-xs flex items-center justify-center gap-1 hover:underline cursor-pointer">
                 Check Merit Lists
               </Link>
             </div>

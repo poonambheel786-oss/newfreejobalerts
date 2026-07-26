@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: "Access real-time recruitment notifications, official admit cards, and merit lists from all government departments in one place.",
   keywords: "Govt jobs, Free job alert, Admit card, Exam syllabus, Government scheme, SSC, UPSC, Bank jobs, Railway recruitment",
   authors: [{ name: "NewFreeJobAlert Team" }],
+  verification: {
+    google: "hJhBh6P7z0tc6pNVcqSBCfie9ktdepuEMMsjrQH3GAI",
+  },
 };
 
 export default function RootLayout({

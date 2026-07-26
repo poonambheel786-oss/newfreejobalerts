@@ -13,14 +13,37 @@ function formatDate(date: Date) {
   return `${day}-${month}-${year}`;
 }
 
-export default async function Home() {
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+}
+
+export default async function Home({ searchParams }: Props) {
+  const params = await searchParams;
+  const currentPage = parseInt(params.page || "1") || 1;
+  const limit = 15;
+  const skip = (currentPage - 1) * limit;
+
   let notifications: any[] = [];
   let admitCards: any[] = [];
   let results: any[] = [];
   let consolidatedJobs: any[] = [];
+  let marqueeJobs: any[] = [];
+  let totalJobs = 0;
   let dbError = false;
 
   try {
+    // 1. Fetch Marquee updates (Latest Notifications)
+    marqueeJobs = await prisma.job.findMany({
+      where: {
+        postType: "Latest Notifications"
+      },
+      orderBy: { createdAt: "desc" },
+      take: 6
+    });
+
+    // 2. Fetch Latest Notifications for Column Card
     notifications = await prisma.job.findMany({
       where: {
         postType: "Latest Notifications"
@@ -30,6 +53,7 @@ export default async function Home() {
       take: 5
     });
 
+    // 3. Fetch Admit Cards for Column Card
     admitCards = await prisma.job.findMany({
       where: {
         postType: "Admit Cards"
@@ -39,6 +63,7 @@ export default async function Home() {
       take: 5
     });
 
+    // 4. Fetch Results for Column Card
     results = await prisma.job.findMany({
       where: {
         postType: "Results"
@@ -48,7 +73,11 @@ export default async function Home() {
       take: 5
     });
 
+    // 5. Fetch consolidated jobs (Jobs only, excluding Admit Cards & Results) with pagination
     consolidatedJobs = await prisma.job.findMany({
+      where: {
+        postType: "Latest Notifications"
+      },
       include: {
         department: true,
         category: true,
@@ -56,24 +85,39 @@ export default async function Home() {
         qualification: true
       },
       orderBy: { createdAt: "desc" },
-      take: 15
+      skip,
+      take: limit
+    });
+
+    totalJobs = await prisma.job.count({
+      where: {
+        postType: "Latest Notifications"
+      }
     });
   } catch (e) {
     console.error("Database connection failed:", e);
     dbError = true;
   }
 
+  const totalPages = Math.ceil(totalJobs / limit);
+
   return (
-    <div className="flex flex-col flex-grow">
-      {/* Breaking News Marquee */}
+    <div className="flex flex-col flex-grow animate-fade-in">
+      {/* Dynamic Marquee */}
       <div className="bg-secondary-container text-white py-2 overflow-hidden flex items-center relative z-10 border-b border-secondary">
-        <div className="bg-secondary px-6 py-2 absolute left-0 z-20 font-bold text-sm shadow-xl italic">
-          BREAKING NEWS
+        <div className="bg-secondary px-6 py-2 absolute left-0 z-20 font-bold text-sm shadow-xl italic whitespace-nowrap">
+          New Vacancies
         </div>
-        <div className="marquee-content whitespace-nowrap flex items-center gap-8 pl-40">
-          <span className="text-sm font-medium">• Welcome to NewFreeJobAlert. Access real-time government recruitment updates.</span>
-          <span className="text-sm font-medium">• Civil Services Examination 2026 results released today. Check the "Results" section for the merit list.</span>
-          <span className="text-sm font-medium">• New vacancies for Senior Technical Officers at NITI Aayog. Application window opens tomorrow.</span>
+        <div className="marquee-content whitespace-nowrap flex items-center gap-8 pl-44">
+          {marqueeJobs.length === 0 ? (
+            <span className="text-sm font-medium">• Welcome to NewFreeJobAlert. Access real-time government recruitment updates.</span>
+          ) : (
+            marqueeJobs.map((j) => (
+              <Link key={j.id} href={`/jobs/${j.slug}`} className="text-sm font-bold text-white hover:underline flex items-center gap-1 cursor-pointer">
+                • {j.title} (Apply Details)
+              </Link>
+            ))
+          )}
         </div>
       </div>
 
@@ -81,22 +125,10 @@ export default async function Home() {
         {/* Public Hero Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="font-extrabold text-3xl md:text-5xl text-on-surface mb-2 tracking-tight">Government Job Portal</h1>
+            <h1 className="font-extrabold text-3xl md:text-5xl text-on-surface mb-2 tracking-tight">Best Job Portal</h1>
             <p className="text-base text-on-surface-variant max-w-2xl">
               Access real-time recruitment notifications, official admit cards, and merit lists from all government departments in one place.
             </p>
-          </div>
-          <div className="flex gap-4">
-            <div className="relative w-full md:w-80">
-              <input 
-                type="text" 
-                placeholder="Search exams or posts..." 
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant bg-white focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none text-sm transition-all"
-              />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-outline flex items-center">
-                <SearchIcon className="h-5 w-5" />
-              </span>
-            </div>
           </div>
         </div>
 
@@ -130,13 +162,13 @@ export default async function Home() {
                     <Link className="font-semibold text-sm text-on-surface hover:text-primary transition-colors block" href={`/jobs/${n.slug}`}>
                       {n.title}
                     </Link>
-                    <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">{n.eligibility}</p>
+                    <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">{n.eligibility.replace(/<[^>]*>/g, '')}</p>
                   </div>
                 ))
               )}
             </div>
             <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/jobs?type=latest-notifications" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
+              <Link href="/jobs?type=latest-notifications" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline cursor-pointer">
                 View Full List
                 <ArrowForwardIcon className="h-4 w-4" />
               </Link>
@@ -170,7 +202,7 @@ export default async function Home() {
               )}
             </div>
             <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/jobs?type=admit-cards" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
+              <Link href="/jobs?type=admit-cards" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline cursor-pointer">
                 View All Hall Tickets
               </Link>
             </div>
@@ -204,22 +236,17 @@ export default async function Home() {
               )}
             </div>
             <div className="p-4 border-t border-outline-variant/10">
-              <Link href="/jobs?type=results" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline">
+              <Link href="/jobs?type=results" className="w-full text-primary font-bold text-sm flex items-center justify-center gap-2 hover:underline cursor-pointer">
                 Check Merit Lists
               </Link>
             </div>
           </section>
         </div>
 
-        {/* Detailed View Table */}
+        {/* Detailed View Table (Only contains Jobs) */}
         <section className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden">
           <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low/30">
-            <h2 className="font-semibold text-lg text-on-surface">Consolidated Recruitment View</h2>
-            <div className="flex gap-2">
-              <button className="p-2 border border-outline-variant rounded-lg hover:bg-white hover:text-primary transition-colors flex items-center">
-                <FilterIcon className="h-4 w-4" />
-              </button>
-            </div>
+            <h2 className="font-semibold text-lg text-on-surface">One View All Recruitment</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -260,7 +287,7 @@ export default async function Home() {
                         <td className="px-6 py-4 text-outline">{tj.advtNumber || "N/A"}</td>
                         <td className="px-6 py-4 text-rose-600 font-medium">{lastDateStr}</td>
                         <td className="px-6 py-4 text-center">
-                          <Link className="text-primary font-bold hover:underline" href={`/jobs/${tj.slug}`}>More Info</Link>
+                          <Link className="text-primary font-bold hover:underline cursor-pointer" href={`/jobs/${tj.slug}`}>More Info</Link>
                         </td>
                       </tr>
                     );
@@ -269,17 +296,33 @@ export default async function Home() {
               </tbody>
             </table>
           </div>
+
+          {/* Table Pagination */}
+          {totalPages > 1 && (
+            <div className="bg-slate-50/50 px-6 py-4 border-t border-outline-variant/10 flex items-center justify-between">
+              <Link 
+                href={currentPage > 1 ? `/?page=${currentPage - 1}` : "#"} 
+                className={`text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
+                  currentPage > 1 ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
+                }`}
+              >
+                Previous
+              </Link>
+              <span className="text-xs font-semibold text-slate-500">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Link 
+                href={currentPage < totalPages ? `/?page=${currentPage + 1}` : "#"} 
+                className={`text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
+                  currentPage < totalPages ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
+                }`}
+              >
+                Next
+              </Link>
+            </div>
+          )}
         </section>
       </div>
     </div>
-  );
-}
-
-// Simple fallback SVG search icon
-function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.602 10.602Z" />
-    </svg>
   );
 }

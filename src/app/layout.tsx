@@ -30,10 +30,8 @@ export default function RootLayout({
                 <button className="md:hidden p-2 rounded-full hover:bg-primary-container/10 transition-colors">
                   <Menu className="h-5 w-5" />
                 </button>
-                <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary tracking-tight">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white shadow-md">
-                    <Briefcase className="h-5 w-5" />
-                  </div>
+                <Link href="/" className="flex items-center gap-3 font-bold text-xl text-primary tracking-tight">
+                  <img src="/logo.png" alt="PR Deep Solution Logo" className="h-9 w-9 object-contain rounded-lg shadow-sm" />
                   <span>New<span className="text-on-background">FreeJobAlert</span></span>
                 </Link>
               </div>
@@ -60,15 +58,6 @@ export default function RootLayout({
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
-                <Link 
-                  href="/control-panel/dashboard" 
-                  className="hidden sm:flex items-center gap-2 text-xs font-semibold text-primary bg-primary-container/10 hover:bg-primary-container/20 px-3 py-1.5 rounded-full transition-all"
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Admin Panel
-                </Link>
-              </div>
             </div>
           </nav>
 
@@ -80,7 +69,7 @@ export default function RootLayout({
           {/* Footer */}
           <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/30 mt-auto">
             <div className="max-w-[1280px] mx-auto px-6 py-4 text-center">
-              <p className="text-xs text-on-surface-variant opacity-70">&copy; {new Date().getFullYear()} NewFreeJobAlert. All rights reserved.</p>
+              <p className="text-xs text-on-surface-variant opacity-70">&copy; 2026 PR Deep Solution Lvt Ltd. All rights reserved.</p>
             </div>
           </footer>
         </Providers>

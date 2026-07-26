@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Calendar, MapPin, GraduationCap, Building2, Download, ExternalLink, HelpCircle, Briefcase, ShieldCheck } from "lucide-react";
+import { Calendar, MapPin, GraduationCap, Building2, Download, ExternalLink, HelpCircle, Briefcase, ShieldCheck, ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/db";
 
 export const revalidate = 3600;
@@ -113,14 +113,22 @@ export default async function JobDetailPage({ params }: Props) {
       />
 
       <div className="mx-auto max-w-[1280px] w-full px-6 py-10 space-y-8 flex-grow">
-        {/* Breadcrumbs */}
-        <nav className="text-xs font-semibold text-slate-500 flex gap-2 items-center">
-          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-          <span>/</span>
-          <Link href="/jobs" className="hover:text-primary transition-colors">Jobs</Link>
-          <span>/</span>
-          <span className="text-slate-800 truncate">{job.title}</span>
-        </nav>
+        {/* Breadcrumbs & Back Row */}
+        <div className="flex items-center justify-between gap-4">
+          <nav className="text-xs font-semibold text-slate-500 flex gap-2 items-center min-w-0">
+            <Link href="/" className="hover:text-primary transition-colors shrink-0">Home</Link>
+            <span className="shrink-0">/</span>
+            <Link href="/jobs" className="hover:text-primary transition-colors shrink-0">Jobs</Link>
+            <span className="shrink-0">/</span>
+            <span className="text-slate-800 truncate">{job.title}</span>
+          </nav>
+          <Link 
+            href="/jobs" 
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors shrink-0 bg-slate-100 hover:bg-slate-200/70 px-4 py-2 rounded-xl border border-slate-200/40"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back
+          </Link>
+        </div>
 
         {/* Hero Details Block */}
         <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">

@@ -108,7 +108,9 @@ export default async function JobsListingPage({ searchParams }: Props) {
     : typeLabel 
       ? `${typeLabel} List` 
       : categoryName 
-        ? `${categoryName} Jobs` 
+        ? categoryName.toLowerCase().endsWith("jobs")
+          ? categoryName
+          : `${categoryName} Jobs`
         : "All Notifications & Updates";
 
   // Build pagination query helper
@@ -123,17 +125,18 @@ export default async function JobsListingPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-[1280px] w-full px-6 py-10 space-y-8 flex-grow">
-      {/* Back button */}
-      <div className="flex items-center justify-end">
-        <Link href="/" className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
+      {/* Main Header with Back Button */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-black text-slate-950 tracking-tight">{titleText}</h1>
+          <p className="text-xs text-slate-500 mt-1">Showing {jobs.length} updates of {totalCount} total entries.</p>
+        </div>
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors shrink-0 bg-slate-100 hover:bg-slate-200/70 px-4 py-2.5 rounded-xl border border-slate-200/40"
+        >
           <ArrowLeft className="h-4 w-4" /> Back to Home
         </Link>
-      </div>
-
-      {/* Main Header */}
-      <div>
-        <h1 className="text-2xl font-black text-slate-950 tracking-tight">{titleText}</h1>
-        <p className="text-xs text-slate-500 mt-1">Showing {jobs.length} updates of {totalCount} total entries.</p>
       </div>
 
       {jobs.length === 0 ? (

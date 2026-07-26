@@ -30,11 +30,20 @@ export default function PublicLayout({
             <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=bank-jobs">Bank Jobs</Link>
             <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=teaching-jobs">Teaching Jobs</Link>
             <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=railway-jobs">Railway Jobs</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=nursing-jobs">Nursing Jobs</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=engineering-jobs">Engineering Jobs</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=police-defence-jobs">Police/Defence Jobs</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=agriculture-jobs">Agriculture Jobs</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=college-entrance-exams">College Entrance Exams</Link>
+          </div>
+
+          {/* More Dropdown */}
+          <div className="relative group py-2 shrink-0">
+            <div className="flex items-center gap-1 text-on-surface hover:text-primary font-semibold text-sm transition-colors cursor-pointer select-none">
+              More <span className="text-[10px]">▼</span>
+            </div>
+            <div className="absolute right-0 top-full w-52 rounded-lg shadow-xl bg-white border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 divide-y divide-slate-100 py-1">
+              <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=nursing-jobs">Nursing Jobs</Link>
+              <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=engineering-jobs">Engineering Jobs</Link>
+              <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=police-defence-jobs">Police/Defence Jobs</Link>
+              <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=agriculture-jobs">Agriculture Jobs</Link>
+              <Link className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/jobs?category=college-entrance-exams">College Entrance Exams</Link>
+            </div>
           </div>
         </div>
       </nav>

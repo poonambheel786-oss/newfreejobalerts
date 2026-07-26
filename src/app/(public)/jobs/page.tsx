@@ -124,7 +124,7 @@ export default async function JobsListingPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-[1280px] w-full px-6 py-10 space-y-8 flex-grow">
       {/* Back button */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-end">
         <Link href="/" className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
           <ArrowLeft className="h-4 w-4" /> Back to Home
         </Link>

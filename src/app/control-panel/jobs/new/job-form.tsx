@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useActionState, useEffect, useState, useRef } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Save, AlertCircle, Bold, Italic, Underline, Strikethrough, Code, Heading1, Heading2, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Link2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Save, AlertCircle, CheckCircle2 } from "lucide-react";
 import { createJob } from "../../actions";
+import RichTextEditor from "../../../../components/RichTextEditor/RichTextEditor";
 
 interface Props {
   states: string[];
@@ -15,7 +16,6 @@ export default function JobForm({ states, categories, initialJob }: Props) {
   const [state, formAction, isPending] = useActionState(createJob, null);
   const [postType, setPostType] = useState(initialJob?.postType || "Latest Notifications");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const editorRef = useRef<HTMLDivElement>(null);
   const [htmlContent, setHtmlContent] = useState(initialJob?.eligibility || "");
 
   useEffect(() => {
@@ -23,30 +23,6 @@ export default function JobForm({ states, categories, initialJob }: Props) {
       setShowSuccessModal(true);
     }
   }, [state]);
-
-  const handleEditorBlur = () => {
-    if (editorRef.current) {
-      setHtmlContent(editorRef.current.innerHTML);
-    }
-  };
-
-  const handleEditorInput = (e: React.FormEvent<HTMLDivElement>) => {
-    setHtmlContent(e.currentTarget.innerHTML);
-  };
-
-  const handleCommand = (command: string, value: string = "") => {
-    document.execCommand(command, false, value);
-    if (editorRef.current) {
-      setHtmlContent(editorRef.current.innerHTML);
-    }
-  };
-
-  const handleLink = () => {
-    const url = prompt("Enter link URL:");
-    if (url) {
-      handleCommand("createLink", url);
-    }
-  };
 
   // Helper to extract date string in format YYYY-MM-DD
   const formatDateValue = (dateObj: any) => {
@@ -240,36 +216,10 @@ export default function JobForm({ states, categories, initialJob }: Props) {
               <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">Description / HTML Content *</h2>
               
               <div className="space-y-3">
-                {/* Premium WYSIWYG Toolbar */}
-                <div className="flex flex-wrap gap-1 border border-slate-200/80 bg-slate-50/50 p-1.5 rounded-t-xl border-b-0">
-                  <button type="button" onClick={() => handleCommand("bold")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Bold"><Bold className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => handleCommand("italic")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Italic"><Italic className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => handleCommand("underline")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Underline"><Underline className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => handleCommand("strikeThrough")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Strikethrough"><Strikethrough className="h-4 w-4" /></button>
-                  <span className="w-[1px] h-6 bg-slate-200 self-center mx-1"></span>
-                  <button type="button" onClick={() => handleCommand("formatBlock", "H1")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="H1"><Heading1 className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => handleCommand("formatBlock", "H2")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="H2"><Heading2 className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => handleCommand("formatBlock", "P")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer font-bold text-xs" title="Paragraph">P</button>
-                  <span className="w-[1px] h-6 bg-slate-200 self-center mx-1"></span>
-                  <button type="button" onClick={() => handleCommand("insertUnorderedList")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Bulleted List"><List className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => handleCommand("insertOrderedList")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Numbered List"><ListOrdered className="h-4 w-4" /></button>
-                  <span className="w-[1px] h-6 bg-slate-200 self-center mx-1"></span>
-                  <button type="button" onClick={() => handleCommand("justifyLeft")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Align Left"><AlignLeft className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => handleCommand("justifyCenter")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Align Center"><AlignCenter className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => handleCommand("justifyRight")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Align Right"><AlignRight className="h-4 w-4" /></button>
-                  <span className="w-[1px] h-6 bg-slate-200 self-center mx-1"></span>
-                  <button type="button" onClick={handleLink} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer" title="Insert Link"><Link2 className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => handleCommand("removeFormat")} className="p-2 hover:bg-slate-200 rounded-lg text-slate-600 cursor-pointer text-xs font-semibold" title="Clear Formatting">Clear</button>
-                </div>
-
-                <div 
-                  ref={editorRef}
-                  contentEditable
-                  onBlur={handleEditorBlur}
-                  onInput={handleEditorInput}
-                  dangerouslySetInnerHTML={{ __html: initialJob?.eligibility || "" }}
-                  className="w-full min-h-[220px] p-4 border border-slate-200 rounded-b-xl text-sm focus:bg-white focus:border-primary focus:outline-none transition-all resize-y prose prose-sm max-w-none bg-white"
-                  style={{ outline: 'none' }}
+                <RichTextEditor 
+                  value={htmlContent}
+                  onChange={setHtmlContent}
+                  placeholder="Type description or recruitment details..."
                 />
               </div>
 

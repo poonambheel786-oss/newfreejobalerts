@@ -3,10 +3,10 @@ import "./globals.css";
 import Providers from "@/components/providers";
 
 export const metadata: Metadata = {
-  title: "GovCareers | Official Government Recruitment Portal",
+  title: "NewFreeJobAlert | Official Government Recruitment Portal",
   description: "Access real-time recruitment notifications, official admit cards, and merit lists from all government departments in one place.",
   keywords: "Govt jobs, Free job alert, Admit card, Exam syllabus, Government scheme, SSC, UPSC, Bank jobs, Railway recruitment",
-  authors: [{ name: "GovCareers Team" }],
+  authors: [{ name: "NewFreeJobAlert Team" }],
 };
 
 export default function RootLayout({

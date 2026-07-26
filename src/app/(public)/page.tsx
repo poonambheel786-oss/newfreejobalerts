@@ -257,7 +257,7 @@ export default async function Home({ searchParams }: Props) {
                         <td className="px-6 py-4 text-on-surface-variant">{formatDate(tj.createdAt)}</td>
                         <td className="px-6 py-4 font-bold text-on-surface">{tj.department.name}</td>
                         <td className="px-6 py-4">{tj.title}</td>
-                        <td className="px-6 py-4">{tj.qualification.name}</td>
+                        <td className="px-6 py-4 max-w-[200px] truncate" title={tj.qualification.name}>{tj.qualification.name}</td>
                         <td className="px-6 py-4 text-outline">{tj.advtNumber || "N/A"}</td>
                         <td className="px-6 py-4 text-rose-600 font-medium">{lastDateStr}</td>
                         <td className="px-6 py-4 text-center">

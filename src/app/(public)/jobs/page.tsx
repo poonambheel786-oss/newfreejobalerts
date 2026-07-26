@@ -182,7 +182,9 @@ export default async function JobsListingPage({ searchParams }: Props) {
                     </td>
                     {typeLabel === "Latest Notifications" || !typeLabel ? (
                       <>
-                        <td className="px-6 py-4 text-slate-500 whitespace-nowrap text-xs">{job.qualification.name}</td>
+                        <td className="px-6 py-4 text-slate-500 text-xs max-w-[200px] truncate" title={job.qualification.name}>
+                          {job.qualification.name}
+                        </td>
                         <td className="px-6 py-4 text-slate-800 font-bold whitespace-nowrap text-xs">{job.vacancy}</td>
                       </>
                     ) : null}

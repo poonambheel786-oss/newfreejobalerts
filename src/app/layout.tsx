@@ -18,6 +18,11 @@ export default function RootLayout({
     <html lang="en" className="light h-full">
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3085706097528661"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="bg-background text-on-background min-h-screen flex flex-col font-sans antialiased">
         <Providers>

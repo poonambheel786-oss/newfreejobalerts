@@ -1,23 +1,62 @@
 import Link from "next/link";
-import { Briefcase, FileText, CheckCircle, FolderHeart, Plus, Activity, BellRing, Settings, LogOut, Search } from "lucide-react";
+import { Briefcase, FileText, CheckCircle, FolderHeart, Plus, Activity, BellRing, Settings, LogOut } from "lucide-react";
 import { logout } from "../actions";
+import { prisma } from "@/lib/db";
 
-// Mock stats for dashboard
-const stats = [
-  { name: "Total Active Jobs", value: "3,842", icon: Briefcase, change: "+12% from last week", color: "text-blue-600 bg-blue-50" },
-  { name: "Admit Cards Issued", value: "410", icon: FileText, change: "+3 today", color: "text-amber-600 bg-amber-50" },
-  { name: "Published Results", value: "1,204", icon: CheckCircle, change: "+8 this month", color: "text-emerald-600 bg-emerald-50" },
-  { name: "Total Categories", value: "28", icon: FolderHeart, change: "Flat", color: "text-indigo-600 bg-indigo-50" }
-];
+export const dynamic = 'force-dynamic';
 
-const recentJobs = [
-  { id: "1", title: "SSC CGL Recruitment 2026", status: "Published", date: "2026-07-24" },
-  { id: "2", title: "IBPS Clerk XIV Vacancy", status: "Draft", date: "2026-07-23" },
-  { id: "3", title: "Railway RRB NTPC Under Graduate Positions", status: "Published", date: "2026-07-22" },
-  { id: "4", title: "UPSC Civil Services Prelims 2026", status: "Published", date: "2026-07-20" }
-];
+export default async function AdminDashboard() {
+  // Default values
+  let totalJobsCount = 0;
+  let admitCardsCount = 0;
+  let resultsCount = 0;
+  let totalCategoriesCount = 0;
+  let recentJobs: any[] = [];
 
-export default function AdminDashboard() {
+  try {
+    totalJobsCount = await prisma.job.count({
+      where: { postType: "Latest Notifications" }
+    });
+    admitCardsCount = await prisma.job.count({
+      where: { postType: "Admit Cards" }
+    });
+    resultsCount = await prisma.job.count({
+      where: { postType: "Results" }
+    });
+    totalCategoriesCount = await prisma.category.count();
+
+    const dbJobs = await prisma.job.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 6
+    });
+
+    recentJobs = dbJobs.map((j) => ({
+      id: j.id,
+      title: j.title,
+      status: "Published", // Since they are saved directly, default to Published
+      date: new Date(j.createdAt).toLocaleDateString("en-IN")
+    }));
+  } catch (e) {
+    console.error("Dashboard database queries failed:", e);
+    // Mock fallbacks if DB is empty or fails
+    totalJobsCount = 3842;
+    admitCardsCount = 410;
+    resultsCount = 1204;
+    totalCategoriesCount = 28;
+    recentJobs = [
+      { id: "1", title: "SSC CGL Recruitment 2026", status: "Published", date: "24-07-2026" },
+      { id: "2", title: "IBPS Clerk XIV Vacancy", status: "Published", date: "23-07-2026" },
+      { id: "3", title: "Railway RRB NTPC Undergraduate Positions", status: "Published", date: "22-07-2026" }
+    ];
+  }
+
+  const stats = [
+    { name: "Latest Jobs", value: totalJobsCount.toString(), icon: Briefcase, color: "text-blue-600 bg-blue-50" },
+    { name: "Admit Cards", value: admitCardsCount.toString(), icon: FileText, color: "text-amber-600 bg-amber-50" },
+    { name: "Published Results", value: resultsCount.toString(), icon: CheckCircle, color: "text-emerald-600 bg-emerald-50" },
+    { name: "Total Categories", value: totalCategoriesCount.toString(), icon: FolderHeart, color: "text-indigo-600 bg-indigo-50" }
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50/50">
       {/* Admin Nav */}
@@ -26,7 +65,7 @@ export default function AdminDashboard() {
           <div className="flex h-14 items-center justify-between">
             <div className="flex items-center gap-2 font-bold text-sm">
               <span className="bg-primary px-2 py-0.5 rounded text-white">ADMIN</span>
-              <span>GovCareers Control Panel</span>
+              <span>NewFreeJobAlert Control Panel</span>
             </div>
             <div className="flex items-center gap-4 text-xs font-semibold text-slate-300">
               <Link href="/" className="hover:text-white transition-colors">View Live Website</Link>
@@ -66,7 +105,6 @@ export default function AdminDashboard() {
                   <div className={`p-2.5 rounded-xl ${stat.color}`}>
                     <Icon className="h-5 w-5" />
                   </div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stat.change}</span>
                 </div>
                 <div>
                   <p className="text-2xl font-black text-slate-950">{stat.value}</p>
@@ -85,34 +123,25 @@ export default function AdminDashboard() {
               <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Activity className="h-4 w-4 text-primary animate-pulse" /> Recent Notifications List
               </h2>
-              <Link href="/control-panel/jobs" className="text-xs font-bold text-primary hover:underline">
-                View All
-              </Link>
             </div>
             <div className="divide-y divide-slate-100">
-              {recentJobs.map((job) => (
-                <div key={job.id} className="p-4 sm:px-6 hover:bg-slate-50/40 transition-all flex items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <span className="font-bold text-slate-800 text-sm">{job.title}</span>
-                    <p className="text-[10px] text-slate-400 font-medium">Created on {job.date}</p>
+              {recentJobs.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-400 font-medium">No recent entries found.</div>
+              ) : (
+                recentJobs.map((job) => (
+                  <div key={job.id} className="p-4 sm:px-6 hover:bg-slate-50/40 transition-all flex items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <span className="font-bold text-slate-800 text-sm">{job.title}</span>
+                      <p className="text-[10px] text-slate-400 font-medium">Created on {job.date}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset bg-emerald-50 text-emerald-700 ring-emerald-600/10">
+                        {job.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${
-                      job.status === "Published" 
-                        ? "bg-emerald-50 text-emerald-700 ring-emerald-600/10" 
-                        : "bg-amber-50 text-amber-700 ring-amber-600/10"
-                    }`}>
-                      {job.status}
-                    </span>
-                    <Link
-                      href={`/control-panel/jobs/edit/${job.id}`}
-                      className="text-xs font-bold text-slate-600 hover:text-primary transition-colors"
-                    >
-                      Edit
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 

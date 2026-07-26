@@ -53,7 +53,11 @@ export async function createJob(state: any, formData: FormData) {
     const categoryName = formData.get('category') as string
     const postType = (formData.get('postType') as string) || "Latest Notifications"
 
-    if (!title || !departmentName || !qualificationName || !categoryName) {
+    const isJob = postType === "Latest Notifications";
+    const finalDepartmentName = isJob ? departmentName : "General Board";
+    const finalQualificationName = isJob ? qualificationName : "General Eligibility";
+
+    if (!title || !finalDepartmentName || !finalQualificationName || !categoryName) {
       return { success: false, error: 'Please fill in all required fields marked with *.' }
     }
 
@@ -61,19 +65,19 @@ export async function createJob(state: any, formData: FormData) {
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Math.floor(Math.random() * 1000)
 
     // Find or Create Department
-    const deptSlug = departmentName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    const deptSlug = finalDepartmentName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
     const department = await prisma.department.upsert({
       where: { slug: deptSlug },
       update: {},
-      create: { name: departmentName, slug: deptSlug }
+      create: { name: finalDepartmentName, slug: deptSlug }
     })
 
     // Find or Create Qualification
-    const qualSlug = qualificationName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    const qualSlug = finalQualificationName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
     const qualification = await prisma.qualification.upsert({
       where: { slug: qualSlug },
       update: {},
-      create: { name: qualificationName, slug: qualSlug }
+      create: { name: finalQualificationName, slug: qualSlug }
     })
 
     // Find State

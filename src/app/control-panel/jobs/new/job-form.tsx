@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useActionState, useEffect } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Save, AlertCircle } from "lucide-react";
+import { ArrowLeft, Save, AlertCircle, Bold, Type, List, Link as LinkIcon, HelpCircle } from "lucide-react";
 import { createJob } from "../../actions";
 
 interface Props {
@@ -12,21 +12,35 @@ interface Props {
 
 export default function JobForm({ states, categories }: Props) {
   const [state, formAction, isPending] = useActionState(createJob, null);
+  const [postType, setPostType] = useState("Latest Notifications");
 
   useEffect(() => {
     if (state?.success) {
-      alert("Job notification created successfully!");
+      alert("Job entry created successfully!");
       window.location.href = "/control-panel/dashboard";
     }
   }, [state]);
+
+  const insertHtmlTag = (tagOpen: string, tagClose: string = "") => {
+    const textarea = document.getElementById("eligibility-textarea") as HTMLTextAreaElement;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selected = text.substring(start, end);
+    const replacement = tagOpen + selected + tagClose;
+    textarea.value = text.substring(0, start) + replacement + text.substring(end);
+    textarea.focus();
+    textarea.setSelectionRange(start + tagOpen.length, start + tagOpen.length + selected.length);
+  };
 
   return (
     <form action={formAction} className="space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-950 tracking-tight">Create Job Notification</h1>
-          <p className="text-xs text-slate-500 mt-1">Fill out the detailed specifications for the public job post.</p>
+          <h1 className="text-2xl font-black text-slate-950 tracking-tight">Create Job Entry</h1>
+          <p className="text-xs text-slate-500 mt-1">Fill out the dynamic specifications for the public job post.</p>
         </div>
         <button
           type="submit"
@@ -56,7 +70,7 @@ export default function JobForm({ states, categories }: Props) {
             
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Job Title / Heading *</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Title / Heading *</label>
                 <input 
                   type="text" 
                   name="title" 
@@ -64,51 +78,6 @@ export default function JobForm({ states, categories }: Props) {
                   placeholder="e.g. SSC CGL Recruitment 2026 Online Form" 
                   className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
                 />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Department / Organization *</label>
-                  <input 
-                    type="text" 
-                    name="department" 
-                    required 
-                    placeholder="e.g. Staff Selection Commission" 
-                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Advertisement Number</label>
-                  <input 
-                    type="text" 
-                    name="advtNumber" 
-                    placeholder="e.g. SSC/CGL/2026/04" 
-                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Total Vacancies *</label>
-                  <input 
-                    type="number" 
-                    name="vacancy" 
-                    required 
-                    placeholder="e.g. 17727" 
-                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Minimum Qualification *</label>
-                  <input 
-                    type="text" 
-                    name="qualification" 
-                    required 
-                    placeholder="e.g. Graduate" 
-                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                  />
-                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -126,6 +95,8 @@ export default function JobForm({ states, categories }: Props) {
                   <label className="block text-xs font-semibold text-slate-600 mb-1">Post Type *</label>
                   <select 
                     name="postType" 
+                    value={postType}
+                    onChange={(e) => setPostType(e.target.value)}
                     className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
                   >
                     <option value="Latest Notifications">Latest Notifications</option>
@@ -156,131 +127,234 @@ export default function JobForm({ states, categories }: Props) {
                   </select>
                 </div>
               </div>
+
+              {postType === "Latest Notifications" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Department / Organization *</label>
+                    <input 
+                      type="text" 
+                      name="department" 
+                      placeholder="e.g. Staff Selection Commission" 
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Advertisement Number</label>
+                    <input 
+                      type="text" 
+                      name="advtNumber" 
+                      placeholder="e.g. SSC/CGL/2026/04" 
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {postType === "Latest Notifications" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Total Vacancies *</label>
+                    <input 
+                      type="number" 
+                      name="vacancy" 
+                      placeholder="e.g. 17727" 
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Minimum Qualification *</label>
+                    <input 
+                      type="text" 
+                      name="qualification" 
+                      placeholder="e.g. Graduate" 
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Eligibility */}
+          {/* HTML Description with Custom Toolbar Editor */}
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">Job Specifications</h2>
+            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">Description / HTML Content *</h2>
             
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Detailed Eligibility Criteria</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">HTML Content Toolbar</label>
+                
+                {/* HTML Helper Toolbar */}
+                <div className="flex flex-wrap gap-1.5 border border-slate-200 border-b-0 bg-slate-50 p-2 rounded-t-xl">
+                  <button 
+                    type="button" 
+                    onClick={() => insertHtmlTag('<p>', '</p>')} 
+                    className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold bg-white border border-slate-200 hover:bg-slate-100 hover:text-primary rounded-lg transition-colors cursor-pointer"
+                  >
+                    <Type className="h-3.5 w-3.5 text-slate-500" /> Paragraph
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => insertHtmlTag('<strong>', '</strong>')} 
+                    className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold bg-white border border-slate-200 hover:bg-slate-100 hover:text-primary rounded-lg transition-colors cursor-pointer"
+                  >
+                    <Bold className="h-3.5 w-3.5 text-slate-500" /> Bold
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => insertHtmlTag('<li>', '</li>')} 
+                    className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold bg-white border border-slate-200 hover:bg-slate-100 hover:text-primary rounded-lg transition-colors cursor-pointer"
+                  >
+                    <List className="h-3.5 w-3.5 text-slate-500" /> List Item
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => insertHtmlTag('<a href="#" target="_blank" class="text-primary font-bold hover:underline">', '</a>')} 
+                    className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold bg-white border border-slate-200 hover:bg-slate-100 hover:text-primary rounded-lg transition-colors cursor-pointer"
+                  >
+                    <LinkIcon className="h-3.5 w-3.5 text-slate-500" /> Add Link
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => insertHtmlTag('<br />')} 
+                    className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold bg-white border border-slate-200 hover:bg-slate-100 hover:text-primary rounded-lg transition-colors cursor-pointer"
+                  >
+                    Break Line
+                  </button>
+                </div>
+
                 <textarea 
+                  id="eligibility-textarea"
                   name="eligibility" 
-                  rows={3} 
-                  placeholder="Candidate must possess Bachelor Degree in any discipline..." 
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all resize-y"
+                  required
+                  rows={8} 
+                  placeholder="Enter details using toolbar or standard HTML..." 
+                  className="w-full p-3 border border-slate-200 rounded-b-xl text-sm focus:bg-white focus:border-primary focus:outline-none transition-all resize-y font-mono bg-slate-50/50"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {postType === "Latest Notifications" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Age Limit</label>
+                    <input 
+                      type="text" 
+                      name="ageLimit" 
+                      placeholder="18 to 30 years" 
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Salary / Pay Scale</label>
+                    <input 
+                      type="text" 
+                      name="salary" 
+                      placeholder="Pay level 4 (25500 - 81100)" 
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {postType === "Latest Notifications" && (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Age Limit</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Selection Process</label>
+                  <textarea 
+                    name="selectionProcess" 
+                    rows={2} 
+                    placeholder="Tier-I CBT, Tier-II CBT, and interview..." 
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all resize-y"
+                  />
+                </div>
+              )}
+
+              {postType === "Latest Notifications" && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Application Fees</label>
                   <input 
                     type="text" 
-                    name="ageLimit" 
-                    placeholder="18 to 30 years" 
+                    name="applicationFees" 
+                    placeholder="GEN/OBC: 100, SC/ST: Exempted" 
                     className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Salary / Pay Scale</label>
-                  <input 
-                    type="text" 
-                    name="salary" 
-                    placeholder="Pay level 4 (25500 - 81100)" 
-                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Selection Process</label>
-                <textarea 
-                  name="selectionProcess" 
-                  rows={2} 
-                  placeholder="Tier-I CBT, Tier-II CBT, and interview..." 
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all resize-y"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Application Fees</label>
-                <input 
-                  type="text" 
-                  name="applicationFees" 
-                  placeholder="GEN/OBC: 100, SC/ST: Exempted" 
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                />
-              </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Timelines and Links */}
         <div className="md:col-span-4 space-y-6">
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">Important Dates</h3>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Start Date</label>
-                <input 
-                  type="date" 
-                  name="startDate" 
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">End Date</label>
-                <input 
-                  type="date" 
-                  name="endDate" 
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Exam Date Info</label>
-                <input 
-                  type="text" 
-                  name="examDate" 
-                  placeholder="September - October 2026"
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                />
+          {postType === "Latest Notifications" && (
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">Important Dates</h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Start Date</label>
+                  <input 
+                    type="date" 
+                    name="startDate" 
+                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">End Date</label>
+                  <input 
+                    type="date" 
+                    name="endDate" 
+                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Exam Date Info</label>
+                  <input 
+                    type="text" 
+                    name="examDate" 
+                    placeholder="September - October 2026"
+                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
             <h3 className="text-sm font-bold text-slate-950 uppercase tracking-wide border-b border-slate-100 pb-2">Attachments & Links</h3>
             <div className="space-y-3">
+              {postType === "Latest Notifications" && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Notification PDF URL</label>
+                  <input 
+                    type="text" 
+                    name="pdfUrl" 
+                    placeholder="S3 PDF Link" 
+                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                  />
+                </div>
+              )}
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Notification PDF URL</label>
-                <input 
-                  type="text" 
-                  name="pdfUrl" 
-                  placeholder="S3 PDF Link" 
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Apply Link</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                  {postType === "Latest Notifications" ? "Apply Link *" : "Download / Results Link *"}
+                </label>
                 <input 
                   type="text" 
                   name="applyLink" 
-                  placeholder="Official Apply Page URL" 
+                  required
+                  placeholder="Official Link" 
                   className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Official Website</label>
-                <input 
-                  type="text" 
-                  name="officialWebsite" 
-                  placeholder="https://ssc.gov.in" 
-                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
-                />
-              </div>
+              {postType === "Latest Notifications" && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Official Website</label>
+                  <input 
+                    type="text" 
+                    name="officialWebsite" 
+                    placeholder="https://ssc.gov.in" 
+                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -44,10 +44,6 @@ export default async function PublicLayout({
                 State Govt Jobs <span className="text-[10px]">▼</span>
               </div>
               <div className="absolute left-1/2 -translate-x-1/2 top-full w-[900px] xl:w-[1000px] rounded-2xl shadow-2xl bg-white border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-6">
-                <div className="text-slate-900 font-extrabold text-sm mb-4 border-b border-slate-100 pb-2 flex justify-between items-center">
-                  <span>Browse Jobs by State / Union Territory</span>
-                  <span className="text-xs font-semibold text-slate-400">Total States: {states.length}</span>
-                </div>
                 <div className="grid grid-cols-4 border-t border-l border-slate-100 rounded-xl overflow-hidden bg-white">
                   {states.map((st) => (
                     <Link 

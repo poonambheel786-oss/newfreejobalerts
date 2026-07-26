@@ -258,20 +258,20 @@ export default async function Home({ searchParams }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-                  <th className="px-6 py-4 border-b border-outline-variant/20">Post Date</th>
-                  <th className="px-6 py-4 border-b border-outline-variant/20">Recruitment Board</th>
-                  <th className="px-6 py-4 border-b border-outline-variant/20">Exam / Post Name</th>
-                  <th className="px-6 py-4 border-b border-outline-variant/20">Qualification</th>
-                  <th className="px-6 py-4 border-b border-outline-variant/20">Advt No</th>
-                  <th className="px-6 py-4 border-b border-outline-variant/20">Last Date</th>
-                  <th className="px-6 py-4 border-b border-outline-variant/20 text-center">Action</th>
+                <tr className="bg-slate-800 text-[11px] font-bold text-white uppercase tracking-wider">
+                  <th className="px-6 py-4 border border-slate-200">Post Date</th>
+                  <th className="px-6 py-4 border border-slate-200">Recruitment Board</th>
+                  <th className="px-6 py-4 border border-slate-200">Exam / Post Name</th>
+                  <th className="px-6 py-4 border border-slate-200">Qualification</th>
+                  <th className="px-6 py-4 border border-slate-200">Advt No</th>
+                  <th className="px-6 py-4 border border-slate-200">Last Date</th>
+                  <th className="px-6 py-4 border border-slate-200 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-outline-variant/10 text-xs sm:text-sm">
+              <tbody className="text-xs sm:text-sm">
                 {consolidatedJobs.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-xs text-slate-400 font-bold">
+                    <td colSpan={7} className="px-6 py-12 text-center text-xs text-slate-400 font-bold border border-slate-200">
                       No recruitment notices found in the database.
                     </td>
                   </tr>
@@ -287,13 +287,13 @@ export default async function Home({ searchParams }: Props) {
 
                     return (
                       <tr key={i} className="hover:bg-primary-container/5 transition-colors">
-                        <td className="px-6 py-4 text-on-surface-variant">{formatDate(tj.createdAt)}</td>
-                        <td className="px-6 py-4 font-bold text-on-surface">{tj.department.name}</td>
-                        <td className="px-6 py-4">{tj.title}</td>
-                        <td className="px-6 py-4 max-w-[200px] truncate" title={tj.qualification.name}>{tj.qualification.name}</td>
-                        <td className="px-6 py-4 text-outline">{tj.advtNumber || "N/A"}</td>
-                        <td className="px-6 py-4 text-rose-600 font-medium">{lastDateStr}</td>
-                        <td className="px-6 py-4 text-center">
+                        <td className="px-6 py-4 text-on-surface-variant border border-slate-200">{formatDate(tj.createdAt)}</td>
+                        <td className="px-6 py-4 font-bold text-on-surface border border-slate-200">{tj.department.name}</td>
+                        <td className="px-6 py-4 border border-slate-200">{tj.title}</td>
+                        <td className="px-6 py-4 max-w-[200px] truncate border border-slate-200" title={tj.qualification.name}>{tj.qualification.name}</td>
+                        <td className="px-6 py-4 text-outline border border-slate-200">{tj.advtNumber || "N/A"}</td>
+                        <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200">{lastDateStr}</td>
+                        <td className="px-6 py-4 text-center border border-slate-200">
                           <Link className="text-primary font-bold hover:underline cursor-pointer" href={`/jobs/${tj.slug}`}>More Info</Link>
                         </td>
                       </tr>

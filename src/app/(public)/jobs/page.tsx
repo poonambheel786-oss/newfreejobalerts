@@ -185,29 +185,29 @@ export default async function JobsListingPage({ searchParams }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-                  <th className="px-6 py-4">Posted Date</th>
-                  <th className="px-6 py-4">Organization / Department</th>
-                  <th className="px-6 py-4">Notification Title</th>
+                <tr className="bg-slate-800 text-[11px] font-bold text-white uppercase tracking-wider">
+                  <th className="px-6 py-4 border border-slate-200">Posted Date</th>
+                  <th className="px-6 py-4 border border-slate-200">Organization / Department</th>
+                  <th className="px-6 py-4 border border-slate-200">Notification Title</th>
                   {typeLabel === "Latest Notifications" || !typeLabel ? (
                     <>
-                      <th className="px-6 py-4">Eligibility</th>
-                      <th className="px-6 py-4">Total Posts</th>
+                      <th className="px-6 py-4 border border-slate-200">Eligibility</th>
+                      <th className="px-6 py-4 border border-slate-200">Total Posts</th>
                     </>
                   ) : null}
-                  <th className="px-6 py-4 text-right">Details</th>
+                  <th className="px-6 py-4 border border-slate-200 text-right">Details</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-sm">
+              <tbody className="text-sm">
                 {jobs.map((job) => (
                   <tr key={job.id} className="hover:bg-slate-50/40 transition-colors">
-                    <td className="px-6 py-4 text-slate-400 font-semibold text-xs whitespace-nowrap">
+                    <td className="px-6 py-4 text-slate-400 font-semibold text-xs whitespace-nowrap border border-slate-200">
                       {new Date(job.createdAt).toLocaleDateString("en-IN")}
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900">
+                    <td className="px-6 py-4 font-bold text-slate-900 border border-slate-200">
                       {job.department.name}
                     </td>
-                    <td className="px-6 py-4 font-medium text-slate-700 max-w-xs sm:max-w-md">
+                    <td className="px-6 py-4 font-medium text-slate-700 max-w-xs sm:max-w-md border border-slate-200">
                       <Link href={`/jobs/${job.slug}`} className="hover:text-primary hover:underline transition-colors block font-semibold">
                         {job.title}
                       </Link>
@@ -224,13 +224,13 @@ export default async function JobsListingPage({ searchParams }: Props) {
                     </td>
                     {typeLabel === "Latest Notifications" || !typeLabel ? (
                       <>
-                        <td className="px-6 py-4 text-slate-500 text-xs max-w-[200px] truncate" title={job.qualification.name}>
+                        <td className="px-6 py-4 text-slate-500 text-xs max-w-[200px] truncate border border-slate-200" title={job.qualification.name}>
                           {job.qualification.name}
                         </td>
-                        <td className="px-6 py-4 text-slate-800 font-bold whitespace-nowrap text-xs">{job.vacancy}</td>
+                        <td className="px-6 py-4 text-slate-800 font-bold whitespace-nowrap text-xs border border-slate-200">{job.vacancy}</td>
                       </>
                     ) : null}
-                    <td className="px-6 py-4 text-right whitespace-nowrap">
+                    <td className="px-6 py-4 text-right whitespace-nowrap border border-slate-200">
                       <Link 
                         href={`/jobs/${job.slug}`} 
                         className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline cursor-pointer"

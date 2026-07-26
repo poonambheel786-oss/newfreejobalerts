@@ -2,8 +2,9 @@ import Link from "next/link";
 import { CampaignIcon, AssignmentIndIcon, VerifiedIcon, DownloadIcon, ArrowForwardIcon, FilterIcon } from "@/app/icons";
 import { prisma } from "@/lib/db";
 import { Search } from "lucide-react";
+import { unstable_cache } from "next/cache";
 
-export const revalidate = 3600;
+export const revalidate = 300; // Cache page for 5 minutes
 
 // Helper to format date
 function formatDate(date: Date) {
@@ -13,6 +14,96 @@ function formatDate(date: Date) {
   const year = d.getFullYear();
   return `${day}-${month}-${year}`;
 }
+
+const getCachedHomeData = unstable_cache(
+  async (currentPage: number) => {
+    const limit = 15;
+    const skip = (currentPage - 1) * limit;
+
+    const [
+      latestNotifs,
+      latestAdmitCards,
+      latestResults,
+      notifications,
+      admitCards,
+      results,
+      consolidatedJobs,
+      totalJobs
+    ] = await Promise.all([
+      prisma.job.findMany({
+        where: { postType: "Latest Notifications" },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+        select: { id: true, title: true, slug: true, createdAt: true }
+      }),
+      prisma.job.findMany({
+        where: { postType: "Admit Cards" },
+        orderBy: { createdAt: "desc" },
+        take: 2,
+        select: { id: true, title: true, slug: true, createdAt: true }
+      }),
+      prisma.job.findMany({
+        where: { postType: "Results" },
+        orderBy: { createdAt: "desc" },
+        take: 2,
+        select: { id: true, title: true, slug: true, createdAt: true }
+      }),
+      prisma.job.findMany({
+        where: { postType: "Latest Notifications" },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: { id: true, title: true, slug: true, category: { select: { name: true } } }
+      }),
+      prisma.job.findMany({
+        where: { postType: "Admit Cards" },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: { id: true, title: true, slug: true, category: { select: { name: true } } }
+      }),
+      prisma.job.findMany({
+        where: { postType: "Results" },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: { id: true, title: true, slug: true, category: { select: { name: true } } }
+      }),
+      prisma.job.findMany({
+        where: { postType: "Latest Notifications" },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          createdAt: true,
+          importantDates: true,
+          advtNumber: true,
+          vacancy: true,
+          department: { select: { name: true } },
+          qualification: { select: { name: true } }
+        },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit
+      }),
+      prisma.job.count({
+        where: { postType: "Latest Notifications" }
+      })
+    ]);
+
+    const marqueeJobs = [...latestNotifs, ...latestAdmitCards, ...latestResults].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    return {
+      marqueeJobs,
+      notifications,
+      admitCards,
+      results,
+      consolidatedJobs,
+      totalJobs
+    };
+  },
+  ["homepage-data"],
+  { revalidate: 300, tags: ["homepage"] }
+);
 
 interface Props {
   searchParams: Promise<{
@@ -24,7 +115,6 @@ export default async function Home({ searchParams }: Props) {
   const params = await searchParams;
   const currentPage = parseInt(params.page || "1") || 1;
   const limit = 15;
-  const skip = (currentPage - 1) * limit;
 
   let notifications: any[] = [];
   let admitCards: any[] = [];
@@ -35,80 +125,13 @@ export default async function Home({ searchParams }: Props) {
   let dbError = false;
 
   try {
-    // 1. Fetch Marquee updates (3 latest Notifications, 2 Admit Cards, 2 Results)
-    const [latestNotifs, latestAdmitCards, latestResults] = await Promise.all([
-      prisma.job.findMany({
-        where: { postType: "Latest Notifications" },
-        orderBy: { createdAt: "desc" },
-        take: 3
-      }),
-      prisma.job.findMany({
-        where: { postType: "Admit Cards" },
-        orderBy: { createdAt: "desc" },
-        take: 2
-      }),
-      prisma.job.findMany({
-        where: { postType: "Results" },
-        orderBy: { createdAt: "desc" },
-        take: 2
-      }),
-    ]);
-
-    marqueeJobs = [...latestNotifs, ...latestAdmitCards, ...latestResults].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-
-    // 2. Fetch Latest Notifications for Column Card
-    notifications = await prisma.job.findMany({
-      where: {
-        postType: "Latest Notifications"
-      },
-      include: { category: true },
-      orderBy: { createdAt: "desc" },
-      take: 5
-    });
-
-    // 3. Fetch Admit Cards for Column Card
-    admitCards = await prisma.job.findMany({
-      where: {
-        postType: "Admit Cards"
-      },
-      include: { category: true },
-      orderBy: { createdAt: "desc" },
-      take: 5
-    });
-
-    // 4. Fetch Results for Column Card
-    results = await prisma.job.findMany({
-      where: {
-        postType: "Results"
-      },
-      include: { category: true },
-      orderBy: { createdAt: "desc" },
-      take: 5
-    });
-
-    // 5. Fetch consolidated jobs (Jobs only, excluding Admit Cards & Results) with pagination
-    consolidatedJobs = await prisma.job.findMany({
-      where: {
-        postType: "Latest Notifications"
-      },
-      include: {
-        department: true,
-        category: true,
-        state: true,
-        qualification: true
-      },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: limit
-    });
-
-    totalJobs = await prisma.job.count({
-      where: {
-        postType: "Latest Notifications"
-      }
-    });
+    const data = await getCachedHomeData(currentPage);
+    notifications = data.notifications;
+    admitCards = data.admitCards;
+    results = data.results;
+    consolidatedJobs = data.consolidatedJobs;
+    marqueeJobs = data.marqueeJobs;
+    totalJobs = data.totalJobs;
   } catch (e) {
     console.error("Database connection failed:", e);
     dbError = true;

@@ -97,4 +97,9 @@ model Job {
   updatedAt           DateTime       @updatedAt
 
   @@index([slug])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([categoryId])
+  @@index([stateId])
+  @@index([postType])
 }

@@ -11,6 +11,7 @@ interface Props {
     type?: string;
     page?: string;
     q?: string;
+    state?: string;
   }>;
 }
 
@@ -19,6 +20,7 @@ export default async function JobsListingPage({ searchParams }: Props) {
   const categorySlug = params.category;
   const postTypeQuery = params.type;
   const searchQuery = params.q;
+  const stateQuery = params.state;
   const currentPage = parseInt(params.page || "1") || 1;
   const limit = 15;
   const skip = (currentPage - 1) * limit;
@@ -29,6 +31,12 @@ export default async function JobsListingPage({ searchParams }: Props) {
   if (categorySlug) {
     whereClause.category = {
       slug: categorySlug
+    };
+  }
+
+  if (stateQuery) {
+    whereClause.state = {
+      slug: stateQuery
     };
   }
 
@@ -102,16 +110,31 @@ export default async function JobsListingPage({ searchParams }: Props) {
     console.error("Failed to load listings:", e);
   }
 
+  // Fetch state name if state query is active
+  let stateName = "";
+  if (stateQuery) {
+    try {
+      const dbState = await prisma.state.findUnique({
+        where: { slug: stateQuery }
+      });
+      stateName = dbState?.name || stateQuery.replace(/-/g, " ");
+    } catch (e) {
+      stateName = stateQuery.replace(/-/g, " ");
+    }
+  }
+
   const totalPages = Math.ceil(totalCount / limit);
   const titleText = searchQuery
     ? `Search Results for "${searchQuery}"`
-    : typeLabel 
-      ? `${typeLabel} List` 
-      : categoryName 
-        ? categoryName.toLowerCase().endsWith("jobs")
-          ? categoryName
-          : `${categoryName} Jobs`
-        : "All Notifications & Updates";
+    : stateName
+      ? `Government Jobs in ${stateName}`
+      : typeLabel 
+        ? `${typeLabel} List` 
+        : categoryName 
+          ? categoryName.toLowerCase().endsWith("jobs")
+            ? categoryName
+            : `${categoryName} Jobs`
+          : "All Notifications & Updates";
 
   // Build pagination query helper
   const getPageUrl = (pageNumber: number) => {
@@ -119,6 +142,7 @@ export default async function JobsListingPage({ searchParams }: Props) {
     if (categorySlug) q.push(`category=${categorySlug}`);
     if (postTypeQuery) q.push(`type=${postTypeQuery}`);
     if (searchQuery) q.push(`q=${encodeURIComponent(searchQuery)}`);
+    if (stateQuery) q.push(`state=${stateQuery}`);
     q.push(`page=${pageNumber}`);
     return `/jobs?${q.join("&")}`;
   };

@@ -15,6 +15,28 @@ function formatDate(date: Date) {
   return `${day}-${month}-${year}`;
 }
 
+function formatDateString(dateStr: string) {
+  if (!dateStr || dateStr === "N/A" || dateStr.trim() === "") return "N/A";
+  try {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      const months = [
+        "Jan", "Feb", "March", "April", "May", "June",
+        "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+      ];
+      if (monthIndex >= 0 && monthIndex < 12) {
+        return `${day} ${months[monthIndex]} ${year}`;
+      }
+    }
+    return dateStr;
+  } catch (e) {
+    return dateStr;
+  }
+}
+
 const getCachedHomeData = unstable_cache(
   async (currentPage: number) => {
     const limit = 15;
@@ -320,8 +342,8 @@ export default async function Home({ searchParams }: Props) {
                         </td>
                         <td className="px-6 py-4 max-w-[200px] truncate border border-slate-200" title={tj.qualification.name}>{tj.qualification.name}</td>
                         <td className="px-6 py-4 text-outline border border-slate-200">{tj.advtNumber || "N/A"}</td>
-                        <td className="px-6 py-4 text-slate-600 border border-slate-200">{startDateStr}</td>
-                        <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200">{lastDateStr}</td>
+                        <td className="px-6 py-4 text-slate-600 border border-slate-200 whitespace-nowrap">{formatDateString(startDateStr)}</td>
+                        <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(lastDateStr)}</td>
                         <td className="px-6 py-4 text-center border border-slate-200">
                           <Link className="text-primary font-bold hover:underline cursor-pointer" href={`/jobs/${tj.slug}`}>More Info</Link>
                         </td>

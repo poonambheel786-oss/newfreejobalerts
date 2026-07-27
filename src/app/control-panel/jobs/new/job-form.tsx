@@ -18,6 +18,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   const [postType, setPostType] = useState(initialJob?.postType || initialType || "Latest Notifications");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [htmlContent, setHtmlContent] = useState(initialJob?.eligibility || "");
+  const [selectionProcessHtml, setSelectionProcessHtml] = useState(initialJob?.selectionProcess || "");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -82,6 +83,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         <input type="hidden" name="customDatesJson" value={JSON.stringify(customDates)} />
         <input type="hidden" name="customLinksJson" value={JSON.stringify(customLinks)} />
         <textarea name="eligibility" value={htmlContent} onChange={(e) => setHtmlContent(e.target.value)} className="hidden" />
+        <textarea name="selectionProcess" value={selectionProcessHtml} onChange={(e) => setSelectionProcessHtml(e.target.value)} className="hidden" />
 
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -264,14 +266,12 @@ export default function JobForm({ states, categories, initialJob, initialType }:
               )}
 
               {postType === "Latest Notifications" && (
-                <div>
+                <div className="space-y-1">
                   <label className="block text-xs font-semibold text-slate-600 mb-1">Selection Process</label>
-                  <textarea 
-                    name="selectionProcess" 
-                    defaultValue={initialJob?.selectionProcess || ""}
-                    rows={2} 
-                    placeholder="Tier-I CBT, Tier-II CBT, and interview..." 
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all resize-y"
+                  <RichTextEditor 
+                    value={selectionProcessHtml}
+                    onChange={setSelectionProcessHtml}
+                    placeholder="Enter selection process details, stages, and criteria..."
                   />
                 </div>
               )}

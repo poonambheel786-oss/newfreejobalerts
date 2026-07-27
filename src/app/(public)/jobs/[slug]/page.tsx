@@ -230,7 +230,10 @@ export default async function JobDetailPage({ params }: Props) {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
                       <span className="font-bold text-slate-600">Selection Process</span>
-                      <span className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0 whitespace-pre-line">{job.selectionProcess || "N/A"}</span>
+                      <span 
+                        className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0 html-content prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: job.selectionProcess || "N/A" }}
+                      />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
                       <span className="font-bold text-slate-600">Application Fees</span>

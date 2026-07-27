@@ -9,10 +9,13 @@ export const revalidate = 300; // Cache page for 5 minutes
 // Helper to format date
 function formatDate(date: Date) {
   const d = new Date(date);
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = d.getDate();
   const year = d.getFullYear();
-  return `${day}-${month}-${year}`;
+  const months = [
+    "Jan", "Feb", "March", "April", "May", "June",
+    "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+  ];
+  return `${day} ${months[d.getMonth()]} ${year}`;
 }
 
 function formatDateString(dateStr: string) {
@@ -336,12 +339,12 @@ export default async function Home({ searchParams }: Props) {
  
                     return (
                       <tr key={i} className="hover:bg-primary-container/5 transition-colors">
-                        <td className="px-6 py-4 text-on-surface-variant border border-slate-200">{formatDate(tj.createdAt)}</td>
+                        <td className="px-6 py-4 text-on-surface-variant border border-slate-200 whitespace-nowrap">{formatDate(tj.createdAt)}</td>
                         <td className="px-6 py-4 border border-slate-200">
                           <Link href={`/jobs/${tj.slug}`} className="hover:text-primary hover:underline transition-colors block">{tj.title}</Link>
                         </td>
                         <td className="px-6 py-4 max-w-[200px] truncate border border-slate-200" title={tj.qualification.name}>{tj.qualification.name}</td>
-                        <td className="px-6 py-4 text-outline border border-slate-200">{tj.advtNumber || "N/A"}</td>
+                        <td className="px-6 py-4 text-outline border border-slate-200 whitespace-nowrap">{tj.advtNumber || "N/A"}</td>
                         <td className="px-6 py-4 text-slate-600 border border-slate-200 whitespace-nowrap">{formatDateString(startDateStr)}</td>
                         <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(lastDateStr)}</td>
                         <td className="px-6 py-4 text-center border border-slate-200">

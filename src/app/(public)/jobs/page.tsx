@@ -15,6 +15,17 @@ interface Props {
   }>;
 }
 
+function formatDate(date: Date) {
+  const d = new Date(date);
+  const day = d.getDate();
+  const year = d.getFullYear();
+  const months = [
+    "Jan", "Feb", "March", "April", "May", "June",
+    "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+  ];
+  return `${day} ${months[d.getMonth()]} ${year}`;
+}
+
 export default async function JobsListingPage({ searchParams }: Props) {
   const params = await searchParams;
   const categorySlug = params.category;
@@ -204,7 +215,7 @@ export default async function JobsListingPage({ searchParams }: Props) {
                 {jobs.map((job) => (
                   <tr key={job.id} className="hover:bg-slate-50/40 transition-colors">
                     <td className="px-6 py-4 text-slate-400 font-semibold text-xs whitespace-nowrap border border-slate-200">
-                      {new Date(job.createdAt).toLocaleDateString("en-IN")}
+                      {formatDate(job.createdAt)}
                     </td>
                     {(typeLabel === "Latest Notifications" || !typeLabel) && (
                       <td className="px-6 py-4 font-bold text-slate-900 border border-slate-200">

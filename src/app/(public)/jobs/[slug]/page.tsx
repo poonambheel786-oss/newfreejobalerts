@@ -79,8 +79,42 @@ export default async function JobDetailPage({ params }: Props) {
   const faqs = parseFaqs(job.faqSchema);
   const isJob = job.postType === "Latest Notifications";
 
+  // Format validThrough using ISO 8601
+  let validThroughStr = "";
+  if (dates.end && /^\d{4}-\d{2}-\d{2}$/.test(dates.end.trim())) {
+    validThroughStr = `${dates.end.trim()}T23:59:59Z`;
+  } else {
+    const fallbackDate = new Date(job.createdAt);
+    fallbackDate.setFullYear(fallbackDate.getFullYear() + 1);
+    validThroughStr = fallbackDate.toISOString();
+  }
+
+  // Parse salary if available
+  let baseSalaryObj = undefined;
+  if (job.salary && job.salary.trim() !== "") {
+    const cleanedSalary = job.salary.replace(/,/g, '');
+    const numbers = cleanedSalary.match(/\d+/g);
+    if (numbers) {
+      const salaryNumbers = numbers.map(Number).filter(n => n >= 1000);
+      if (salaryNumbers.length > 0) {
+        const minVal = salaryNumbers[0];
+        const maxVal = salaryNumbers.length > 1 ? salaryNumbers[1] : minVal;
+        baseSalaryObj = {
+          "@type": "MonetaryAmount",
+          "currency": "INR",
+          "value": {
+            "@type": "QuantitativeValue",
+            "minValue": minVal,
+            "maxValue": maxVal,
+            "unitText": "MONTH"
+          }
+        };
+      }
+    }
+  }
+
   // Schema JSON-LD definition
-  const jsonLd = {
+  const jsonLd: any = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
     "title": job.title,
@@ -91,7 +125,8 @@ export default async function JobDetailPage({ params }: Props) {
       "value": job.advtNumber || "N/A"
     },
     "datePosted": job.createdAt.toISOString(),
-    "validThrough": `${dates.end}T23:59:59Z`,
+    "validThrough": validThroughStr,
+    "employmentType": "FULL_TIME",
     "hiringOrganization": {
       "@type": "Organization",
       "name": job.department.name,
@@ -101,11 +136,17 @@ export default async function JobDetailPage({ params }: Props) {
       "@type": "Place",
       "address": {
         "@type": "PostalAddress",
-        "addressCountry": "IN",
-        "addressRegion": job.state?.name || "All India"
+        "streetAddress": job.state?.name || "All India",
+        "addressLocality": job.state?.name || "All India",
+        "addressRegion": job.state?.name || "All India",
+        "addressCountry": "IN"
       }
     }
   };
+
+  if (baseSalaryObj) {
+    jsonLd.baseSalary = baseSalaryObj;
+  }
 
   return (
     <>

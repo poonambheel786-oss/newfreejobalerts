@@ -67,6 +67,7 @@
   overflow-y: auto;
   outline: none;
   line-height: 1.625;
+  font-family: 'Inter', sans-serif;
 }
 
 .editorArea:focus {

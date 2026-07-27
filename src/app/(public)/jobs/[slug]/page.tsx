@@ -256,70 +256,83 @@ export default async function JobDetailPage({ params }: Props) {
           <div className="lg:col-span-4 space-y-6">
             {/* Important Links Card */}
             {(job.applyLink || job.pdfUrl || job.officialWebsite || (dates.customLinks && dates.customLinks.length > 0)) && (
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">Important Links</h3>
-                <div className="relative pl-6 border-l border-slate-100 space-y-6 text-sm">
+              <div className="bg-gradient-to-br from-blue-50/80 via-indigo-50/50 to-violet-50/80 border border-indigo-200/70 rounded-2xl p-6 shadow-xl shadow-indigo-100/40 relative overflow-hidden">
+                {/* Decorative background glow */}
+                <div className="absolute -right-10 -top-10 w-24 h-24 bg-primary/10 rounded-full blur-xl pointer-events-none"></div>
+                <div className="absolute -left-10 -bottom-10 w-24 h-24 bg-violet-400/10 rounded-full blur-xl pointer-events-none"></div>
+                
+                <div className="flex items-center justify-between mb-4 border-b border-indigo-100/60 pb-2 relative z-10">
+                  <h3 className="text-sm font-black text-indigo-950 uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-indigo-600 animate-pulse"></span>
+                    Important Links
+                  </h3>
+                  <span className="text-[9px] font-bold text-white bg-gradient-to-r from-primary to-indigo-600 px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-md shadow-indigo-550/15">
+                    Apply Now
+                  </span>
+                </div>
+                
+                <div className="relative pl-6 border-l border-indigo-200/50 space-y-6 text-sm relative z-10">
                   {job.applyLink && job.applyLink.trim() !== "" && (
-                    <div className="relative">
-                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary border-4 border-white ring-2 ring-primary/20"></div>
-                      <p className="text-xs text-slate-400 font-semibold uppercase">Apply Link</p>
+                    <div className="relative group">
+                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary border-4 border-white ring-4 ring-primary/10 group-hover:scale-110 transition-transform"></div>
+                      <p className="text-[10px] text-indigo-950/60 font-bold uppercase tracking-wider">Apply Link</p>
                       <a 
                         href={job.applyLink} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="font-bold text-primary hover:underline flex items-center gap-1 mt-0.5"
+                        className="font-extrabold text-primary hover:text-primary-dark hover:underline flex items-center gap-1 mt-0.5 transition-colors text-base"
                       >
-                        {isJob ? "Apply Online" : "Download / View Link"} <ExternalLink className="h-3 w-3" />
+                        {isJob ? "Apply Online" : "Download / View Link"} <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     </div>
                   )}
                   {isJob && job.pdfUrl && job.pdfUrl.trim() !== "" && (
-                    <div className="relative">
-                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-rose-500 border-4 border-white ring-2 ring-rose-500/20"></div>
-                      <p className="text-xs text-slate-400 font-semibold uppercase">Notification PDF</p>
+                    <div className="relative group">
+                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-rose-500 border-4 border-white ring-4 ring-rose-500/10 group-hover:scale-110 transition-transform"></div>
+                      <p className="text-[10px] text-indigo-950/60 font-bold uppercase tracking-wider">Notification PDF</p>
                       <a 
                         href={job.pdfUrl} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="font-bold text-rose-600 hover:underline flex items-center gap-1 mt-0.5"
+                        className="font-extrabold text-rose-600 hover:text-rose-700 hover:underline flex items-center gap-1 mt-0.5 transition-colors text-base"
                       >
-                        Official Notification PDF <Download className="h-3 w-3" />
+                        Official Notification PDF <Download className="h-3.5 w-3.5" />
                       </a>
                     </div>
                   )}
                   {isJob && job.officialWebsite && job.officialWebsite.trim() !== "" && (
-                    <div className="relative">
-                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-amber-500 border-4 border-white ring-2 ring-amber-500/20"></div>
-                      <p className="text-xs text-slate-400 font-semibold uppercase">Official Website</p>
+                    <div className="relative group">
+                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-amber-500 border-4 border-white ring-4 ring-amber-500/10 group-hover:scale-110 transition-transform"></div>
+                      <p className="text-[10px] text-indigo-950/60 font-bold uppercase tracking-wider">Official Website</p>
                       <a 
                         href={job.officialWebsite} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="font-bold text-amber-600 hover:underline flex items-center gap-1 mt-0.5"
+                        className="font-bold text-amber-600 hover:text-amber-700 hover:underline flex items-center gap-1 mt-0.5 transition-colors"
                       >
-                        Official Website <ExternalLink className="h-3 w-3" />
+                        Official Website <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     </div>
                   )}
                   {dates.customLinks && dates.customLinks.map((link: any, index: number) => {
                     const colors = [
-                      { bg: "bg-indigo-500", text: "text-indigo-600", ring: "ring-indigo-500/20" },
-                      { bg: "bg-emerald-500", text: "text-emerald-600", ring: "ring-emerald-500/20" },
-                      { bg: "bg-teal-500", text: "text-teal-600", ring: "ring-teal-500/20" },
-                      { bg: "bg-violet-500", text: "text-violet-600", ring: "ring-violet-500/20" }
+                      { bg: "bg-indigo-500", text: "text-indigo-600", hover: "hover:text-indigo-700", ring: "ring-indigo-500/10" },
+                      { bg: "bg-emerald-500", text: "text-emerald-600", hover: "hover:text-emerald-700", ring: "ring-emerald-500/10" },
+                      { bg: "bg-teal-500", text: "text-teal-600", hover: "hover:text-teal-700", ring: "ring-teal-500/10" },
+                      { bg: "bg-violet-500", text: "text-violet-600", hover: "hover:text-violet-700", ring: "ring-violet-500/10" }
                     ];
                     const color = colors[index % colors.length];
                     return link.label && link.value && link.value.trim() !== "" && (
-                      <div key={index} className="relative">
-                        <div className={`absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full ${color.bg} border-4 border-white ring-2 ${color.ring}`}></div>
-                        <p className="text-xs text-slate-400 font-semibold uppercase">{link.label}</p>
+                      <div key={index} className="relative group">
+                        <div className={`absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full ${color.bg} border-4 border-white ring-4 ${color.ring} group-hover:scale-110 transition-transform`}></div>
+                        <p className="text-[10px] text-indigo-950/60 font-bold uppercase tracking-wider">{link.label}</p>
                         <a 
                           href={link.value} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className={`font-bold ${color.text} hover:underline flex items-center gap-1 mt-0.5`}
+                          className={`font-extrabold ${color.text} ${color.hover} hover:underline flex items-center gap-1 mt-0.5 text-base transition-colors`}
                         >
-                          Click Here to Visit <ExternalLink className="h-3 w-3" />
+                          Click Here to Visit <ExternalLink className="h-3.5 w-3.5" />
                         </a>
                       </div>
                     );

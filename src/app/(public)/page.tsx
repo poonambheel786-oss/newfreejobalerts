@@ -345,7 +345,7 @@ export default async function Home({ searchParams }: Props) {
                         </td>
                         <td className="px-6 py-4 max-w-[200px] truncate border border-slate-200" title={tj.qualification.name}>{tj.qualification.name}</td>
                         <td className="px-6 py-4 text-outline border border-slate-200 whitespace-nowrap">{tj.advtNumber || "N/A"}</td>
-                        <td className="px-6 py-4 text-slate-600 border border-slate-200 whitespace-nowrap">{formatDateString(startDateStr)}</td>
+                        <td className="px-6 py-4 text-emerald-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(startDateStr)}</td>
                         <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(lastDateStr)}</td>
                         <td className="px-6 py-4 text-center border border-slate-200">
                           <Link className="text-primary font-bold hover:underline cursor-pointer" href={`/jobs/${tj.slug}`}>More Info</Link>

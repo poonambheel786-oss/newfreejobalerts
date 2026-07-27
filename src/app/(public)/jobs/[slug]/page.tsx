@@ -254,56 +254,76 @@ export default async function JobDetailPage({ params }: Props) {
 
           {/* Action Links & Timeline */}
           <div className="lg:col-span-4 space-y-6">
-            {/* Quick Actions Card */}
+            {/* Important Links Card */}
             {(job.applyLink || job.pdfUrl || job.officialWebsite || (dates.customLinks && dates.customLinks.length > 0)) && (
-              <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-sm space-y-4 border border-slate-800">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">
-                  {isJob ? "Application Links" : "Download & Links"}
-                </h3>
-                <div className="space-y-3">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">Important Links</h3>
+                <div className="relative pl-6 border-l border-slate-100 space-y-6 text-sm">
                   {job.applyLink && job.applyLink.trim() !== "" && (
-                    <a 
-                      href={job.applyLink} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20 text-sm cursor-pointer"
-                    >
-                      {isJob ? "Apply Online" : "Download / View Link"} <ExternalLink className="h-4 w-4" />
-                    </a>
-                  )}
-                  {isJob && job.pdfUrl && job.pdfUrl.trim() !== "" && (
-                    <a 
-                      href={job.pdfUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/10 font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-sm cursor-pointer"
-                    >
-                      Official Notification PDF <Download className="h-4 w-4" />
-                    </a>
-                  )}
-                  {isJob && job.officialWebsite && job.officialWebsite.trim() !== "" && (
-                    <a 
-                      href={job.officialWebsite} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="w-full bg-slate-800/50 hover:bg-slate-800 text-slate-300 font-medium h-10 rounded-xl flex items-center justify-center gap-1.5 transition-all text-xs cursor-pointer"
-                    >
-                      Official Website <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                  {dates.customLinks && dates.customLinks.map((link: any, index: number) => (
-                    link.label && link.value && link.value.trim() !== "" && (
+                    <div className="relative">
+                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary border-4 border-white ring-2 ring-primary/20"></div>
+                      <p className="text-xs text-slate-400 font-semibold uppercase">Apply Link</p>
                       <a 
-                        key={index}
-                        href={link.value} 
+                        href={job.applyLink} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="w-full bg-slate-800/50 hover:bg-slate-800 text-slate-300 font-medium h-10 rounded-xl flex items-center justify-center gap-1.5 transition-all text-xs cursor-pointer border border-slate-700/50"
+                        className="font-bold text-primary hover:underline flex items-center gap-1 mt-0.5"
                       >
-                        {link.label} <ExternalLink className="h-3 w-3" />
+                        {isJob ? "Apply Online" : "Download / View Link"} <ExternalLink className="h-3 w-3" />
                       </a>
-                    )
-                  ))}
+                    </div>
+                  )}
+                  {isJob && job.pdfUrl && job.pdfUrl.trim() !== "" && (
+                    <div className="relative">
+                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-rose-500 border-4 border-white ring-2 ring-rose-500/20"></div>
+                      <p className="text-xs text-slate-400 font-semibold uppercase">Notification PDF</p>
+                      <a 
+                        href={job.pdfUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="font-bold text-rose-600 hover:underline flex items-center gap-1 mt-0.5"
+                      >
+                        Official Notification PDF <Download className="h-3 w-3" />
+                      </a>
+                    </div>
+                  )}
+                  {isJob && job.officialWebsite && job.officialWebsite.trim() !== "" && (
+                    <div className="relative">
+                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-amber-500 border-4 border-white ring-2 ring-amber-500/20"></div>
+                      <p className="text-xs text-slate-400 font-semibold uppercase">Official Website</p>
+                      <a 
+                        href={job.officialWebsite} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="font-bold text-amber-600 hover:underline flex items-center gap-1 mt-0.5"
+                      >
+                        Official Website <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  )}
+                  {dates.customLinks && dates.customLinks.map((link: any, index: number) => {
+                    const colors = [
+                      { bg: "bg-indigo-500", text: "text-indigo-600", ring: "ring-indigo-500/20" },
+                      { bg: "bg-emerald-500", text: "text-emerald-600", ring: "ring-emerald-500/20" },
+                      { bg: "bg-teal-500", text: "text-teal-600", ring: "ring-teal-500/20" },
+                      { bg: "bg-violet-500", text: "text-violet-600", ring: "ring-violet-500/20" }
+                    ];
+                    const color = colors[index % colors.length];
+                    return link.label && link.value && link.value.trim() !== "" && (
+                      <div key={index} className="relative">
+                        <div className={`absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full ${color.bg} border-4 border-white ring-2 ${color.ring}`}></div>
+                        <p className="text-xs text-slate-400 font-semibold uppercase">{link.label}</p>
+                        <a 
+                          href={link.value} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={`font-bold ${color.text} hover:underline flex items-center gap-1 mt-0.5`}
+                        >
+                          Click Here to Visit <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

@@ -2,7 +2,7 @@
 
 import React, { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Save, AlertCircle, CheckCircle2, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, AlertCircle, CheckCircle2, Plus, Trash2, Loader2 } from "lucide-react";
 import { createJob } from "../../actions";
 import RichTextEditor from "../../../../components/RichTextEditor/RichTextEditor";
 
@@ -431,14 +431,13 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                     />
                   </div>
                 )}
-                <div>
+                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1">
-                    {postType === "Latest Notifications" ? "Apply Link *" : "Download / Results Link *"}
+                    {postType === "Latest Notifications" ? "Apply Link (Optional)" : "Download / Results Link (Optional)"}
                   </label>
                   <input 
                     type="text" 
                     name="applyLink" 
-                    required
                     defaultValue={initialJob?.applyLink || ""}
                     placeholder="Official Link" 
                     className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
@@ -520,10 +519,19 @@ export default function JobForm({ states, categories, initialJob, initialType }:
           <button
             type="submit"
             disabled={isPending}
-            className="bg-primary hover:bg-primary/95 disabled:bg-primary/50 text-white font-bold text-sm px-8 py-3 rounded-xl shadow-lg shadow-primary/10 flex items-center gap-2 transition-all cursor-pointer"
+            className="bg-primary hover:bg-primary/95 disabled:bg-primary/50 text-white font-bold text-sm px-8 py-3 rounded-xl shadow-lg shadow-primary/10 flex items-center gap-2 transition-all cursor-pointer disabled:cursor-not-allowed"
           >
-            <Save className="h-4 w-4" />
-            {isPending ? "Saving..." : initialJob ? "Update Notification" : "Publish Notification"}
+            {isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                {initialJob ? "Update Notification" : "Publish Notification"}
+              </>
+            )}
           </button>
         </div>
       </form>

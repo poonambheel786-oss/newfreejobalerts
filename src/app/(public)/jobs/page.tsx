@@ -26,6 +26,28 @@ function formatDate(date: Date) {
   return `${day} ${months[d.getMonth()]} ${year}`;
 }
 
+function formatDateString(dateStr: string) {
+  if (!dateStr || dateStr === "N/A" || dateStr.trim() === "") return "N/A";
+  try {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      const months = [
+        "Jan", "Feb", "March", "April", "May", "June",
+        "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+      ];
+      if (monthIndex >= 0 && monthIndex < 12) {
+        return `${day} ${months[monthIndex]} ${year}`;
+      }
+    }
+    return dateStr;
+  } catch (e) {
+    return dateStr;
+  }
+}
+
 export default async function JobsListingPage({ searchParams }: Props) {
   const params = await searchParams;
   const categorySlug = params.category;
@@ -198,65 +220,73 @@ export default async function JobsListingPage({ searchParams }: Props) {
               <thead>
                 <tr className="text-[11px] font-bold uppercase tracking-wider">
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Posted Date</th>
-                  {(typeLabel === "Latest Notifications" || !typeLabel) && (
-                    <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Organization / Department</th>
-                  )}
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Notification Title</th>
                   {typeLabel === "Latest Notifications" || !typeLabel ? (
                     <>
                       <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Eligibility</th>
                       <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Total Posts</th>
+                      <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Start Date</th>
+                      <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Last Date</th>
                     </>
                   ) : null}
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200 text-right">Details</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
-                {jobs.map((job) => (
-                  <tr key={job.id} className="hover:bg-slate-50/40 transition-colors">
-                    <td className="px-6 py-4 text-slate-400 font-semibold text-xs whitespace-nowrap border border-slate-200">
-                      {formatDate(job.createdAt)}
-                    </td>
-                    {(typeLabel === "Latest Notifications" || !typeLabel) && (
-                      <td className="px-6 py-4 font-bold text-slate-900 border border-slate-200">
-                        <Link href={`/jobs/${job.slug}`} className="hover:text-primary hover:underline transition-colors block">
-                          {job.department.name}
+                {jobs.map((job) => {
+                  let startDateStr = "N/A";
+                  let lastDateStr = "N/A";
+                  try {
+                    const dates = job.importantDates as any;
+                    if (dates && dates.start) {
+                      startDateStr = dates.start;
+                    }
+                    if (dates && dates.end) {
+                      lastDateStr = dates.end;
+                    }
+                  } catch (e) {}
+
+                  return (
+                    <tr key={job.id} className="hover:bg-slate-50/40 transition-colors">
+                      <td className="px-6 py-4 text-slate-400 font-semibold text-xs whitespace-nowrap border border-slate-200">
+                        {formatDate(job.createdAt)}
+                      </td>
+                      <td className="px-6 py-4 font-medium text-slate-700 max-w-xs sm:max-w-md border border-slate-200">
+                        <Link href={`/jobs/${job.slug}`} className="hover:text-primary hover:underline transition-colors block font-semibold">
+                          {job.title}
+                        </Link>
+                        <div className="flex gap-2 mt-1 items-center">
+                          <span className="text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 px-2 py-0.5 rounded">
+                            {job.category.name}
+                          </span>
+                          {job.state && (
+                            <span className="text-[9px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
+                              {job.state.name}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      {typeLabel === "Latest Notifications" || !typeLabel ? (
+                        <>
+                          <td className="px-6 py-4 text-slate-500 text-xs max-w-[200px] truncate border border-slate-200" title={job.qualification.name}>
+                            {job.qualification.name}
+                          </td>
+                          <td className="px-6 py-4 text-slate-800 font-bold whitespace-nowrap text-xs border border-slate-200">{job.vacancy}</td>
+                          <td className="px-6 py-4 text-emerald-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(startDateStr)}</td>
+                          <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(lastDateStr)}</td>
+                        </>
+                      ) : null}
+                      <td className="px-6 py-4 text-right whitespace-nowrap border border-slate-200">
+                        <Link 
+                          href={`/jobs/${job.slug}`} 
+                          className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline cursor-pointer"
+                        >
+                          View Details <ArrowRight className="h-3 w-3" />
                         </Link>
                       </td>
-                    )}
-                    <td className="px-6 py-4 font-medium text-slate-700 max-w-xs sm:max-w-md border border-slate-200">
-                      <Link href={`/jobs/${job.slug}`} className="hover:text-primary hover:underline transition-colors block font-semibold">
-                        {job.title}
-                      </Link>
-                      <div className="flex gap-2 mt-1 items-center">
-                        <span className="text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 px-2 py-0.5 rounded">
-                          {job.category.name}
-                        </span>
-                        {job.state && (
-                          <span className="text-[9px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
-                            {job.state.name}
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    {typeLabel === "Latest Notifications" || !typeLabel ? (
-                      <>
-                        <td className="px-6 py-4 text-slate-500 text-xs max-w-[200px] truncate border border-slate-200" title={job.qualification.name}>
-                          {job.qualification.name}
-                        </td>
-                        <td className="px-6 py-4 text-slate-800 font-bold whitespace-nowrap text-xs border border-slate-200">{job.vacancy}</td>
-                      </>
-                    ) : null}
-                    <td className="px-6 py-4 text-right whitespace-nowrap border border-slate-200">
-                      <Link 
-                        href={`/jobs/${job.slug}`} 
-                        className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline cursor-pointer"
-                      >
-                        View Details <ArrowRight className="h-3 w-3" />
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

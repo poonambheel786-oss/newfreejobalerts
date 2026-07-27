@@ -2,7 +2,7 @@
 
 import React, { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Save, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Save, AlertCircle, CheckCircle2, Plus, Trash2 } from "lucide-react";
 import { createJob } from "../../actions";
 import RichTextEditor from "../../../../components/RichTextEditor/RichTextEditor";
 
@@ -44,6 +44,8 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   };
 
   const dates = initialJob?.importantDates ? (typeof initialJob.importantDates === 'string' ? JSON.parse(initialJob.importantDates) : initialJob.importantDates) : {};
+  const [customDates, setCustomDates] = useState<{label: string, value: string}[]>(dates?.customDates || []);
+  const [customLinks, setCustomLinks] = useState<{label: string, value: string}[]>(dates?.customLinks || []);
 
   return (
     <>
@@ -73,6 +75,8 @@ export default function JobForm({ states, categories, initialJob, initialType }:
 
       <form action={formAction} className="space-y-8">
         <input type="hidden" name="id" value={initialJob?.id || ""} />
+        <input type="hidden" name="customDatesJson" value={JSON.stringify(customDates)} />
+        <input type="hidden" name="customLinksJson" value={JSON.stringify(customLinks)} />
         <textarea name="eligibility" value={htmlContent} onChange={(e) => setHtmlContent(e.target.value)} className="hidden" />
 
         {/* Header */}
@@ -325,7 +329,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
             {postType === "Latest Notifications" && (
               <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">Important Dates</h3>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 mb-1">Start Date</label>
                     <input 
@@ -354,13 +358,67 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                       className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
                     />
                   </div>
+
+                  {/* Dynamic Custom Dates */}
+                  {customDates.length > 0 && (
+                    <div className="space-y-3 pt-2 border-t border-slate-100">
+                      <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">Custom Exam/Event Dates</label>
+                      {customDates.map((cd, index) => (
+                        <div key={index} className="flex gap-2 items-end bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 relative">
+                          <div className="flex-1 space-y-1">
+                            <label className="block text-[9px] font-bold text-slate-500 uppercase">Label</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. Mains Date"
+                              value={cd.label}
+                              onChange={(e) => {
+                                const newDates = [...customDates];
+                                newDates[index].label = e.target.value;
+                                setCustomDates(newDates);
+                              }}
+                              className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs focus:border-primary focus:outline-none"
+                            />
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <label className="block text-[9px] font-bold text-slate-500 uppercase">Date / Info</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. 15-20 Nov 2026"
+                              value={cd.value}
+                              onChange={(e) => {
+                                const newDates = [...customDates];
+                                newDates[index].value = e.target.value;
+                                setCustomDates(newDates);
+                              }}
+                              className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs focus:border-primary focus:outline-none"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setCustomDates(customDates.filter((_, idx) => idx !== index))}
+                            className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setCustomDates([...customDates, { label: "", value: "" }])}
+                    className="w-full py-2.5 border border-dashed border-slate-200 hover:border-primary hover:text-primary text-slate-550 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-slate-50/50 hover:bg-white"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Add Date Field (e.g. Pre, Mains)
+                  </button>
                 </div>
               </div>
             )}
 
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
               <h3 className="text-sm font-bold text-slate-955 uppercase tracking-wide border-b border-slate-100 pb-2">Attachments & Links</h3>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {postType === "Latest Notifications" && (
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 mb-1">Notification PDF URL</label>
@@ -398,6 +456,60 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                     />
                   </div>
                 )}
+
+                {/* Dynamic Custom Links */}
+                {customLinks.length > 0 && (
+                  <div className="space-y-3 pt-2 border-t border-slate-100">
+                    <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">Custom Extra Links</label>
+                    {customLinks.map((cl, index) => (
+                      <div key={index} className="flex gap-2 items-end bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 relative">
+                        <div className="flex-1 space-y-1">
+                          <label className="block text-[9px] font-bold text-slate-500 uppercase">Link Name</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Answer Key, Admit Card"
+                            value={cl.label}
+                            onChange={(e) => {
+                              const newLinks = [...customLinks];
+                              newLinks[index].label = e.target.value;
+                              setCustomLinks(newLinks);
+                            }}
+                            className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs focus:border-primary focus:outline-none"
+                          />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <label className="block text-[9px] font-bold text-slate-500 uppercase">URL Link</label>
+                          <input
+                            type="text"
+                            placeholder="https://..."
+                            value={cl.value}
+                            onChange={(e) => {
+                              const newLinks = [...customLinks];
+                              newLinks[index].value = e.target.value;
+                              setCustomLinks(newLinks);
+                            }}
+                            className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs focus:border-primary focus:outline-none"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setCustomLinks(customLinks.filter((_, idx) => idx !== index))}
+                          className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setCustomLinks([...customLinks, { label: "", value: "" }])}
+                  className="w-full py-2.5 border border-dashed border-slate-200 hover:border-primary hover:text-primary text-slate-550 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-slate-50/50 hover:bg-white"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add Link Field (e.g. Answer Key)
+                </button>
               </div>
             </div>
           </div>

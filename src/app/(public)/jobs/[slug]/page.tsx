@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   return {
     title: job.metaTitle || `${job.title} - Eligibility, Vacancy & Apply Link`,
-    description: job.metaDescription || `Apply for ${job.vacancy} vacancies in ${job.department.name}. Qualification: ${job.qualification.name}. Last Date: ${parseDates(job.importantDates).end}`,
+    description: job.metaDescription || `Apply for ${job.vacancy} vacancies in ${job.department.name}. Qualification: ${job.qualification.name}. Last Date: ${parseDates(job.importantDates).end || "N/A"}`,
     openGraph: {
       title: job.title,
       description: `Apply for ${job.vacancy} vacancies. Qualification: ${job.qualification.name}.`,
@@ -42,14 +42,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function parseDates(importantDates: any) {
-  const defaults = { start: "N/A", end: "N/A", examDate: "N/A" };
+  const defaults = { start: "", end: "", examDate: "", customDates: [], customLinks: [] };
   if (!importantDates) return defaults;
   try {
     const parsed = typeof importantDates === "string" ? JSON.parse(importantDates) : importantDates;
     return {
-      start: parsed.start || "N/A",
-      end: parsed.end || "N/A",
-      examDate: parsed.examDate || "N/A"
+      start: parsed.start || "",
+      end: parsed.end || "",
+      examDate: parsed.examDate || "",
+      customDates: parsed.customDates || [],
+      customLinks: parsed.customLinks || []
     };
   } catch (e) {
     return defaults;
@@ -187,11 +189,11 @@ export default async function JobDetailPage({ params }: Props) {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
                       <span className="font-bold text-slate-600">Selection Process</span>
-                      <span className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0">{job.selectionProcess || "N/A"}</span>
+                      <span className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0 whitespace-pre-line">{job.selectionProcess || "N/A"}</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
                       <span className="font-bold text-slate-600">Application Fees</span>
-                      <span className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0">{job.applicationFees || "N/A"}</span>
+                      <span className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0 whitespace-pre-line">{job.applicationFees || "N/A"}</span>
                     </div>
                   </div>
                 </div>
@@ -253,64 +255,94 @@ export default async function JobDetailPage({ params }: Props) {
           {/* Action Links & Timeline */}
           <div className="lg:col-span-4 space-y-6">
             {/* Quick Actions Card */}
-            <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-sm space-y-4 border border-slate-800">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">
-                {isJob ? "Application Links" : "Download & Links"}
-              </h3>
-              <div className="space-y-3">
-                {job.applyLink && (
-                  <a 
-                    href={job.applyLink} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20 text-sm cursor-pointer"
-                  >
-                    {isJob ? "Apply Online" : "Download / View Link"} <ExternalLink className="h-4 w-4" />
-                  </a>
-                )}
-                {isJob && job.pdfUrl && (
-                  <a 
-                    href={job.pdfUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/10 font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-sm cursor-pointer"
-                  >
-                    Official Notification PDF <Download className="h-4 w-4" />
-                  </a>
-                )}
-                {isJob && job.officialWebsite && (
-                  <a 
-                    href={job.officialWebsite} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full bg-slate-800/50 hover:bg-slate-800 text-slate-300 font-medium h-10 rounded-xl flex items-center justify-center gap-1.5 transition-all text-xs cursor-pointer"
-                  >
-                    Official Website <ExternalLink className="h-3 w-3" />
-                  </a>
-                )}
+            {(job.applyLink || job.pdfUrl || job.officialWebsite || (dates.customLinks && dates.customLinks.length > 0)) && (
+              <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-sm space-y-4 border border-slate-800">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">
+                  {isJob ? "Application Links" : "Download & Links"}
+                </h3>
+                <div className="space-y-3">
+                  {job.applyLink && job.applyLink.trim() !== "" && (
+                    <a 
+                      href={job.applyLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20 text-sm cursor-pointer"
+                    >
+                      {isJob ? "Apply Online" : "Download / View Link"} <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )}
+                  {isJob && job.pdfUrl && job.pdfUrl.trim() !== "" && (
+                    <a 
+                      href={job.pdfUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/10 font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-sm cursor-pointer"
+                    >
+                      Official Notification PDF <Download className="h-4 w-4" />
+                    </a>
+                  )}
+                  {isJob && job.officialWebsite && job.officialWebsite.trim() !== "" && (
+                    <a 
+                      href={job.officialWebsite} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="w-full bg-slate-800/50 hover:bg-slate-800 text-slate-300 font-medium h-10 rounded-xl flex items-center justify-center gap-1.5 transition-all text-xs cursor-pointer"
+                    >
+                      Official Website <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                  {dates.customLinks && dates.customLinks.map((link: any, index: number) => (
+                    link.label && link.value && link.value.trim() !== "" && (
+                      <a 
+                        key={index}
+                        href={link.value} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full bg-slate-800/50 hover:bg-slate-800 text-slate-300 font-medium h-10 rounded-xl flex items-center justify-center gap-1.5 transition-all text-xs cursor-pointer border border-slate-700/50"
+                      >
+                        {link.label} <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Timeline Widget (Only for Jobs) */}
-            {isJob && (
+            {isJob && (dates.start || dates.end || dates.examDate || (dates.customDates && dates.customDates.length > 0)) && (
               <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">Important Dates</h3>
                 <div className="relative pl-6 border-l border-slate-100 space-y-6 text-sm">
-                  <div className="relative">
-                    <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary border-4 border-white ring-2 ring-primary/20"></div>
-                    <p className="text-xs text-slate-400 font-semibold uppercase">Registration Starts</p>
-                    <p className="font-bold text-slate-800">{dates.start}</p>
-                  </div>
-                  <div className="relative">
-                    <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-rose-500 border-4 border-white ring-2 ring-rose-500/20"></div>
-                    <p className="text-xs text-slate-400 font-semibold uppercase">Last Date to Apply</p>
-                    <p className="font-bold text-rose-600">{dates.end}</p>
-                  </div>
-                  <div className="relative">
-                    <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-amber-500 border-4 border-white ring-2 ring-amber-500/20"></div>
-                    <p className="text-xs text-slate-400 font-semibold uppercase">Exam Date</p>
-                    <p className="font-bold text-slate-800">{dates.examDate}</p>
-                  </div>
+                  {dates.start && dates.start.trim() !== "" && (
+                    <div className="relative">
+                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary border-4 border-white ring-2 ring-primary/20"></div>
+                      <p className="text-xs text-slate-400 font-semibold uppercase">Registration Starts</p>
+                      <p className="font-bold text-slate-800">{dates.start}</p>
+                    </div>
+                  )}
+                  {dates.end && dates.end.trim() !== "" && (
+                    <div className="relative">
+                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-rose-500 border-4 border-white ring-2 ring-rose-500/20"></div>
+                      <p className="text-xs text-slate-400 font-semibold uppercase">Last Date to Apply</p>
+                      <p className="font-bold text-rose-600">{dates.end}</p>
+                    </div>
+                  )}
+                  {dates.examDate && dates.examDate.trim() !== "" && (
+                    <div className="relative">
+                      <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-amber-500 border-4 border-white ring-2 ring-amber-500/20"></div>
+                      <p className="text-xs text-slate-400 font-semibold uppercase">Exam Date</p>
+                      <p className="font-bold text-slate-800">{dates.examDate}</p>
+                    </div>
+                  )}
+                  {dates.customDates && dates.customDates.map((cd: any, index: number) => (
+                    cd.label && cd.value && cd.value.trim() !== "" && (
+                      <div key={index} className="relative">
+                        <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-indigo-500 border-4 border-white ring-2 ring-indigo-500/20"></div>
+                        <p className="text-xs text-slate-400 font-semibold uppercase">{cd.label}</p>
+                        <p className="font-bold text-slate-800">{cd.value}</p>
+                      </div>
+                    )
+                  ))}
                 </div>
               </div>
             )}

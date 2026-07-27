@@ -48,6 +48,18 @@ export async function createJob(state: any, formData: FormData) {
     const startDate = formData.get('startDate') as string
     const endDate = formData.get('endDate') as string
     const examDate = formData.get('examDate') as string
+    const customDatesJson = formData.get('customDatesJson') as string || "[]"
+    const customLinksJson = formData.get('customLinksJson') as string || "[]"
+    
+    let customDates = [];
+    let customLinks = [];
+    try {
+      customDates = JSON.parse(customDatesJson);
+    } catch(e) {}
+    try {
+      customLinks = JSON.parse(customLinksJson);
+    } catch(e) {}
+
     const pdfUrl = formData.get('pdfUrl') as string
     const applyLink = formData.get('applyLink') as string
     const officialWebsite = formData.get('officialWebsite') as string
@@ -119,7 +131,9 @@ export async function createJob(state: any, formData: FormData) {
       importantDates: {
         start: startDate,
         end: endDate,
-        examDate: examDate
+        examDate: examDate,
+        customDates,
+        customLinks
       },
       pdfUrl,
       applyLink,

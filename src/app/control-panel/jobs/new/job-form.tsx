@@ -18,6 +18,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   const [postType, setPostType] = useState(initialJob?.postType || initialType || "Latest Notifications");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [htmlContent, setHtmlContent] = useState(initialJob?.eligibility || "");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialType && !initialJob) {
@@ -26,8 +27,11 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   }, [initialType, initialJob]);
 
   useEffect(() => {
-    if (state?.success) {
-      setShowSuccessModal(true);
+    if (state) {
+      setLoading(false);
+      if (state.success) {
+        setShowSuccessModal(true);
+      }
     }
   }, [state]);
 
@@ -73,7 +77,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         </div>
       )}
 
-      <form action={formAction} className="space-y-8">
+      <form action={formAction} onSubmit={() => setLoading(true)} className="space-y-8">
         <input type="hidden" name="id" value={initialJob?.id || ""} />
         <input type="hidden" name="customDatesJson" value={JSON.stringify(customDates)} />
         <input type="hidden" name="customLinksJson" value={JSON.stringify(customLinks)} />
@@ -518,10 +522,10 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         <div className="flex justify-end pt-4">
           <button
             type="submit"
-            disabled={isPending}
+            disabled={loading}
             className="bg-primary hover:bg-primary/95 disabled:bg-primary/50 text-white font-bold text-sm px-8 py-3 rounded-xl shadow-lg shadow-primary/10 flex items-center gap-2 transition-all cursor-pointer disabled:cursor-not-allowed"
           >
-            {isPending ? (
+            {loading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Saving...

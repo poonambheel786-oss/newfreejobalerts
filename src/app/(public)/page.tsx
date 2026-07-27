@@ -283,10 +283,10 @@ export default async function Home({ searchParams }: Props) {
               <thead>
                 <tr className="text-[11px] font-bold uppercase tracking-wider">
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Post Date</th>
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Recruitment Board</th>
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Exam / Post Name</th>
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Qualification</th>
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Advt No</th>
+                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Start Date</th>
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Last Date</th>
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200 text-center">Action</th>
                 </tr>
@@ -300,25 +300,27 @@ export default async function Home({ searchParams }: Props) {
                   </tr>
                 ) : (
                   consolidatedJobs.map((tj, i) => {
+                    let startDateStr = "N/A";
                     let lastDateStr = "N/A";
                     try {
                       const dates = tj.importantDates as any;
+                      if (dates && dates.start) {
+                        startDateStr = dates.start;
+                      }
                       if (dates && dates.end) {
                         lastDateStr = dates.end;
                       }
                     } catch (e) {}
-
+ 
                     return (
                       <tr key={i} className="hover:bg-primary-container/5 transition-colors">
                         <td className="px-6 py-4 text-on-surface-variant border border-slate-200">{formatDate(tj.createdAt)}</td>
-                        <td className="px-6 py-4 font-bold text-on-surface border border-slate-200">
-                          <Link href={`/jobs/${tj.slug}`} className="hover:text-primary hover:underline transition-colors block">{tj.department.name}</Link>
-                        </td>
                         <td className="px-6 py-4 border border-slate-200">
                           <Link href={`/jobs/${tj.slug}`} className="hover:text-primary hover:underline transition-colors block">{tj.title}</Link>
                         </td>
                         <td className="px-6 py-4 max-w-[200px] truncate border border-slate-200" title={tj.qualification.name}>{tj.qualification.name}</td>
                         <td className="px-6 py-4 text-outline border border-slate-200">{tj.advtNumber || "N/A"}</td>
+                        <td className="px-6 py-4 text-slate-600 border border-slate-200">{startDateStr}</td>
                         <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200">{lastDateStr}</td>
                         <td className="px-6 py-4 text-center border border-slate-200">
                           <Link className="text-primary font-bold hover:underline cursor-pointer" href={`/jobs/${tj.slug}`}>More Info</Link>

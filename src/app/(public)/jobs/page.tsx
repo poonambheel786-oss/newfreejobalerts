@@ -187,7 +187,9 @@ export default async function JobsListingPage({ searchParams }: Props) {
               <thead>
                 <tr className="text-[11px] font-bold uppercase tracking-wider">
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Posted Date</th>
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Organization / Department</th>
+                  {(typeLabel === "Latest Notifications" || !typeLabel) && (
+                    <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Organization / Department</th>
+                  )}
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Notification Title</th>
                   {typeLabel === "Latest Notifications" || !typeLabel ? (
                     <>
@@ -204,11 +206,13 @@ export default async function JobsListingPage({ searchParams }: Props) {
                     <td className="px-6 py-4 text-slate-400 font-semibold text-xs whitespace-nowrap border border-slate-200">
                       {new Date(job.createdAt).toLocaleDateString("en-IN")}
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900 border border-slate-200">
-                      <Link href={`/jobs/${job.slug}`} className="hover:text-primary hover:underline transition-colors block">
-                        {job.department.name}
-                      </Link>
-                    </td>
+                    {(typeLabel === "Latest Notifications" || !typeLabel) && (
+                      <td className="px-6 py-4 font-bold text-slate-900 border border-slate-200">
+                        <Link href={`/jobs/${job.slug}`} className="hover:text-primary hover:underline transition-colors block">
+                          {job.department.name}
+                        </Link>
+                      </td>
+                    )}
                     <td className="px-6 py-4 font-medium text-slate-700 max-w-xs sm:max-w-md border border-slate-200">
                       <Link href={`/jobs/${job.slug}`} className="hover:text-primary hover:underline transition-colors block font-semibold">
                         {job.title}

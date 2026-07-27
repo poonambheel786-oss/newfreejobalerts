@@ -311,8 +311,12 @@ export default async function Home({ searchParams }: Props) {
                     return (
                       <tr key={i} className="hover:bg-primary-container/5 transition-colors">
                         <td className="px-6 py-4 text-on-surface-variant border border-slate-200">{formatDate(tj.createdAt)}</td>
-                        <td className="px-6 py-4 font-bold text-on-surface border border-slate-200">{tj.department.name}</td>
-                        <td className="px-6 py-4 border border-slate-200">{tj.title}</td>
+                        <td className="px-6 py-4 font-bold text-on-surface border border-slate-200">
+                          <Link href={`/jobs/${tj.slug}`} className="hover:text-primary hover:underline transition-colors block">{tj.department.name}</Link>
+                        </td>
+                        <td className="px-6 py-4 border border-slate-200">
+                          <Link href={`/jobs/${tj.slug}`} className="hover:text-primary hover:underline transition-colors block">{tj.title}</Link>
+                        </td>
                         <td className="px-6 py-4 max-w-[200px] truncate border border-slate-200" title={tj.qualification.name}>{tj.qualification.name}</td>
                         <td className="px-6 py-4 text-outline border border-slate-200">{tj.advtNumber || "N/A"}</td>
                         <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200">{lastDateStr}</td>

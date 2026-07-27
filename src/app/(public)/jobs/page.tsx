@@ -205,7 +205,9 @@ export default async function JobsListingPage({ searchParams }: Props) {
                       {new Date(job.createdAt).toLocaleDateString("en-IN")}
                     </td>
                     <td className="px-6 py-4 font-bold text-slate-900 border border-slate-200">
-                      {job.department.name}
+                      <Link href={`/jobs/${job.slug}`} className="hover:text-primary hover:underline transition-colors block">
+                        {job.department.name}
+                      </Link>
                     </td>
                     <td className="px-6 py-4 font-medium text-slate-700 max-w-xs sm:max-w-md border border-slate-200">
                       <Link href={`/jobs/${job.slug}`} className="hover:text-primary hover:underline transition-colors block font-semibold">

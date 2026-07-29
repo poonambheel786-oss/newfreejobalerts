@@ -257,7 +257,7 @@ export default async function JobDetailPage({ params }: Props) {
                   </div>
                   <div className="divide-y divide-slate-100 text-sm">
                     <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                      <span className="font-bold text-slate-600">Description / Details</span>
+                      <span className="font-bold text-slate-600">Overview</span>
                       <span 
                         className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0 html-content prose prose-sm max-w-none"
                         dangerouslySetInnerHTML={{ __html: job.eligibility }}
@@ -311,7 +311,7 @@ export default async function JobDetailPage({ params }: Props) {
             ) : (
               /* Simplified Layout for Admit Cards and Results rendering Description directly */
               <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">Details & Updates</h2>
+                <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">Overview</h2>
                 <div 
                   className="text-slate-800 leading-relaxed html-content prose prose-sm max-w-none space-y-3"
                   dangerouslySetInnerHTML={{ __html: job.eligibility }}

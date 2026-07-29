@@ -228,6 +228,51 @@ export default async function JobDetailPage({ params }: Props) {
               <span className="flex items-center gap-1"><MapPin className="h-4 w-4 text-slate-400" /> State: {job.state?.name || "All India"}</span>
               {isJob && <span className="flex items-center gap-1"><GraduationCap className="h-4 w-4 text-slate-400" /> Qualification: {job.qualification.name}</span>}
             </div>
+
+            {/* Quick Action Links */}
+            <div className="flex flex-wrap gap-3 pt-2">
+              {job.applyLink && job.applyLink.trim() !== "" && (
+                <a 
+                  href={job.applyLink} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-primary hover:bg-primary/95 px-4.5 py-2.5 rounded-xl shadow-md shadow-primary/10 transition-all"
+                >
+                  {linkText} <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              )}
+              {job.pdfUrl && job.pdfUrl.trim() !== "" && (
+                <a 
+                  href={job.pdfUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100/70 border border-rose-200/60 px-4.5 py-2.5 rounded-xl transition-all"
+                >
+                  Notification PDF <Download className="h-3.5 w-3.5" />
+                </a>
+              )}
+              {job.officialWebsite && job.officialWebsite.trim() !== "" && (
+                <a 
+                  href={job.officialWebsite} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100/70 border border-amber-200/60 px-4.5 py-2.5 rounded-xl transition-all"
+                >
+                  Official Website <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              )}
+              {dates.customLinks && dates.customLinks.map((cl: any, idx: number) => cl.label && cl.value && cl.value.trim() !== "" && (
+                <a 
+                  key={idx}
+                  href={cl.value} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100/70 border border-indigo-200/60 px-4.5 py-2.5 rounded-xl transition-all"
+                >
+                  {cl.label} <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              ))}
+            </div>
           </div>
 
           {isJob && (

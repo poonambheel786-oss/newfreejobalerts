@@ -30,7 +30,7 @@ export default async function AdminDashboard() {
       take: 6
     });
 
-    recentJobs = dbJobs.map((j) => ({
+    recentJobs = dbJobs.map((j: any) => ({
       id: j.id,
       title: j.title,
       status: j.status || "Published",

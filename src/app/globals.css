@@ -137,3 +137,22 @@ body {
 .animate-slide-in {
   animation: slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Style HTML tables inside rich text content */
+.html-content table {
+  width: 100% !important;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  min-width: 500px;
+}
+
+.html-content th, .html-content td {
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.html-content th {
+  background-color: #f8fafc;
+  font-weight: 700;
+}

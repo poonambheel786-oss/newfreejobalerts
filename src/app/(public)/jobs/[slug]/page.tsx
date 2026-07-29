@@ -256,10 +256,12 @@ export default async function JobDetailPage({ params }: Props) {
                     <Briefcase className="h-5 w-5 text-primary" /> Overview
                   </h2>
                   {job.overview && job.overview.trim() !== "" ? (
-                    <div 
-                      className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: job.overview }}
-                    />
+                    <div className="overflow-x-auto">
+                      <div 
+                        className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: job.overview }}
+                      />
+                    </div>
                   ) : (
                     <p className="text-sm text-slate-600 leading-relaxed">
                       Government recruitment notification for <strong>{job.vacancy} vacancies</strong> has been announced by <strong>{job.department.name}</strong>. Candidates matching the eligibility criteria can apply online. Check details below.
@@ -273,10 +275,12 @@ export default async function JobDetailPage({ params }: Props) {
                     <GraduationCap className="h-5 w-5 text-emerald-500" /> Vacancy Details & Eligibility
                   </h2>
                   {job.vacancyDetails && job.vacancyDetails.trim() !== "" ? (
-                    <div 
-                      className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: job.vacancyDetails }}
-                    />
+                    <div className="overflow-x-auto">
+                      <div 
+                        className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: job.vacancyDetails }}
+                      />
+                    </div>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
@@ -300,10 +304,12 @@ export default async function JobDetailPage({ params }: Props) {
                           <tr>
                             <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Eligibility Details</th>
                             <td className="px-4 py-3 text-slate-800">
-                              <div 
-                                className="html-content prose prose-sm max-w-none leading-relaxed"
-                                dangerouslySetInnerHTML={{ __html: job.eligibility }}
-                              />
+                              <div className="overflow-x-auto">
+                                <div 
+                                  className="html-content prose prose-sm max-w-none leading-relaxed"
+                                  dangerouslySetInnerHTML={{ __html: job.eligibility }}
+                                />
+                              </div>
                             </td>
                           </tr>
                         </tbody>
@@ -392,10 +398,12 @@ export default async function JobDetailPage({ params }: Props) {
                     <ShieldCheck className="h-5 w-5 text-indigo-500" /> How to Apply
                   </h2>
                   {job.howToApply && job.howToApply.trim() !== "" ? (
-                    <div 
-                      className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: job.howToApply }}
-                    />
+                    <div className="overflow-x-auto">
+                      <div 
+                        className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: job.howToApply }}
+                      />
+                    </div>
                   ) : (
                     <ol className="list-decimal pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
                       <li>Read the official notification PDF carefully before applying (Link provided below).</li>
@@ -495,10 +503,12 @@ export default async function JobDetailPage({ params }: Props) {
               /* Simplified Layout for Admit Cards and Results rendering Description directly */
               <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
                 <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">Overview</h2>
-                <div 
-                  className="text-slate-800 leading-relaxed html-content prose prose-sm max-w-none space-y-3"
-                  dangerouslySetInnerHTML={{ __html: job.eligibility }}
-                />
+                <div className="overflow-x-auto">
+                  <div 
+                    className="text-slate-800 leading-relaxed html-content prose prose-sm max-w-none space-y-3"
+                    dangerouslySetInnerHTML={{ __html: job.eligibility }}
+                  />
+                </div>
               </div>
             )}
 

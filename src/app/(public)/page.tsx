@@ -56,43 +56,43 @@ const getCachedHomeData = unstable_cache(
       totalJobs
     ] = await Promise.all([
       prisma.job.findMany({
-        where: { postType: "Latest Notifications" },
+        where: { postType: "Latest Notifications", status: "Published" },
         orderBy: { createdAt: "desc" },
         take: 3,
         select: { id: true, title: true, slug: true, createdAt: true }
       }),
       prisma.job.findMany({
-        where: { postType: "Admit Cards" },
+        where: { postType: "Admit Cards", status: "Published" },
         orderBy: { createdAt: "desc" },
         take: 2,
         select: { id: true, title: true, slug: true, createdAt: true }
       }),
       prisma.job.findMany({
-        where: { postType: "Results" },
+        where: { postType: "Results", status: "Published" },
         orderBy: { createdAt: "desc" },
         take: 2,
         select: { id: true, title: true, slug: true, createdAt: true }
       }),
       prisma.job.findMany({
-        where: { postType: "Latest Notifications" },
+        where: { postType: "Latest Notifications", status: "Published" },
         orderBy: { createdAt: "desc" },
         take: 5,
         select: { id: true, title: true, slug: true, category: { select: { name: true } } }
       }),
       prisma.job.findMany({
-        where: { postType: "Admit Cards" },
+        where: { postType: "Admit Cards", status: "Published" },
         orderBy: { createdAt: "desc" },
         take: 5,
         select: { id: true, title: true, slug: true, category: { select: { name: true } } }
       }),
       prisma.job.findMany({
-        where: { postType: "Results" },
+        where: { postType: "Results", status: "Published" },
         orderBy: { createdAt: "desc" },
         take: 5,
         select: { id: true, title: true, slug: true, category: { select: { name: true } } }
       }),
       prisma.job.findMany({
-        where: { postType: "Latest Notifications" },
+        where: { postType: "Latest Notifications", status: "Published" },
         select: {
           id: true,
           title: true,
@@ -109,7 +109,7 @@ const getCachedHomeData = unstable_cache(
         take: limit
       }),
       prisma.job.count({
-        where: { postType: "Latest Notifications" }
+        where: { postType: "Latest Notifications", status: "Published" }
       })
     ]);
 

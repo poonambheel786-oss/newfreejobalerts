@@ -59,7 +59,9 @@ export default async function JobsListingPage({ searchParams }: Props) {
   const skip = (currentPage - 1) * limit;
 
   // Build filter
-  const whereClause: any = {};
+  const whereClause: any = {
+    status: "Published"
+  };
 
   if (categorySlug) {
     whereClause.category = {

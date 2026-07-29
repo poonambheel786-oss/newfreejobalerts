@@ -33,7 +33,7 @@ export default async function AdminDashboard() {
     recentJobs = dbJobs.map((j) => ({
       id: j.id,
       title: j.title,
-      status: "Published", // Since they are saved directly, default to Published
+      status: j.status || "Published",
       date: new Date(j.createdAt).toLocaleDateString("en-IN")
     }));
   } catch (e) {
@@ -113,7 +113,13 @@ export default async function AdminDashboard() {
                       <p className="text-[10px] text-slate-400 font-medium">Created on {job.date}</p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset bg-emerald-50 text-emerald-700 ring-emerald-600/10">
+                      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${
+                        job.status === "Published"
+                          ? "bg-emerald-50 text-emerald-700 ring-emerald-600/10"
+                          : job.status === "Draft"
+                          ? "bg-amber-50 text-amber-700 ring-amber-600/10"
+                          : "bg-slate-50 text-slate-700 ring-slate-600/10"
+                      }`}>
                         {job.status}
                       </span>
                       <Link href={`/control-panel/jobs/edit/${job.id}`} className="text-xs font-bold text-primary hover:underline cursor-pointer">

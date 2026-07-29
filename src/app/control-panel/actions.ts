@@ -66,6 +66,7 @@ export async function createJob(state: any, formData: FormData) {
     const stateName = formData.get('state') as string || "All India"
     const categoryName = formData.get('category') as string
     const postType = (formData.get('postType') as string) || "Latest Notifications"
+    const status = (formData.get('status') as string) || "Published"
 
     // SEO Parameters
     const customMetaTitle = formData.get('metaTitle') as string
@@ -115,8 +116,20 @@ export async function createJob(state: any, formData: FormData) {
       return { success: false, error: 'Selected category does not exist in database.' }
     }
 
+    let defaultMetaTitle = `${title} - Vacancy Eligibility Apply Details`;
+    let defaultMetaDescription = `Apply for ${vacancy} posts in ${finalDepartmentName}. Qualification required: ${finalQualificationName}. Last date to apply: ${endDate || 'N/A'}.`;
+
+    if (postType === "Admit Cards") {
+      defaultMetaTitle = `${title} - Download Admit Card / Hall Ticket`;
+      defaultMetaDescription = `Download Admit Card / Hall Ticket for ${title}. Check exam dates, download instructions, and direct link.`;
+    } else if (postType === "Results") {
+      defaultMetaTitle = `${title} - Check Score Card & Merit List`;
+      defaultMetaDescription = `Check exam results, merit list, cut off marks, and score card details for ${title}. Direct link to download.`;
+    }
+
     const jobData = {
       title,
+      status,
       departmentId: department.id,
       stateId: dbState?.id || null,
       qualificationId: qualification.id,
@@ -139,8 +152,8 @@ export async function createJob(state: any, formData: FormData) {
       applyLink,
       officialWebsite,
       advtNumber: advtNumber || null,
-      metaTitle: customMetaTitle || `${title} - Vacancy Eligibility Apply Details`,
-      metaDescription: customMetaDescription || `Apply for ${vacancy} posts in ${finalDepartmentName}. Qualification required: ${finalQualificationName}. Last date to apply: ${endDate || 'N/A'}.`,
+      metaTitle: customMetaTitle || defaultMetaTitle,
+      metaDescription: customMetaDescription || defaultMetaDescription,
       searchTags: searchTags || null
     }
 

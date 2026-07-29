@@ -135,6 +135,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                     >
                       <option value="Published">Published</option>
                       <option value="Draft">Draft</option>
+                      <option value="Unpublished">Unpublished</option>
                     </select>
                   </div>
                   <div>

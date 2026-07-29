@@ -87,6 +87,7 @@ model Job {
   // Meta/SEO & Classification
   jobType             JobType        @default(PERMANENT)
   jobSector           JobSector      @default(STATE)
+  status              String         @default("Published")
   isFeatured          Boolean        @default(false)
   metaTitle           String?
   metaDescription     String?

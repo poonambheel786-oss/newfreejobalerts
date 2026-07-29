@@ -9,6 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let jobs: any[] = []
   try {
     jobs = await prisma.job.findMany({
+      where: { status: "Published" },
       select: { slug: true, updatedAt: true }
     })
   } catch (e) {

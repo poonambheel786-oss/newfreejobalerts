@@ -103,6 +103,7 @@ export default async function AdminJobsPage({ searchParams }: Props) {
                 <th className="px-6 py-4">Title / Heading</th>
                 <th className="px-6 py-4">Category</th>
                 <th className="px-6 py-4">State</th>
+                <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Created Date</th>
                 <th className="px-6 py-4 text-center">Actions</th>
               </tr>
@@ -135,6 +136,17 @@ export default async function AdminJobsPage({ searchParams }: Props) {
                     <td className="px-6 py-4">
                       <span className="text-slate-500 font-medium">
                         {job.state?.name || "All India"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-medium ring-1 ring-inset ${
+                        job.status === "Published"
+                          ? "bg-emerald-50 text-emerald-700 ring-emerald-600/10"
+                          : job.status === "Draft"
+                          ? "bg-amber-50 text-amber-700 ring-amber-600/10"
+                          : "bg-slate-50 text-slate-700 ring-slate-600/10"
+                      }`}>
+                        {job.status || "Published"}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-slate-500 font-medium">

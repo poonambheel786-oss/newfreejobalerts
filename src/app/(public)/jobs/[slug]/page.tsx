@@ -12,7 +12,7 @@ interface Props {
 
 // Fetch Job from database
 async function getJob(slug: string) {
-  return await prisma.job.findUnique({
+  const job = await prisma.job.findUnique({
     where: { slug },
     include: {
       department: true,
@@ -21,6 +21,10 @@ async function getJob(slug: string) {
       state: true
     }
   });
+  if (job && job.status !== "Published") {
+    return null;
+  }
+  return job;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -31,12 +35,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: "Job Not Found - NewFreeJobAlert",
     };
   }
+
+  const postType = job.postType;
+  let defaultDesc = "";
+  let ogDesc = "";
+  let defaultTitle = `${job.title} - Details & Updates`;
+
+  if (postType === "Admit Cards") {
+    defaultTitle = `${job.title} - Download Admit Card & Exam Date`;
+    defaultDesc = `Download Admit Card / Hall Ticket for ${job.title}. Check exam dates, download link, and instructions.`;
+    ogDesc = `Download Admit Card / Exam Hall Ticket for ${job.title}. Get direct download link and exam dates.`;
+  } else if (postType === "Results") {
+    defaultTitle = `${job.title} - Merit List, Score Card & Results`;
+    defaultDesc = `Check Results, Score Card, Merit List & Cut Off Marks for ${job.title}. Download scorecard and check direct link here.`;
+    ogDesc = `Check Results, Score Card, Merit List & Cut Off Marks for ${job.title}. Direct link to download.`;
+  } else {
+    // Latest Notifications / Jobs
+    const endDate = parseDates(job.importantDates).end || "N/A";
+    defaultTitle = `${job.title} - Eligibility, Vacancy & Apply Link`;
+    defaultDesc = `Apply for ${job.vacancy} vacancies in ${job.department.name}. Qualification: ${job.qualification.name}. Last Date: ${endDate}`;
+    ogDesc = `Apply for ${job.vacancy} vacancies. Qualification: ${job.qualification.name}. Last Date: ${endDate}`;
+  }
+
+  const finalTitle = job.metaTitle || defaultTitle;
+  const finalDescription = job.metaDescription || defaultDesc;
+
   return {
-    title: job.metaTitle || `${job.title} - Eligibility, Vacancy & Apply Link`,
-    description: job.metaDescription || `Apply for ${job.vacancy} vacancies in ${job.department.name}. Qualification: ${job.qualification.name}. Last Date: ${parseDates(job.importantDates).end || "N/A"}`,
+    title: finalTitle,
+    description: finalDescription,
     openGraph: {
       title: job.title,
-      description: `Apply for ${job.vacancy} vacancies. Qualification: ${job.qualification.name}.`,
+      description: ogDesc || finalDescription,
     }
   };
 }
@@ -78,6 +107,17 @@ export default async function JobDetailPage({ params }: Props) {
   const dates = parseDates(job.importantDates);
   const faqs = parseFaqs(job.faqSchema);
   const isJob = job.postType === "Latest Notifications";
+
+  let linkLabel = "Apply Link";
+  let linkText = "Apply Online";
+
+  if (job.postType === "Results") {
+    linkLabel = "Check Result";
+    linkText = "Check Result";
+  } else if (job.postType === "Admit Cards") {
+    linkLabel = "Download Admit Card";
+    linkText = "Download Admit Card";
+  }
 
   // Format validThrough using ISO 8601
   let validThroughStr = "";
@@ -319,14 +359,14 @@ export default async function JobDetailPage({ params }: Props) {
                   {job.applyLink && job.applyLink.trim() !== "" && (
                     <div className="relative group">
                       <div className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary border-4 border-white ring-4 ring-primary/10 group-hover:scale-110 transition-transform"></div>
-                      <p className="text-[10px] text-indigo-950/60 font-bold uppercase tracking-wider">Apply Link</p>
+                      <p className="text-[10px] text-indigo-950/60 font-bold uppercase tracking-wider">{linkLabel}</p>
                       <a 
                         href={job.applyLink} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="font-extrabold text-primary hover:text-primary-dark hover:underline flex items-center gap-1 mt-0.5 transition-colors text-base"
                       >
-                        {isJob ? "Apply Online" : "Download / View Link"} <ExternalLink className="h-3.5 w-3.5" />
+                        {linkText} <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     </div>
                   )}

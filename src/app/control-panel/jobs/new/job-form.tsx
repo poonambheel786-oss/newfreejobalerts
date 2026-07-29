@@ -19,6 +19,9 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [htmlContent, setHtmlContent] = useState(initialJob?.eligibility || "");
   const [selectionProcessHtml, setSelectionProcessHtml] = useState(initialJob?.selectionProcess || "");
+  const [overviewHtml, setOverviewHtml] = useState(initialJob?.overview || "");
+  const [vacancyDetailsHtml, setVacancyDetailsHtml] = useState(initialJob?.vacancyDetails || "");
+  const [howToApplyHtml, setHowToApplyHtml] = useState(initialJob?.howToApply || "");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -84,6 +87,9 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         <input type="hidden" name="customLinksJson" value={JSON.stringify(customLinks)} />
         <textarea name="eligibility" value={htmlContent} onChange={(e) => setHtmlContent(e.target.value)} className="hidden" />
         <textarea name="selectionProcess" value={selectionProcessHtml} onChange={(e) => setSelectionProcessHtml(e.target.value)} className="hidden" />
+        <textarea name="overview" value={overviewHtml} onChange={(e) => setOverviewHtml(e.target.value)} className="hidden" />
+        <textarea name="vacancyDetails" value={vacancyDetailsHtml} onChange={(e) => setVacancyDetailsHtml(e.target.value)} className="hidden" />
+        <textarea name="howToApply" value={howToApplyHtml} onChange={(e) => setHowToApplyHtml(e.target.value)} className="hidden" />
 
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -231,13 +237,37 @@ export default function JobForm({ states, categories, initialJob, initialType }:
 
             {/* WYSIWYG HTML Content Editor Card */}
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-              <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">Description / HTML Content *</h2>
+              {postType === "Latest Notifications" && (
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Overview (Rich Text)</label>
+                  <RichTextEditor 
+                    value={overviewHtml}
+                    onChange={setOverviewHtml}
+                    placeholder="Enter post overview or summary..."
+                  />
+                </div>
+              )}
+
+              {postType === "Latest Notifications" && (
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Vacancy Details (Rich Text)</label>
+                  <RichTextEditor 
+                    value={vacancyDetailsHtml}
+                    onChange={setVacancyDetailsHtml}
+                    placeholder="Enter vacancy details table or text..."
+                  />
+                </div>
+              )}
+
+              <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">
+                {postType === "Latest Notifications" ? "Eligibility / Details *" : "Description / HTML Content *"}
+              </h2>
               
               <div className="space-y-3">
                 <RichTextEditor 
                   value={htmlContent}
                   onChange={setHtmlContent}
-                  placeholder="Type description or recruitment details..."
+                  placeholder="Type eligibility or description details..."
                 />
               </div>
 
@@ -286,6 +316,17 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                     defaultValue={initialJob?.applicationFees || ""}
                     placeholder="GEN/OBC: 100, SC/ST: Exempted" 
                     className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                  />
+                </div>
+              )}
+
+              {postType === "Latest Notifications" && (
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">How to Apply (Rich Text)</label>
+                  <RichTextEditor 
+                    value={howToApplyHtml}
+                    onChange={setHowToApplyHtml}
+                    placeholder="Enter instructions on how to fill form and apply..."
                   />
                 </div>
               )}

@@ -78,6 +78,9 @@ model Job {
   importantDates      Json           // JSON structured dates (start, end, exam date)
   examPattern         String?        @db.Text
   syllabus            String?        @db.Text
+  overview            String?        @db.Text
+  vacancyDetails      String?        @db.Text
+  howToApply          String?        @db.Text
   
   // Links & Attachments
   pdfUrl              String?        // S3 or Wasabi URL

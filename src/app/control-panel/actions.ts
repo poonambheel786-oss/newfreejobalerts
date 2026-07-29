@@ -68,6 +68,10 @@ export async function createJob(state: any, formData: FormData) {
     const postType = (formData.get('postType') as string) || "Latest Notifications"
     const status = (formData.get('status') as string) || "Published"
 
+    const overview = formData.get('overview') as string
+    const vacancyDetails = formData.get('vacancyDetails') as string
+    const howToApply = formData.get('howToApply') as string
+
     // SEO Parameters
     const customMetaTitle = formData.get('metaTitle') as string
     const customMetaDescription = formData.get('metaDescription') as string
@@ -130,6 +134,9 @@ export async function createJob(state: any, formData: FormData) {
     const jobData = {
       title,
       status,
+      overview,
+      vacancyDetails,
+      howToApply,
       departmentId: department.id,
       stateId: dbState?.id || null,
       qualificationId: qualification.id,

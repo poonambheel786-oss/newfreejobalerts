@@ -255,9 +255,16 @@ export default async function JobDetailPage({ params }: Props) {
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                     <Briefcase className="h-5 w-5 text-primary" /> Overview
                   </h2>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    Government recruitment notification for <strong>{job.vacancy} vacancies</strong> has been announced by <strong>{job.department.name}</strong>. Candidates matching the eligibility criteria can apply online. Check details below.
-                  </p>
+                  {job.overview && job.overview.trim() !== "" ? (
+                    <div 
+                      className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: job.overview }}
+                    />
+                  ) : (
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Government recruitment notification for <strong>{job.vacancy} vacancies</strong> has been announced by <strong>{job.department.name}</strong>. Candidates matching the eligibility criteria can apply online. Check details below.
+                    </p>
+                  )}
                 </div>
 
                 {/* 2. Vacancy Details & 3. Eligibility */}
@@ -265,37 +272,44 @@ export default async function JobDetailPage({ params }: Props) {
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                     <GraduationCap className="h-5 w-5 text-emerald-500" /> Vacancy Details & Eligibility
                   </h2>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
-                      <tbody>
-                        <tr className="bg-slate-50 border-b border-slate-200/60">
-                          <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Department Name</th>
-                          <td className="px-4 py-3 text-slate-800 font-semibold">{job.department.name}</td>
-                        </tr>
-                        <tr className="border-b border-slate-200/60">
-                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Post Category</th>
-                          <td className="px-4 py-3 text-slate-800">{job.category.name}</td>
-                        </tr>
-                        <tr className="bg-slate-50 border-b border-slate-200/60">
-                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Total Vacancies</th>
-                          <td className="px-4 py-3 text-slate-800 font-bold">{job.vacancy} Posts</td>
-                        </tr>
-                        <tr className="border-b border-slate-200/60">
-                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Qualification</th>
-                          <td className="px-4 py-3 text-slate-800 font-semibold">{job.qualification.name}</td>
-                        </tr>
-                        <tr>
-                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Eligibility Details</th>
-                          <td className="px-4 py-3 text-slate-800">
-                            <div 
-                              className="html-content prose prose-sm max-w-none leading-relaxed"
-                              dangerouslySetInnerHTML={{ __html: job.eligibility }}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  {job.vacancyDetails && job.vacancyDetails.trim() !== "" ? (
+                    <div 
+                      className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: job.vacancyDetails }}
+                    />
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
+                        <tbody>
+                          <tr className="bg-slate-50 border-b border-slate-200/60">
+                            <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Department Name</th>
+                            <td className="px-4 py-3 text-slate-800 font-semibold">{job.department.name}</td>
+                          </tr>
+                          <tr className="border-b border-slate-200/60">
+                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Post Category</th>
+                            <td className="px-4 py-3 text-slate-800">{job.category.name}</td>
+                          </tr>
+                          <tr className="bg-slate-50 border-b border-slate-200/60">
+                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Total Vacancies</th>
+                            <td className="px-4 py-3 text-slate-800 font-bold">{job.vacancy} Posts</td>
+                          </tr>
+                          <tr className="border-b border-slate-200/60">
+                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Qualification</th>
+                            <td className="px-4 py-3 text-slate-800 font-semibold">{job.qualification.name}</td>
+                          </tr>
+                          <tr>
+                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Eligibility Details</th>
+                            <td className="px-4 py-3 text-slate-800">
+                              <div 
+                                className="html-content prose prose-sm max-w-none leading-relaxed"
+                                dangerouslySetInnerHTML={{ __html: job.eligibility }}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
 
                 {/* 4. Age Limit */}
@@ -377,15 +391,22 @@ export default async function JobDetailPage({ params }: Props) {
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                     <ShieldCheck className="h-5 w-5 text-indigo-500" /> How to Apply
                   </h2>
-                  <ol className="list-decimal pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
-                    <li>Read the official notification PDF carefully before applying (Link provided below).</li>
-                    <li>Click on the <strong>Apply Online</strong> link below or visit the official website.</li>
-                    <li>Register yourself on the portal and fill in all the required details accurately.</li>
-                    <li>Upload scanned copies of required documents (photo, signature, educational certificates).</li>
-                    <li>Pay the application fee (if applicable) online.</li>
-                    <li>Review all information in the application form carefully before final submission.</li>
-                    <li>Download and print a copy of the submitted form for future reference.</li>
-                  </ol>
+                  {job.howToApply && job.howToApply.trim() !== "" ? (
+                    <div 
+                      className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: job.howToApply }}
+                    />
+                  ) : (
+                    <ol className="list-decimal pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
+                      <li>Read the official notification PDF carefully before applying (Link provided below).</li>
+                      <li>Click on the <strong>Apply Online</strong> link below or visit the official website.</li>
+                      <li>Register yourself on the portal and fill in all the required details accurately.</li>
+                      <li>Upload scanned copies of required documents (photo, signature, educational certificates).</li>
+                      <li>Pay the application fee (if applicable) online.</li>
+                      <li>Review all information in the application form carefully before final submission.</li>
+                      <li>Download and print a copy of the submitted form for future reference.</li>
+                    </ol>
+                  )}
                 </div>
 
                 {/* 10. Important Links */}

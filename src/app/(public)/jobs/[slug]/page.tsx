@@ -110,13 +110,16 @@ export default async function JobDetailPage({ params }: Props) {
 
   let linkLabel = "Apply Link";
   let linkText = "Apply Online";
+  let badgeText = "Apply Now";
 
   if (job.postType === "Results") {
     linkLabel = "Check Result";
     linkText = "Check Result";
+    badgeText = "Check Result";
   } else if (job.postType === "Admit Cards") {
     linkLabel = "Download Admit Card";
     linkText = "Download Admit Card";
+    badgeText = "Admit Card";
   }
 
   // Format validThrough using ISO 8601
@@ -351,7 +354,7 @@ export default async function JobDetailPage({ params }: Props) {
                     Important Links
                   </h3>
                   <span className="text-[9px] font-bold text-white bg-gradient-to-r from-primary to-indigo-600 px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-md shadow-indigo-550/15">
-                    Apply Now
+                    {badgeText}
                   </span>
                 </div>
                 

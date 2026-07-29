@@ -348,14 +348,11 @@ export default async function JobDetailPage({ params }: Props) {
                 <div className="absolute -right-10 -top-10 w-24 h-24 bg-primary/10 rounded-full blur-xl pointer-events-none"></div>
                 <div className="absolute -left-10 -bottom-10 w-24 h-24 bg-violet-400/10 rounded-full blur-xl pointer-events-none"></div>
                 
-                <div className="flex items-center justify-between mb-4 border-b border-indigo-100/60 pb-2 relative z-10">
+                <div className="flex items-center mb-4 border-b border-indigo-100/60 pb-2 relative z-10">
                   <h3 className="text-sm font-black text-indigo-950 uppercase tracking-wider flex items-center gap-1.5">
                     <span className="h-2.5 w-2.5 rounded-full bg-indigo-600 animate-pulse"></span>
                     Important Links
                   </h3>
-                  <span className="text-[9px] font-bold text-white bg-gradient-to-r from-primary to-indigo-600 px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-md shadow-indigo-550/15">
-                    {badgeText}
-                  </span>
                 </div>
                 
                 <div className="relative pl-6 border-l border-indigo-200/50 space-y-6 text-sm relative z-10">

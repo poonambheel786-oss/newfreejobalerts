@@ -3,8 +3,8 @@
 import React, { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Save, AlertCircle, CheckCircle2, Plus, Trash2, Loader2 } from "lucide-react";
-import { createJob } from "../../actions";
-import RichTextEditor from "../../../../components/RichTextEditor/RichTextEditor";
+import { createJob } from "../../../actions";
+import RichTextEditor from "../../../../../components/RichTextEditor/RichTextEditor";
 
 interface Props {
   states: string[];

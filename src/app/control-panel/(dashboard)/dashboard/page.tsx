@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Briefcase, FileText, CheckCircle, FolderHeart, Plus, Activity, BellRing, Settings, LogOut } from "lucide-react";
-import { logout } from "../actions";
+import { logout } from "../../actions";
 import { prisma } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';

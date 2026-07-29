@@ -14,7 +14,7 @@ export async function login(state: any, formData: FormData) {
     password === process.env.ADMIN_PASSWORD
   ) {
     const cookieStore = await cookies()
-    cookieStore.set('admin_session', 'authenticated', {
+    cookieStore.set('admin_session_secure', 'authenticated', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24, // 1 day
@@ -28,6 +28,7 @@ export async function login(state: any, formData: FormData) {
 
 export async function logout() {
   const cookieStore = await cookies()
+  cookieStore.delete('admin_session_secure')
   cookieStore.delete('admin_session')
   redirect('/control-panel/login')
 }

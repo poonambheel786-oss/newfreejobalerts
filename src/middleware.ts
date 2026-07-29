@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
-  const session = request.cookies.get('admin_session')?.value
+  const session = request.cookies.get('admin_session_secure')?.value
 
   const isControlPanel = path.startsWith('/control-panel')
   const isLoginPage = path === '/control-panel/login'

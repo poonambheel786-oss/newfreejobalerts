@@ -51,6 +51,7 @@ export async function createJob(state: any, formData: FormData) {
     const examDate = formData.get('examDate') as string
     const customDatesJson = formData.get('customDatesJson') as string || "[]"
     const customLinksJson = formData.get('customLinksJson') as string || "[]"
+    const faqSchemaJson = formData.get('faqSchemaJson') as string || "[]"
     
     let customDates = [];
     let customLinks = [];
@@ -59,6 +60,11 @@ export async function createJob(state: any, formData: FormData) {
     } catch(e) {}
     try {
       customLinks = JSON.parse(customLinksJson);
+    } catch(e) {}
+
+    let faqSchema = [];
+    try {
+      faqSchema = JSON.parse(faqSchemaJson);
     } catch(e) {}
 
     const pdfUrl = formData.get('pdfUrl') as string
@@ -162,7 +168,8 @@ export async function createJob(state: any, formData: FormData) {
       advtNumber: advtNumber || null,
       metaTitle: customMetaTitle || defaultMetaTitle,
       metaDescription: customMetaDescription || defaultMetaDescription,
-      searchTags: searchTags || null
+      searchTags: searchTags || null,
+      faqSchema
     }
 
     if (id) {

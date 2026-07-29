@@ -23,6 +23,18 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   const [vacancyDetailsHtml, setVacancyDetailsHtml] = useState(initialJob?.vacancyDetails || "");
   const [howToApplyHtml, setHowToApplyHtml] = useState(initialJob?.howToApply || "");
   const [loading, setLoading] = useState(false);
+  const [faqs, setFaqs] = useState<{ q: string; a: string }[]>(() => {
+    if (initialJob?.faqSchema) {
+      try {
+        return typeof initialJob.faqSchema === 'string' 
+          ? JSON.parse(initialJob.faqSchema) 
+          : (initialJob.faqSchema as any) || [];
+      } catch(e) {
+        return [];
+      }
+    }
+    return [];
+  });
 
   useEffect(() => {
     if (initialType && !initialJob) {
@@ -85,6 +97,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         <input type="hidden" name="id" value={initialJob?.id || ""} />
         <input type="hidden" name="customDatesJson" value={JSON.stringify(customDates)} />
         <input type="hidden" name="customLinksJson" value={JSON.stringify(customLinks)} />
+        <input type="hidden" name="faqSchemaJson" value={JSON.stringify(faqs)} />
         <textarea name="eligibility" value={htmlContent} onChange={(e) => setHtmlContent(e.target.value)} className="hidden" />
         <textarea name="selectionProcess" value={selectionProcessHtml} onChange={(e) => setSelectionProcessHtml(e.target.value)} className="hidden" />
         <textarea name="overview" value={overviewHtml} onChange={(e) => setOverviewHtml(e.target.value)} className="hidden" />
@@ -557,6 +570,67 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* FAQs Card */}
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">Frequently Asked Questions (FAQ)</h3>
+          </div>
+          <div className="space-y-4">
+            {faqs.length > 0 && (
+              <div className="space-y-4">
+                {faqs.map((faq, index) => (
+                  <div key={index} className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-200/60 relative">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold text-slate-700">FAQ Question #{index + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => setFaqs(faqs.filter((_, idx) => idx !== index))}
+                        className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Question</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. What is the last date to apply?"
+                        value={faq.q}
+                        onChange={(e) => {
+                          const newFaqs = [...faqs];
+                          newFaqs[index].q = e.target.value;
+                          setFaqs(newFaqs);
+                        }}
+                        className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm focus:border-primary focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Answer (Rich Text)</label>
+                      <RichTextEditor
+                        value={faq.a}
+                        onChange={(val) => {
+                          const newFaqs = [...faqs];
+                          newFaqs[index].a = val;
+                          setFaqs(newFaqs);
+                        }}
+                        placeholder="Type answer here..."
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setFaqs([...faqs, { q: "", a: "" }])}
+              className="w-full py-2.5 border border-dashed border-slate-200 hover:border-primary hover:text-primary text-slate-550 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-slate-50/50 hover:bg-white"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add FAQ Item
+            </button>
           </div>
         </div>
 

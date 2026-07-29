@@ -46,7 +46,10 @@ export default function ContactUsPage() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email Us</p>
-                <p className="text-xs font-bold text-slate-700 mt-0.5">support@newfreejobalert.com</p>
+                <p className="text-xs font-bold text-slate-700 mt-0.5">
+                  support@newfreejobalert.com<br />
+                  poonamsir14@gmail.com
+                </p>
               </div>
             </div>
 
@@ -56,7 +59,12 @@ export default function ContactUsPage() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Headquarters</p>
-                <p className="text-xs font-bold text-slate-700 mt-0.5">PR Deep Solution Pvt. Ltd., Jaipur, Rajasthan, India</p>
+                <p className="text-xs font-bold text-slate-700 mt-0.5 leading-relaxed">
+                  PR Deep Solution Pvt. Ltd.,<br />
+                  1088 Purani Bheel Basti,<br />
+                  Pokhran Marg Ramdeora, Dist Jaisalmer,<br />
+                  Rajasthan, India - 345023
+                </p>
               </div>
             </div>
           </div>

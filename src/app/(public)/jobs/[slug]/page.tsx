@@ -267,7 +267,7 @@ export default async function JobDetailPage({ params }: Props) {
                   )}
                 </div>
 
-                {/* 2. Vacancy Details & 3. Eligibility */}
+                {/* 2. Vacancy Details & Eligibility */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                     <GraduationCap className="h-5 w-5 text-emerald-500" /> Vacancy Details & Eligibility
@@ -316,48 +316,7 @@ export default async function JobDetailPage({ params }: Props) {
                   )}
                 </div>
 
-                {/* 4. Age Limit */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-amber-500" /> Age Limit
-                  </h2>
-                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                    {job.ageLimit || "Please refer to the official notification PDF for detailed age limit guidelines."}
-                  </p>
-                </div>
-
-                {/* 5. Selection Process */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <ShieldCheck className="h-5 w-5 text-indigo-500" /> Selection Process
-                  </h2>
-                  <div 
-                    className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: job.selectionProcess || "Refer to official notifications for the selection process." }}
-                  />
-                </div>
-
-                {/* 6. Salary */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-teal-500" /> Salary / Pay Scale
-                  </h2>
-                  <p className="text-sm text-slate-700 leading-relaxed font-semibold">
-                    {job.salary || "As per the rules of the recruitment board."}
-                  </p>
-                </div>
-
-                {/* 7. Application Fee */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-rose-500" /> Application Fee
-                  </h2>
-                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                    {job.applicationFees || "Free or refer to official notification PDF."}
-                  </p>
-                </div>
-
-                {/* 8. Important Dates */}
+                {/* 3. Important Dates */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                     <Calendar className="h-5 w-5 text-blue-500" /> Important Dates
@@ -390,32 +349,7 @@ export default async function JobDetailPage({ params }: Props) {
                   </div>
                 </div>
 
-                {/* 9. How to Apply */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <ShieldCheck className="h-5 w-5 text-indigo-500" /> How to Apply
-                  </h2>
-                  {job.howToApply && job.howToApply.trim() !== "" ? (
-                    <div className="overflow-x-auto">
-                      <div 
-                        className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: job.howToApply }}
-                      />
-                    </div>
-                  ) : (
-                    <ol className="list-decimal pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
-                      <li>Read the official notification PDF carefully before applying (Link provided below).</li>
-                      <li>Click on the <strong>Apply Online</strong> link below or visit the official website.</li>
-                      <li>Register yourself on the portal and fill in all the required details accurately.</li>
-                      <li>Upload scanned copies of required documents (photo, signature, educational certificates).</li>
-                      <li>Pay the application fee (if applicable) online.</li>
-                      <li>Review all information in the application form carefully before final submission.</li>
-                      <li>Download and print a copy of the submitted form for future reference.</li>
-                    </ol>
-                  )}
-                </div>
-
-                {/* 10. Important Links */}
+                {/* 4. Important Links */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                     <Download className="h-5 w-5 text-violet-500" /> Important Links
@@ -474,7 +408,73 @@ export default async function JobDetailPage({ params }: Props) {
                   </div>
                 </div>
 
-                {/* Exam Pattern & Syllabus */}
+                {/* 5. Age Limit */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-amber-500" /> Age Limit
+                  </h2>
+                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                    {job.ageLimit || "Please refer to the official notification PDF for detailed age limit guidelines."}
+                  </p>
+                </div>
+
+                {/* 6. Selection Process */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-indigo-500" /> Selection Process
+                  </h2>
+                  <div 
+                    className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.selectionProcess || "Refer to official notifications for the selection process." }}
+                  />
+                </div>
+
+                {/* 7. Salary */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <Briefcase className="h-5 w-5 text-teal-500" /> Salary / Pay Scale
+                  </h2>
+                  <p className="text-sm text-slate-700 leading-relaxed font-semibold">
+                    {job.salary || "As per the rules of the recruitment board."}
+                  </p>
+                </div>
+
+                {/* 8. Application Fee */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-rose-500" /> Application Fee
+                  </h2>
+                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                    {job.applicationFees || "Free or refer to official notification PDF."}
+                  </p>
+                </div>
+
+                {/* 9. How to Apply */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-indigo-500" /> How to Apply
+                  </h2>
+                  {job.howToApply && job.howToApply.trim() !== "" ? (
+                    <div className="overflow-x-auto">
+                      <div 
+                        className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: job.howToApply }}
+                      />
+                    </div>
+                  ) : (
+                    <ol className="list-decimal pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
+                      <li>Read the official notification PDF carefully before applying (Link provided below).</li>
+                      <li>Click on the <strong>Apply Online</strong> link below or visit the official website.</li>
+                      <li>Register yourself on the portal and fill in all the required details accurately.</li>
+                      <li>Upload scanned copies of required documents (photo, signature, educational certificates).</li>
+                      <li>Pay the application fee (if applicable) online.</li>
+                      <li>Review all information in the application form carefully before final submission.</li>
+                      <li>Download and print a copy of the submitted form for future reference.</li>
+                    </ol>
+                  )}
+                </div>
+
+                {/* 10. Exam Pattern & Syllabus */}
                 {(job.examPattern || job.syllabus) && (
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
                     <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">

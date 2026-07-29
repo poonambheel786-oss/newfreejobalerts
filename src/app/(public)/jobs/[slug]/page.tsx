@@ -250,38 +250,200 @@ export default async function JobDetailPage({ params }: Props) {
           <div className="lg:col-span-8 space-y-6">
             {isJob ? (
               <>
-                {/* Info Table Card */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
-                  <div className="border-b border-slate-100 bg-slate-50/50 p-4">
-                    <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide">Key Details</h2>
+                {/* 1. Overview */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <Briefcase className="h-5 w-5 text-primary" /> Overview
+                  </h2>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Government recruitment notification for <strong>{job.vacancy} vacancies</strong> has been announced by <strong>{job.department.name}</strong>. Candidates matching the eligibility criteria can apply online. Check details below.
+                  </p>
+                </div>
+
+                {/* 2. Vacancy Details & 3. Eligibility */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <GraduationCap className="h-5 w-5 text-emerald-500" /> Vacancy Details & Eligibility
+                  </h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
+                      <tbody>
+                        <tr className="bg-slate-50 border-b border-slate-200/60">
+                          <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Department Name</th>
+                          <td className="px-4 py-3 text-slate-800 font-semibold">{job.department.name}</td>
+                        </tr>
+                        <tr className="border-b border-slate-200/60">
+                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Post Category</th>
+                          <td className="px-4 py-3 text-slate-800">{job.category.name}</td>
+                        </tr>
+                        <tr className="bg-slate-50 border-b border-slate-200/60">
+                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Total Vacancies</th>
+                          <td className="px-4 py-3 text-slate-800 font-bold">{job.vacancy} Posts</td>
+                        </tr>
+                        <tr className="border-b border-slate-200/60">
+                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Qualification</th>
+                          <td className="px-4 py-3 text-slate-800 font-semibold">{job.qualification.name}</td>
+                        </tr>
+                        <tr>
+                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Eligibility Details</th>
+                          <td className="px-4 py-3 text-slate-800">
+                            <div 
+                              className="html-content prose prose-sm max-w-none leading-relaxed"
+                              dangerouslySetInnerHTML={{ __html: job.eligibility }}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                  <div className="divide-y divide-slate-100 text-sm">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                      <span className="font-bold text-slate-600">Overview</span>
-                      <span 
-                        className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0 html-content prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: job.eligibility }}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                      <span className="font-bold text-slate-600">Age Limit</span>
-                      <span className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0">{job.ageLimit || "N/A"}</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                      <span className="font-bold text-slate-600">Salary Scale</span>
-                      <span className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0">{job.salary || "N/A"}</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                      <span className="font-bold text-slate-600">Selection Process</span>
-                      <span 
-                        className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0 html-content prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: job.selectionProcess || "N/A" }}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 p-4">
-                      <span className="font-bold text-slate-600">Application Fees</span>
-                      <span className="sm:col-span-2 text-slate-800 leading-relaxed mt-1 sm:mt-0 whitespace-pre-line">{job.applicationFees || "N/A"}</span>
-                    </div>
+                </div>
+
+                {/* 4. Age Limit */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-amber-500" /> Age Limit
+                  </h2>
+                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                    {job.ageLimit || "Please refer to the official notification PDF for detailed age limit guidelines."}
+                  </p>
+                </div>
+
+                {/* 5. Selection Process */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-indigo-500" /> Selection Process
+                  </h2>
+                  <div 
+                    className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.selectionProcess || "Refer to official notifications for the selection process." }}
+                  />
+                </div>
+
+                {/* 6. Salary */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <Briefcase className="h-5 w-5 text-teal-500" /> Salary / Pay Scale
+                  </h2>
+                  <p className="text-sm text-slate-700 leading-relaxed font-semibold">
+                    {job.salary || "As per the rules of the recruitment board."}
+                  </p>
+                </div>
+
+                {/* 7. Application Fee */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-rose-500" /> Application Fee
+                  </h2>
+                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                    {job.applicationFees || "Free or refer to official notification PDF."}
+                  </p>
+                </div>
+
+                {/* 8. Important Dates */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-blue-500" /> Important Dates
+                  </h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
+                      <tbody>
+                        <tr className="bg-slate-50 border-b border-slate-200/60">
+                          <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Application Start Date</th>
+                          <td className="px-4 py-3 text-slate-800 font-semibold">{dates.start || "N/A"}</td>
+                        </tr>
+                        <tr className="border-b border-slate-200/60">
+                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Last Date to Apply</th>
+                          <td className="px-4 py-3 text-rose-600 font-bold">{dates.end || "N/A"}</td>
+                        </tr>
+                        {dates.examDate && (
+                          <tr className="bg-slate-50 border-b border-slate-200/60">
+                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Exam Date</th>
+                            <td className="px-4 py-3 text-slate-800 font-semibold">{dates.examDate}</td>
+                          </tr>
+                        )}
+                        {dates.customDates && dates.customDates.map((cd: any, idx: number) => (
+                          <tr key={idx} className={idx % 2 === 0 ? "border-b border-slate-200/60" : "bg-slate-50 border-b border-slate-200/60"}>
+                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">{cd.label}</th>
+                            <td className="px-4 py-3 text-slate-800">{cd.value}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 9. How to Apply */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-indigo-500" /> How to Apply
+                  </h2>
+                  <ol className="list-decimal pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
+                    <li>Read the official notification PDF carefully before applying (Link provided below).</li>
+                    <li>Click on the <strong>Apply Online</strong> link below or visit the official website.</li>
+                    <li>Register yourself on the portal and fill in all the required details accurately.</li>
+                    <li>Upload scanned copies of required documents (photo, signature, educational certificates).</li>
+                    <li>Pay the application fee (if applicable) online.</li>
+                    <li>Review all information in the application form carefully before final submission.</li>
+                    <li>Download and print a copy of the submitted form for future reference.</li>
+                  </ol>
+                </div>
+
+                {/* 10. Important Links */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <Download className="h-5 w-5 text-violet-500" /> Important Links
+                  </h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
+                      <thead>
+                        <tr className="bg-slate-800 text-white text-[11px] uppercase tracking-wider font-bold">
+                          <th className="px-4 py-3 border border-slate-200/60">Link Description</th>
+                          <th className="px-4 py-3 border border-slate-200/60 text-right">Action Link</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {job.applyLink && job.applyLink.trim() !== "" && (
+                          <tr className="border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors">
+                            <td className="px-4 py-3 font-semibold text-slate-700">Apply Online Portal</td>
+                            <td className="px-4 py-3 text-right">
+                              <a href={job.applyLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-bold text-primary hover:underline">
+                                Apply Link <ExternalLink className="h-3.5 w-3.5" />
+                              </a>
+                            </td>
+                          </tr>
+                        )}
+                        {job.pdfUrl && job.pdfUrl.trim() !== "" && (
+                          <tr className="bg-slate-50 border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors">
+                            <td className="px-4 py-3 font-semibold text-slate-700">Official Notification PDF</td>
+                            <td className="px-4 py-3 text-right">
+                              <a href={job.pdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-bold text-rose-600 hover:underline">
+                                Download PDF <Download className="h-3.5 w-3.5" />
+                              </a>
+                            </td>
+                          </tr>
+                        )}
+                        {job.officialWebsite && job.officialWebsite.trim() !== "" && (
+                          <tr className="border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors">
+                            <td className="px-4 py-3 font-semibold text-slate-700">Official Website</td>
+                            <td className="px-4 py-3 text-right">
+                              <a href={job.officialWebsite} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-bold text-amber-600 hover:underline">
+                                Visit Website <ExternalLink className="h-3.5 w-3.5" />
+                              </a>
+                            </td>
+                          </tr>
+                        )}
+                        {dates.customLinks && dates.customLinks.map((cl: any, idx: number) => cl.label && cl.value && cl.value.trim() !== "" && (
+                          <tr key={idx} className={(idx + (job.officialWebsite ? 1 : 0)) % 2 === 0 ? "border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors" : "bg-slate-50 border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors"}>
+                            <td className="px-4 py-3 font-semibold text-slate-700">{cl.label}</td>
+                            <td className="px-4 py-3 text-right">
+                              <a href={cl.value} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-bold text-indigo-600 hover:underline">
+                                Link Details <ExternalLink className="h-3.5 w-3.5" />
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 

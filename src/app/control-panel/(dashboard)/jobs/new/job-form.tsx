@@ -22,6 +22,9 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   const [overviewHtml, setOverviewHtml] = useState(initialJob?.overview || "");
   const [vacancyDetailsHtml, setVacancyDetailsHtml] = useState(initialJob?.vacancyDetails || "");
   const [howToApplyHtml, setHowToApplyHtml] = useState(initialJob?.howToApply || "");
+  const [ageLimitHtml, setAgeLimitHtml] = useState(initialJob?.ageLimit || "");
+  const [salaryHtml, setSalaryHtml] = useState(initialJob?.salary || "");
+  const [applicationFeesHtml, setApplicationFeesHtml] = useState(initialJob?.applicationFees || "");
   const [loading, setLoading] = useState(false);
   const [faqs, setFaqs] = useState<{ q: string; a: string }[]>(() => {
     if (initialJob?.faqSchema) {
@@ -103,6 +106,9 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         <textarea name="overview" value={overviewHtml} onChange={(e) => setOverviewHtml(e.target.value)} className="hidden" />
         <textarea name="vacancyDetails" value={vacancyDetailsHtml} onChange={(e) => setVacancyDetailsHtml(e.target.value)} className="hidden" />
         <textarea name="howToApply" value={howToApplyHtml} onChange={(e) => setHowToApplyHtml(e.target.value)} className="hidden" />
+        <textarea name="ageLimit" value={ageLimitHtml} onChange={(e) => setAgeLimitHtml(e.target.value)} className="hidden" />
+        <textarea name="salary" value={salaryHtml} onChange={(e) => setSalaryHtml(e.target.value)} className="hidden" />
+        <textarea name="applicationFees" value={applicationFeesHtml} onChange={(e) => setApplicationFeesHtml(e.target.value)} className="hidden" />
 
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -285,25 +291,21 @@ export default function JobForm({ states, categories, initialJob, initialType }:
               </div>
 
               {postType === "Latest Notifications" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  <div>
+                <div className="space-y-4 pt-2">
+                  <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-600 mb-1">Age Limit</label>
-                    <input 
-                      type="text" 
-                      name="ageLimit" 
-                      defaultValue={initialJob?.ageLimit || ""}
-                      placeholder="18 to 30 years" 
-                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                    <RichTextEditor 
+                      value={ageLimitHtml}
+                      onChange={setAgeLimitHtml}
+                      placeholder="Enter age limit details (e.g. 18 to 30 years, age relaxation, etc.)..."
                     />
                   </div>
-                  <div>
+                  <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-600 mb-1">Salary / Pay Scale</label>
-                    <input 
-                      type="text" 
-                      name="salary" 
-                      defaultValue={initialJob?.salary || ""}
-                      placeholder="Pay level 4 (25500 - 81100)" 
-                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                    <RichTextEditor 
+                      value={salaryHtml}
+                      onChange={setSalaryHtml}
+                      placeholder="Enter salary or pay scale details..."
                     />
                   </div>
                 </div>
@@ -321,14 +323,12 @@ export default function JobForm({ states, categories, initialJob, initialType }:
               )}
 
               {postType === "Latest Notifications" && (
-                <div>
+                <div className="space-y-1">
                   <label className="block text-xs font-semibold text-slate-600 mb-1">Application Fees</label>
-                  <input 
-                    type="text" 
-                    name="applicationFees" 
-                    defaultValue={initialJob?.applicationFees || ""}
-                    placeholder="GEN/OBC: 100, SC/ST: Exempted" 
-                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-primary focus:outline-none transition-all"
+                  <RichTextEditor 
+                    value={applicationFeesHtml}
+                    onChange={setApplicationFeesHtml}
+                    placeholder="Enter application fees details for different categories..."
                   />
                 </div>
               )}

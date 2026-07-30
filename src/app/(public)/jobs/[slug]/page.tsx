@@ -458,9 +458,10 @@ export default async function JobDetailPage({ params }: Props) {
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                     <Calendar className="h-5 w-5 text-amber-500" /> Age Limit
                   </h2>
-                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                    {job.ageLimit || "Please refer to the official notification PDF for detailed age limit guidelines."}
-                  </p>
+                  <div 
+                    className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.ageLimit || "Please refer to the official notification PDF for detailed age limit guidelines." }}
+                  />
                 </div>
 
                 {/* 6. Selection Process */}
@@ -479,9 +480,10 @@ export default async function JobDetailPage({ params }: Props) {
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                     <Briefcase className="h-5 w-5 text-teal-500" /> Salary / Pay Scale
                   </h2>
-                  <p className="text-sm text-slate-700 leading-relaxed font-semibold">
-                    {job.salary || "As per the rules of the recruitment board."}
-                  </p>
+                  <div 
+                    className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.salary || "As per the rules of the recruitment board." }}
+                  />
                 </div>
 
                 {/* 8. Application Fee */}
@@ -489,9 +491,10 @@ export default async function JobDetailPage({ params }: Props) {
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                     <Building2 className="h-5 w-5 text-rose-500" /> Application Fee
                   </h2>
-                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                    {job.applicationFees || "Free or refer to official notification PDF."}
-                  </p>
+                  <div 
+                    className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.applicationFees || "Free or refer to official notification PDF." }}
+                  />
                 </div>
 
                 {/* 9. How to Apply */}

@@ -71,8 +71,8 @@ model Job {
   // Job Specifics
   vacancy             Int            @default(0)
   eligibility         String         @db.Text
-  ageLimit            String?
-  salary              String?
+  ageLimit            String?        @db.Text
+  salary              String?        @db.Text
   selectionProcess    String?        @db.Text
   applicationFees     String?        @db.Text
   importantDates      Json           // JSON structured dates (start, end, exam date)

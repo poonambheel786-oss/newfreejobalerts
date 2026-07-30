@@ -3,6 +3,7 @@ import { CampaignIcon, AssignmentIndIcon, VerifiedIcon, DownloadIcon, ArrowForwa
 import { prisma } from "@/lib/db";
 import { Search } from "lucide-react";
 import { unstable_cache } from "next/cache";
+import EntriesSelector from "@/components/EntriesSelector";
 
 export const revalidate = 300; // Cache page for 5 minutes
 
@@ -41,8 +42,7 @@ function formatDateString(dateStr: string) {
 }
 
 const getCachedHomeData = unstable_cache(
-  async (currentPage: number) => {
-    const limit = 15;
+  async (currentPage: number, limit: number) => {
     const skip = (currentPage - 1) * limit;
 
     const [
@@ -133,13 +133,14 @@ const getCachedHomeData = unstable_cache(
 interface Props {
   searchParams: Promise<{
     page?: string;
+    limit?: string;
   }>;
 }
 
 export default async function Home({ searchParams }: Props) {
   const params = await searchParams;
   const currentPage = parseInt(params.page || "1") || 1;
-  const limit = 15;
+  const limit = parseInt(params.limit || "15") || 15;
 
   let notifications: any[] = [];
   let admitCards: any[] = [];
@@ -150,7 +151,7 @@ export default async function Home({ searchParams }: Props) {
   let dbError = false;
 
   try {
-    const data = await getCachedHomeData(currentPage);
+    const data = await getCachedHomeData(currentPage, limit);
     notifications = data.notifications;
     admitCards = data.admitCards;
     results = data.results;
@@ -302,6 +303,7 @@ export default async function Home({ searchParams }: Props) {
         <section className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden">
           <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low/30">
             <h2 className="font-semibold text-lg text-on-surface">Recruitment Dashboard</h2>
+            <EntriesSelector currentLimit={limit} />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -359,27 +361,34 @@ export default async function Home({ searchParams }: Props) {
           </div>
 
           {/* Table Pagination */}
-          {totalPages > 1 && (
-            <div className="bg-slate-50/50 px-6 py-4 border-t border-outline-variant/10 flex items-center justify-between">
-              <Link 
-                href={currentPage > 1 ? `/?page=${currentPage - 1}` : "#"} 
-                className={`text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
-                  currentPage > 1 ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
-                }`}
-              >
-                Previous
-              </Link>
-              <span className="text-xs font-semibold text-slate-500">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Link 
-                href={currentPage < totalPages ? `/?page=${currentPage + 1}` : "#"} 
-                className={`text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
-                  currentPage < totalPages ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
-                }`}
-              >
-                Next
-              </Link>
+          {totalJobs > 0 && (
+            <div className="bg-slate-50/50 px-6 py-4 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
+              <div>
+                Showing <span className="font-bold text-slate-800">{(currentPage - 1) * limit + 1}</span> – <span className="font-bold text-slate-800">{Math.min(currentPage * limit, totalJobs)}</span> of <span className="font-bold text-slate-800">{totalJobs}</span> records
+              </div>
+              {totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <Link 
+                    href={currentPage > 1 ? `/?page=${currentPage - 1}&limit=${limit}` : "#"} 
+                    className={`text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
+                      currentPage > 1 ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
+                    }`}
+                  >
+                    Previous
+                  </Link>
+                  <span className="text-xs font-semibold text-slate-500">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <Link 
+                    href={currentPage < totalPages ? `/?page=${currentPage + 1}&limit=${limit}` : "#"} 
+                    className={`text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
+                      currentPage < totalPages ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
+                    }`}
+                  >
+                    Next
+                  </Link>
+                </div>
+              )}
             </div>
           )}
         </section>

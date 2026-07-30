@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { ArrowLeft, Edit, AlertCircle, ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import EntriesSelector from "@/components/EntriesSelector";
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +10,7 @@ interface Props {
   searchParams: Promise<{
     type?: string;
     page?: string;
+    limit?: string;
   }>;
 }
 
@@ -16,7 +18,7 @@ export default async function AdminJobsPage({ searchParams }: Props) {
   const params = await searchParams;
   const postType = params.type || "Latest Notifications";
   const currentPage = parseInt(params.page || "1") || 1;
-  const limit = 20;
+  const limit = parseInt(params.limit || "10") || 10;
   const skip = (currentPage - 1) * limit;
 
   let jobs: any[] = [];
@@ -96,6 +98,9 @@ export default async function AdminJobsPage({ searchParams }: Props) {
 
       {/* Main Table */}
       <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <EntriesSelector currentLimit={limit} />
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -168,29 +173,37 @@ export default async function AdminJobsPage({ searchParams }: Props) {
         </div>
 
         {/* Pagination Section */}
-        {totalPages > 1 && (
-          <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
-            <Link
-              href={currentPage > 1 ? `/control-panel/dashboard/jobs?type=${encodeURIComponent(postType)}&page=${currentPage - 1}` : "#"}
-              className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
-                currentPage > 1 ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
-              }`}
-            >
-              <ChevronLeft className="h-4 w-4" /> Previous
-            </Link>
-            
+        {totalJobs > 0 && (
+          <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
             <span className="text-xs font-semibold text-slate-500">
-              Page {currentPage} of {totalPages}
+              Showing <span className="font-bold text-slate-800">{(currentPage - 1) * limit + 1}</span> – <span className="font-bold text-slate-800">{Math.min(currentPage * limit, totalJobs)}</span> of <span className="font-bold text-slate-800">{totalJobs}</span> records
             </span>
 
-            <Link
-              href={currentPage < totalPages ? `/control-panel/dashboard/jobs?type=${encodeURIComponent(postType)}&page=${currentPage + 1}` : "#"}
-              className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
-                currentPage < totalPages ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
-              }`}
-            >
-              Next <ChevronRight className="h-4 w-4" />
-            </Link>
+            {totalPages > 1 && (
+              <div className="flex items-center gap-4">
+                <Link
+                  href={currentPage > 1 ? `/control-panel/dashboard/jobs?type=${encodeURIComponent(postType)}&page=${currentPage - 1}&limit=${limit}` : "#"}
+                  className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
+                    currentPage > 1 ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
+                  }`}
+                >
+                  <ChevronLeft className="h-4 w-4" /> Previous
+                </Link>
+                
+                <span className="text-xs font-semibold text-slate-500">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <Link
+                  href={currentPage < totalPages ? `/control-panel/dashboard/jobs?type=${encodeURIComponent(postType)}&page=${currentPage + 1}&limit=${limit}` : "#"}
+                  className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-2 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer ${
+                    currentPage < totalPages ? "text-slate-700 hover:bg-slate-50" : "text-slate-300 pointer-events-none"
+                  }`}
+                >
+                  Next <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

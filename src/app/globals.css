@@ -143,18 +143,28 @@ body {
   width: 100% !important;
   border-collapse: collapse;
   margin: 1rem 0;
-  min-width: 500px;
 }
 
 .html-content th, .html-content td {
   border: 1px solid #e2e8f0;
   padding: 8px 12px;
   text-align: left;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .html-content th {
   background-color: #f8fafc;
   font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .html-content table {
+    font-size: 11px;
+  }
+  .html-content th, .html-content td {
+    padding: 6px 8px;
+  }
 }
 
 /* Rich text layout restorations */

@@ -2,6 +2,7 @@ import { PrismaClient } from '../src/generated/prisma/client'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
 import dotenv from 'dotenv'
+import { blogPosts } from '../src/lib/blog-data'
 
 dotenv.config()
 
@@ -57,6 +58,32 @@ async function main() {
     update: { name: 'General Recruitment' },
     create: { name: 'General Recruitment', slug: 'general' }
   })
+
+  console.log('Seeding initial blog posts...')
+  for (const post of blogPosts) {
+    await prisma.blogPost.upsert({
+      where: { slug: post.slug },
+      update: {
+        title: post.title,
+        description: post.description,
+        category: post.category,
+        readTime: post.readTime,
+        date: post.date,
+        author: post.author,
+        content: post.content
+      },
+      create: {
+        title: post.title,
+        slug: post.slug,
+        description: post.description,
+        category: post.category,
+        readTime: post.readTime,
+        date: post.date,
+        author: post.author,
+        content: post.content
+      }
+    })
+  }
 
   console.log('Database seeded successfully!')
 }

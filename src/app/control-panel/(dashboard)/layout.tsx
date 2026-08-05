@@ -8,7 +8,8 @@ import {
   Plus, 
   List, 
   LogOut, 
-  ExternalLink 
+  ExternalLink,
+  BookOpen
 } from "lucide-react";
 import { logout } from "../actions";
 
@@ -133,6 +134,30 @@ export default function ControlPanelLayout({
                 >
                   <Plus className="h-3.5 w-3.5" />
                   Add Admit Card
+                </Link>
+              </div>
+            </div>
+
+            {/* Blog Menu Section */}
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2 flex items-center gap-1.5">
+                <BookOpen className="h-3.5 w-3.5 text-violet-500" />
+                Career Blog
+              </p>
+              <div className="space-y-0.5 pl-2 border-l border-slate-100 ml-3">
+                <Link 
+                  href="/control-panel/dashboard/blog" 
+                  className="flex items-center gap-2 text-slate-500 hover:text-primary px-3 py-2 rounded-lg text-xs font-semibold transition-all"
+                >
+                  <List className="h-3.5 w-3.5" />
+                  View Articles
+                </Link>
+                <Link 
+                  href="/control-panel/blog/new" 
+                  className="flex items-center gap-2 text-slate-500 hover:text-primary px-3 py-2 rounded-lg text-xs font-semibold transition-all"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add Article
                 </Link>
               </div>
             </div>

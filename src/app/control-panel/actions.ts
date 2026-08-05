@@ -212,3 +212,89 @@ export async function createJob(state: any, formData: FormData) {
     return { success: false, error: e.message || 'An unexpected error occurred while saving the notification.' }
   }
 }
+
+export async function createOrUpdateBlogPost(state: any, formData: FormData) {
+  try {
+    const id = formData.get('id') as string | null
+    const title = formData.get('title') as string
+    const description = formData.get('description') as string
+    const category = formData.get('category') as string
+    const readTime = formData.get('readTime') as string
+    const author = formData.get('author') as string
+    const content = formData.get('content') as string
+    const dateInput = formData.get('date') as string
+
+    if (!title || !description || !category || !readTime || !author || !content) {
+      return { success: false, error: 'All fields are required.' }
+    }
+
+    const date = dateInput || new Date().toISOString().split('T')[0]
+
+    // Generate unique slug
+    const baseSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    const slug = id ? undefined : `${baseSlug}-${Math.floor(Math.random() * 1000)}`
+
+    const postData = {
+      title,
+      description,
+      category,
+      readTime,
+      author,
+      content,
+      date
+    }
+
+    if (id) {
+      // Update existing post
+      await prisma.blogPost.update({
+        where: { id },
+        data: postData
+      })
+    } else {
+      // Create new post
+      await prisma.blogPost.create({
+        data: {
+          ...postData,
+          slug: slug as string
+        }
+      })
+    }
+
+    // Defer revalidation to background
+    Promise.resolve().then(() => {
+      try {
+        revalidatePath("/", "layout")
+      } catch (e) {
+        console.error("Background revalidation failed:", e)
+      }
+    })
+
+    return { success: true }
+  } catch (e: any) {
+    console.error(e)
+    return { success: false, error: e.message || 'An unexpected error occurred while saving the blog post.' }
+  }
+}
+
+export async function deleteBlogPost(id: string) {
+  try {
+    await prisma.blogPost.delete({
+      where: { id }
+    })
+
+    // Defer revalidation to background
+    Promise.resolve().then(() => {
+      try {
+        revalidatePath("/", "layout")
+      } catch (e) {
+        console.error("Background revalidation failed:", e)
+      }
+    })
+
+    return { success: true }
+  } catch (e: any) {
+    console.error(e)
+    return { success: false, error: e.message || 'Failed to delete the blog post.' }
+  }
+}
+

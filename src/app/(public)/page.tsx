@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CampaignIcon, AssignmentIndIcon, VerifiedIcon, DownloadIcon, ArrowForwardIcon, FilterIcon } from "@/app/icons";
 import { prisma } from "@/lib/db";
-import { Search } from "lucide-react";
+import { Search, BookOpen, Clock, User, ArrowRight } from "lucide-react";
 import { unstable_cache } from "next/cache";
 import EntriesSelector from "@/components/EntriesSelector";
 
@@ -53,7 +53,8 @@ const getCachedHomeData = unstable_cache(
       admitCards,
       results,
       consolidatedJobs,
-      totalJobs
+      totalJobs,
+      latestBlogPosts
     ] = await Promise.all([
       prisma.job.findMany({
         where: { postType: "Latest Notifications", status: "Published" },
@@ -110,6 +111,20 @@ const getCachedHomeData = unstable_cache(
       }),
       prisma.job.count({
         where: { postType: "Latest Notifications", status: "Published" }
+      }),
+      prisma.blogPost.findMany({
+        orderBy: { date: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          description: true,
+          category: true,
+          readTime: true,
+          date: true,
+          author: true
+        }
       })
     ]);
 
@@ -123,7 +138,8 @@ const getCachedHomeData = unstable_cache(
       admitCards,
       results,
       consolidatedJobs,
-      totalJobs
+      totalJobs,
+      latestBlogPosts
     };
   },
   ["homepage-data"],
@@ -147,6 +163,7 @@ export default async function Home({ searchParams }: Props) {
   let results: any[] = [];
   let consolidatedJobs: any[] = [];
   let marqueeJobs: any[] = [];
+  let latestBlogPosts: any[] = [];
   let totalJobs = 0;
   let dbError = false;
 
@@ -157,6 +174,7 @@ export default async function Home({ searchParams }: Props) {
     results = data.results;
     consolidatedJobs = data.consolidatedJobs;
     marqueeJobs = data.marqueeJobs;
+    latestBlogPosts = data.latestBlogPosts || [];
     totalJobs = data.totalJobs;
   } catch (e) {
     console.error("Database connection failed:", e);
@@ -392,7 +410,65 @@ export default async function Home({ searchParams }: Props) {
             </div>
           )}
         </section>
+
+        {/* Latest Blog Posts Section */}
+        {latestBlogPosts && latestBlogPosts.length > 0 && (
+          <section className="space-y-6 pt-6">
+            <div className="flex items-center justify-between border-b border-outline-variant/10 pb-2">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" />
+                <h2 className="font-extrabold text-lg text-on-surface tracking-tight">Latest Career Articles & Guides</h2>
+              </div>
+              <Link href="/blog" className="text-xs font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer">
+                <span>View All Articles</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {latestBlogPosts.map((post: any) => (
+                <article
+                  key={post.id}
+                  className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  <div className="p-5 flex flex-col flex-grow space-y-3.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-violet-50 text-violet-700">
+                        {post.category}
+                      </span>
+                      <span className="flex items-center gap-1 text-[10px] text-slate-500 font-semibold">
+                        <Clock className="h-3 w-3" />
+                        {post.readTime}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 flex-grow">
+                      <h3 className="text-sm font-bold text-on-surface hover:text-primary transition-colors line-clamp-2">
+                        <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                      </h3>
+                      <p className="text-[11px] text-on-surface-variant/80 line-clamp-2 leading-relaxed">
+                        {post.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[10px]">
+                      <span className="text-slate-500 font-medium">{post.author.split(" (")[0]}</span>
+                      <Link
+                        href={`/blog/${post.slug}`}
+                        className="flex items-center gap-0.5 font-bold text-primary hover:text-primary-container transition-colors"
+                      >
+                        <span>Read Post</span>
+                        <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
 }
+

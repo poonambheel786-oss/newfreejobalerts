@@ -107,3 +107,21 @@ model Job {
   @@index([stateId])
   @@index([postType])
 }
+
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  category    String   // e.g. "Exam Preparation", "Career Guidance", etc.
+  readTime    String   // e.g. "5 min read"
+  date        String   // e.g. "2026-08-05"
+  author      String   // e.g. "Prashant Sharma"
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([createdAt])
+}
+

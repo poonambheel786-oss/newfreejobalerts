@@ -3,23 +3,34 @@
 import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { blogPosts, BlogPost } from "@/lib/blog-data";
+import { prisma } from "@/lib/db";
+import { BlogPost } from "@/lib/blog-data";
 import { Clock, Calendar, User, ArrowLeft, Share2, Link2, BookOpen } from "lucide-react";
 import type { Metadata } from "next";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Cache page for 1 minute
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 // Fetch single blog post helper
-function getPost(slug: string): BlogPost | undefined {
-  return blogPosts.find((p) => p.slug === slug);
+async function getPost(slug: string) {
+  try {
+    return await prisma.blogPost.findUnique({
+      where: { slug }
+    });
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }
 
 // Generate dynamic SEO metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPost(slug);
 
   if (!post) {
     return {
@@ -38,6 +49,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       authors: [post.author],
     },
   };
+}
+
+// Check content type and render
+function renderContent(content: string) {
+  const hasHtml = /<\/?[a-z][\s\S]*>/i.test(content);
+  if (hasHtml) {
+    return <div className="html-content" dangerouslySetInnerHTML={{ __html: content }} />;
+  }
+  return renderMarkdown(content);
 }
 
 // Simple Markdown to HTML Parser
@@ -211,14 +231,29 @@ function parseInlineMarkdown(text: string) {
 
 export default async function BlogPostDetailPage({ params }: Props) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPost(slug);
 
   if (!post) {
     notFound();
   }
 
   // Get 3 recent related posts for sidebar
-  const relatedPosts = blogPosts.filter((p) => p.id !== post.id).slice(0, 3);
+  let relatedPosts: any[] = [];
+  try {
+    relatedPosts = await prisma.blogPost.findMany({
+      where: {
+        NOT: {
+          id: post.id
+        }
+      },
+      take: 3,
+      orderBy: {
+        date: "desc"
+      }
+    });
+  } catch (e) {
+    console.error("Failed to load related posts:", e);
+  }
 
   // JSON-LD Article Schema
   const jsonLd = {
@@ -308,7 +343,7 @@ export default async function BlogPostDetailPage({ params }: Props) {
 
             {/* Rich Text Body */}
             <div className="prose max-w-none text-on-surface-variant">
-              {renderMarkdown(post.content)}
+              {renderContent(post.content)}
             </div>
 
             {/* Sharing Footer */}

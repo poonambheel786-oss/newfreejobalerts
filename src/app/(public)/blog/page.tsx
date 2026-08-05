@@ -2,9 +2,13 @@
 
 import React from "react";
 import Link from "next/link";
-import { blogPosts, BlogPost } from "@/lib/blog-data";
+import { prisma } from "@/lib/db";
+import { BlogPost } from "@/lib/blog-data";
 import { BookOpen, Search, Clock, Calendar, User, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Cache page for 1 minute
 
 export const metadata: Metadata = {
   title: "Career & Exam Preparation Blog - NewFreeJobAlert",
@@ -23,8 +27,19 @@ export default async function BlogPage({ searchParams }: Props) {
   const activeCategory = params.category || "All";
   const searchVal = (params.search || "").trim().toLowerCase();
 
+  let posts: any[] = [];
+  try {
+    posts = await prisma.blogPost.findMany({
+      orderBy: {
+        date: "desc"
+      }
+    });
+  } catch(e) {
+    console.error("Failed to load blog posts:", e);
+  }
+
   // Filter posts
-  const filteredPosts = blogPosts.filter((post) => {
+  const filteredPosts = posts.filter((post) => {
     const matchesCategory = activeCategory === "All" || post.category === activeCategory;
     const matchesSearch =
       !searchVal ||

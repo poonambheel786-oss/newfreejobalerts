@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/db'
-import { blogPosts } from '@/lib/blog-data'
 
 export const revalidate = 3600; // Cache sitemap for 1 hour
 
@@ -24,7 +23,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  const blogUrls = blogPosts.map((post) => ({
+  let posts: any[] = []
+  try {
+    posts = await prisma.blogPost.findMany({
+      select: { slug: true, date: true }
+    })
+  } catch (e) {
+    console.error("Failed to fetch blog posts for sitemap:", e)
+  }
+
+  const blogUrls = posts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.date),
     changeFrequency: 'weekly' as const,

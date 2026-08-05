@@ -47,7 +47,7 @@ export default function Header({ states }: HeaderProps) {
           {/* Desktop Categories Navigation (Visible on lg and above) */}
           <div className="hidden lg:flex items-center gap-5 xl:gap-6">
             <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/">Home</Link>
-            <Link className="text-primary font-bold text-sm bg-primary/5 px-2.5 py-1.5 rounded-lg border border-primary/20 hover:bg-primary/10 transition-all shrink-0" href="/blog">Career Blog</Link>
+            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/blog">Career Blog</Link>
             <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=all-india-govt-jobs">All India Govt Jobs</Link>
             
             {/* State Govt Jobs Mega Menu */}

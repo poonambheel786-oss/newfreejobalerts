@@ -224,7 +224,7 @@ export default async function JobsListingPage({ searchParams }: Props) {
             <EntriesSelector currentLimit={limit} />
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[850px] text-left border-collapse">
               <thead>
                 <tr className="text-[11px] font-bold uppercase tracking-wider">
                   <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Posted Date</th>

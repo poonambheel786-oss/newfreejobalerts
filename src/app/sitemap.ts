@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/db'
+import { blogPosts } from '@/lib/blog-data'
 
 export const revalidate = 3600; // Cache sitemap for 1 hour
 
@@ -23,6 +24,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
+  const blogUrls = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
+
   const staticUrls = [
     '',
     '/about',
@@ -36,6 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/dmca-policy',
     '/correction-policy',
     '/jobs',
+    '/blog',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
@@ -43,5 +52,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1.0 : 0.5,
   }))
 
-  return [...staticUrls, ...jobUrls]
+  return [...staticUrls, ...jobUrls, ...blogUrls]
 }

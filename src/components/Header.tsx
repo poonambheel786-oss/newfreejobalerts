@@ -73,6 +73,7 @@ export default function Header({ states }: HeaderProps) {
             <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=teaching-jobs">Teaching Jobs</Link>
             <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=railway-jobs">Railway Jobs</Link>
             <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=police-defence-jobs">Police/Defence Jobs</Link>
+            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0 animate-pulse text-primary font-bold" href="/blog">Career Blog</Link>
 
             {/* More Dropdown */}
             <div className="relative group py-2 shrink-0">
@@ -138,6 +139,9 @@ export default function Header({ states }: HeaderProps) {
                   </Link>
                   <Link href="/jobs?category=all-india-govt-jobs" className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg transition-colors">
                     All India Govt Jobs
+                  </Link>
+                  <Link href="/blog" className="flex items-center gap-3 px-3 py-2 text-sm font-bold text-primary hover:bg-slate-50 rounded-lg transition-colors">
+                    Career Blog
                   </Link>
                 </div>
               </div>

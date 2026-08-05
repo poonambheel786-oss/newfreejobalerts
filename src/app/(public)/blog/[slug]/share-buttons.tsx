@@ -6,18 +6,18 @@ import { Link2 } from "lucide-react";
 
 interface Props {
   title: string;
-  slug: string;
+  path: string; // e.g. "/blog/slug" or "/jobs/slug"
 }
 
-export default function ShareButtons({ title, slug }: Props) {
+export default function ShareButtons({ title, path }: Props) {
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/blog/${slug}`;
+    const url = `${window.location.origin}${path}`;
     navigator.clipboard.writeText(url);
-    alert("Article link copied to clipboard!");
+    alert("Link copied to clipboard!");
   };
 
   const encodedTitle = encodeURIComponent(title);
-  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/blog/${slug}` : `https://www.newfreejobalerts.com/blog/${slug}`;
+  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}${path}` : `https://www.newfreejobalerts.com${path}`;
   const encodedUrl = encodeURIComponent(shareUrl);
 
   return (

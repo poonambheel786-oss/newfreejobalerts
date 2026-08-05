@@ -323,17 +323,17 @@ export default async function Home({ searchParams }: Props) {
             <h2 className="font-semibold text-lg text-on-surface">Recruitment Dashboard</h2>
             <EntriesSelector currentLimit={limit} />
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[850px] text-left border-collapse">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full min-w-[1000px] text-left border-collapse table-fixed">
               <thead>
-                <tr className="text-[11px] font-bold uppercase tracking-wider">
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Post Date</th>
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Exam / Post Name</th>
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Qualification</th>
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Advt No</th>
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Start Date</th>
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Last Date</th>
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200 text-center">Action</th>
+                <tr className="text-[11px] font-bold uppercase tracking-wider bg-slate-800 text-white">
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[10%]">Post Date</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[35%] min-w-[320px]">Exam / Post Name</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[20%] min-w-[160px]">Qualification</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[15%]">Advt No</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[10%]">Start Date</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[10%]">Last Date</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap text-center w-[10%]">Action</th>
                 </tr>
               </thead>
               <tbody className="text-xs sm:text-sm">
@@ -360,13 +360,13 @@ export default async function Home({ searchParams }: Props) {
                     return (
                       <tr key={i} className="hover:bg-primary-container/5 transition-colors">
                         <td className="px-6 py-4 text-on-surface-variant border border-slate-200 whitespace-nowrap">{formatDate(tj.createdAt)}</td>
-                        <td className="px-6 py-4 border border-slate-200">
-                          <Link href={`/jobs/${tj.slug}`} className="hover:text-primary hover:underline transition-colors block">{tj.title}</Link>
+                        <td className="px-6 py-4 border border-slate-200 font-semibold text-slate-800 break-words">
+                          <Link href={`/jobs/${tj.slug}`} className="hover:text-primary hover:underline transition-colors block leading-snug">{tj.title}</Link>
                         </td>
-                        <td className="px-6 py-4 max-w-[200px] truncate border border-slate-200" title={tj.qualification.name}>{tj.qualification.name}</td>
-                        <td className="px-6 py-4 text-outline border border-slate-200 whitespace-nowrap">{tj.advtNumber || "N/A"}</td>
-                        <td className="px-6 py-4 text-emerald-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(startDateStr)}</td>
-                        <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(lastDateStr)}</td>
+                        <td className="px-6 py-4 border border-slate-200 break-words text-slate-600 font-medium" title={tj.qualification.name}>{tj.qualification.name}</td>
+                        <td className="px-6 py-4 text-outline border border-slate-200 break-all">{tj.advtNumber || "N/A"}</td>
+                        <td className="px-6 py-4 text-emerald-600 font-semibold border border-slate-200 whitespace-nowrap">{formatDateString(startDateStr)}</td>
+                        <td className="px-6 py-4 text-rose-600 font-semibold border border-slate-200 whitespace-nowrap">{formatDateString(lastDateStr)}</td>
                         <td className="px-6 py-4 text-center border border-slate-200">
                           <Link className="text-primary font-bold hover:underline cursor-pointer" href={`/jobs/${tj.slug}`}>More Info</Link>
                         </td>

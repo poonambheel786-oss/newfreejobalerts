@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Calendar, MapPin, GraduationCap, Building2, Download, ExternalLink, HelpCircle, Briefcase, ShieldCheck, ArrowLeft } from "lucide-react";
+import { Calendar, MapPin, GraduationCap, Building2, Download, ExternalLink, HelpCircle, Briefcase, ShieldCheck, ArrowLeft, Share2 } from "lucide-react";
 import { prisma } from "@/lib/db";
+import ShareButtons from "../../blog/[slug]/share-buttons";
 
 export const revalidate = 3600;
 
@@ -589,8 +590,18 @@ export default async function JobDetailPage({ params }: Props) {
                 </div>
               </div>
             )}
+
+            {/* Sharing Footer */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                <Share2 className="h-4 w-4 text-slate-400" />
+                <span>Share this Alert:</span>
+              </p>
+              <ShareButtons title={job.title} path={`/jobs/${job.slug}`} />
+            </div>
           </div>
         </div>
       </>
     );
   }
+

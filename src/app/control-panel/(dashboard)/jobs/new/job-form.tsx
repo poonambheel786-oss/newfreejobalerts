@@ -191,8 +191,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
             </div>
 
             {/* STEP 1: BASIC DETAILS */}
-            {currentStep === 1 && (
-              <div className="space-y-4">
+            <div className={currentStep === 1 ? "space-y-4" : "hidden"}>
                 <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1">Title / Heading *</label>
                   <input 
@@ -307,11 +306,9 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                   </div>
                 )}
               </div>
-            )}
 
             {/* STEP 2: DATES & LINKS */}
-            {currentStep === 2 && (
-              <div className="space-y-6">
+            <div className={currentStep === 2 ? "space-y-6" : "hidden"}>
                 {postType === "Latest Notifications" && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b border-slate-800 pb-4">
                     <div>
@@ -489,11 +486,9 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                   </button>
                 </div>
               </div>
-            )}
 
             {/* STEP 3: DETAILS & CONTENT */}
-            {currentStep === 3 && (
-              <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
+            <div className={currentStep === 3 ? "space-y-6 max-h-[70vh] overflow-y-auto pr-2" : "hidden"}>
                 {postType === "Latest Notifications" && (
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-400 mb-1">Overview (Rich Text)</label>
@@ -574,11 +569,9 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                   </>
                 )}
               </div>
-            )}
 
             {/* STEP 4: FAQS */}
-            {currentStep === 4 && (
-              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+            <div className={currentStep === 4 ? "space-y-4 max-h-[70vh] overflow-y-auto pr-2" : "hidden"}>
                 {faqs.length > 0 && (
                   <div className="space-y-4">
                     {faqs.map((faq, index) => (
@@ -632,11 +625,9 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                   <Plus className="h-4.5 w-4.5" /> Add FAQ Item
                 </button>
               </div>
-            )}
 
             {/* STEP 5: SEO & PUBLISH */}
-            {currentStep === 5 && (
-              <div className="space-y-4">
+            <div className={currentStep === 5 ? "space-y-4" : "hidden"}>
                 <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1">Meta Title Tag (Optional)</label>
                   <input 
@@ -668,7 +659,6 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                   />
                 </div>
               </div>
-            )}
 
             {/* Wizard Navigation Bar Footer */}
             <div className="flex justify-between items-center pt-6 border-t border-slate-800 mt-6">

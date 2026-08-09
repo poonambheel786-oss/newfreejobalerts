@@ -39,7 +39,7 @@ export async function createJob(state: any, formData: FormData) {
     const title = formData.get('title') as string
     const departmentName = formData.get('department') as string
     const advtNumber = formData.get('advtNumber') as string
-    const vacancy = parseInt(formData.get('vacancy') as string) || 0
+    const vacancy = (formData.get('vacancy') as string) || "0"
     const qualificationName = formData.get('qualification') as string
     const eligibility = formData.get('eligibility') as string
     const ageLimit = formData.get('ageLimit') as string

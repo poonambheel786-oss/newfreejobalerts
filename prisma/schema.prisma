@@ -69,7 +69,7 @@ model Job {
   postType            String         @default("Latest Notifications")
   
   // Job Specifics
-  vacancy             Int            @default(0)
+  vacancy             String         @default("0")
   eligibility         String         @db.Text
   ageLimit            String?        @db.Text
   salary              String?        @db.Text

@@ -62,8 +62,8 @@
 .editorArea {
   flex-grow: 1;
   padding: 16px;
-  min-height: 250px;
-  max-height: 500px;
+  min-height: 120px;
+  max-height: 280px;
   overflow-y: auto;
   outline: none;
   line-height: 1.625;
@@ -76,8 +76,8 @@
 
 .htmlView {
   width: 100%;
-  min-height: 250px;
-  max-height: 500px;
+  min-height: 120px;
+  max-height: 280px;
   padding: 16px;
   border: none;
   outline: none;

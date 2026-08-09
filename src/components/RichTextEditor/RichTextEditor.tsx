@@ -183,7 +183,7 @@ export default function RichTextEditor({
           suppressContentEditableWarning
           data-placeholder={placeholder}
           className={`${styles.editorArea} prose prose-sm max-w-none bg-white`}
-          style={{ minHeight: isFullscreen ? 'calc(100vh - 100px)' : '250px' }}
+          style={{ minHeight: isFullscreen ? 'calc(100vh - 100px)' : '120px' }}
         />
       )}
 

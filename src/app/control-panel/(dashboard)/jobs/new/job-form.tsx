@@ -511,18 +511,16 @@ export default function JobForm({ states, categories, initialJob, initialType }:
                   </div>
                 )}
 
-                {/* Commented out Eligibility/Details
-                <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-slate-650 mb-1">
-                    {postType === "Latest Notifications" ? "Eligibility / Details *" : "Description / HTML Content *"}
-                  </label>
-                  <RichTextEditor 
-                    value={htmlContent}
-                    onChange={setHtmlContent}
-                    placeholder="Type eligibility or description details..."
-                  />
-                </div>
-                */}
+                {postType !== "Latest Notifications" && (
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">Description / HTML Content *</label>
+                    <RichTextEditor 
+                      value={htmlContent}
+                      onChange={setHtmlContent}
+                      placeholder="Type description or HTML content details..."
+                    />
+                  </div>
+                )}
 
                 {postType === "Latest Notifications" && (
                   <>

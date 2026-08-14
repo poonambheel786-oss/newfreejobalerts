@@ -278,14 +278,23 @@ export default async function JobDetailPage({ params }: Props) {
 
           {isJob && (
             <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 flex gap-4 text-center shrink-0 w-full md:w-auto">
-              <div className="flex-1 px-4 border-r border-slate-200">
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Vacancies</p>
-                <p className="text-lg font-bold text-slate-900">{job.vacancy}</p>
-              </div>
-              <div className="flex-1 px-4">
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Last Date</p>
-                <p className="text-lg font-bold text-rose-600">{dates.end}</p>
-              </div>
+              {job.vacancy && job.vacancy.trim() !== "0" && job.vacancy.trim() !== "" ? (
+                <>
+                  <div className="flex-1 px-4 border-r border-slate-200">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Vacancies</p>
+                    <p className="text-lg font-bold text-slate-900">{job.vacancy}</p>
+                  </div>
+                  <div className="flex-1 px-4">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Last Date</p>
+                    <p className="text-lg font-bold text-rose-600">{dates.end || "N/A"}</p>
+                  </div>
+                </>
+              ) : (
+                <div className="flex-1 px-4">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Last Date</p>
+                  <p className="text-lg font-bold text-rose-600">{dates.end || "N/A"}</p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -337,10 +346,12 @@ export default async function JobDetailPage({ params }: Props) {
                             <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Post Category</th>
                             <td className="px-4 py-3 text-slate-800">{job.category.name}</td>
                           </tr>
-                          <tr className="bg-slate-50 border-b border-slate-200/60">
-                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Total Vacancies</th>
-                            <td className="px-4 py-3 text-slate-800 font-bold">{job.vacancy} Posts</td>
-                          </tr>
+                          {job.vacancy && job.vacancy.trim() !== "0" && job.vacancy.trim() !== "" && (
+                            <tr className="bg-slate-50 border-b border-slate-200/60">
+                              <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Total Vacancies</th>
+                              <td className="px-4 py-3 text-slate-800 font-bold">{job.vacancy} Posts</td>
+                            </tr>
+                          )}
                           <tr className="border-b border-slate-200/60">
                             <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Qualification</th>
                             <td className="px-4 py-3 text-slate-800 font-semibold">{job.qualification.name}</td>
@@ -455,56 +466,64 @@ export default async function JobDetailPage({ params }: Props) {
                 </div>
 
                 {/* 5. Age Limit */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-amber-500" /> Age Limit
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <div 
-                      className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: job.ageLimit || "Please refer to the official notification PDF for detailed age limit guidelines." }}
-                    />
+                {job.ageLimit && job.ageLimit.trim() !== "" && (
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                    <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                      <Calendar className="h-5 w-5 text-amber-500" /> Age Limit
+                    </h2>
+                    <div className="overflow-x-auto">
+                      <div 
+                        className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: job.ageLimit }}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* 6. Selection Process */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <ShieldCheck className="h-5 w-5 text-indigo-500" /> Selection Process
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <div 
-                      className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: job.selectionProcess || "Refer to official notifications for the selection process." }}
-                    />
+                {job.selectionProcess && job.selectionProcess.trim() !== "" && (
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                    <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                      <ShieldCheck className="h-5 w-5 text-indigo-500" /> Selection Process
+                    </h2>
+                    <div className="overflow-x-auto">
+                      <div 
+                        className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: job.selectionProcess }}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* 7. Salary */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-teal-500" /> Salary / Pay Scale
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <div 
-                      className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: job.salary || "As per the rules of the recruitment board." }}
-                    />
+                {job.salary && job.salary.trim() !== "" && (
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                    <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                      <Briefcase className="h-5 w-5 text-teal-500" /> Salary / Pay Scale
+                    </h2>
+                    <div className="overflow-x-auto">
+                      <div 
+                        className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: job.salary }}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* 8. Application Fee */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-rose-500" /> Application Fee
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <div 
-                      className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: job.applicationFees || "Free or refer to official notification PDF." }}
-                    />
+                {job.applicationFees && job.applicationFees.trim() !== "" && (
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                    <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                      <Building2 className="h-5 w-5 text-rose-500" /> Application Fee
+                    </h2>
+                    <div className="overflow-x-auto">
+                      <div 
+                        className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: job.applicationFees }}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* 9. How to Apply */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">

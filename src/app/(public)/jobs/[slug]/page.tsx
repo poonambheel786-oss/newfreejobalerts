@@ -604,17 +604,32 @@ export default async function JobDetailPage({ params }: Props) {
                 </h2>
                 <div className="space-y-4">
                   {faqs.map((faq: any, index: number) => (
-                    <div key={index} className="space-y-1 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-                      <h4 className="font-bold text-slate-900 text-sm flex items-start gap-1">
-                        <span>Q.</span> {faq.q}
-                      </h4>
-                      <div className="overflow-x-auto">
+                    <details 
+                      key={index} 
+                      className="group border border-slate-100 rounded-xl bg-slate-50/50 overflow-hidden [&_summary::-webkit-details-marker]:hidden"
+                    >
+                      <summary className="flex justify-between items-center p-4 font-bold text-slate-900 text-sm cursor-pointer select-none hover:bg-slate-100/50 transition-colors">
+                        <span className="flex items-start gap-1.5 pr-4">
+                          <span className="text-primary font-extrabold">Q.</span>
+                          <span>{faq.q}</span>
+                        </span>
+                        <svg
+                          className="h-4 w-4 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </summary>
+                      <div className="px-4 pb-4 pt-1 border-t border-slate-100/50 overflow-x-auto">
                         <div 
-                          className="text-slate-600 text-sm pl-4 leading-relaxed html-content prose prose-sm max-w-none"
+                          className="text-slate-600 text-sm pl-5 leading-relaxed html-content prose prose-sm max-w-none"
                           dangerouslySetInnerHTML={{ __html: faq.a }}
                         />
                       </div>
-                    </div>
+                    </details>
                   ))}
                 </div>
               </div>

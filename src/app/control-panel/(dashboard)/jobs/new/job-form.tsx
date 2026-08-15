@@ -70,6 +70,11 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   const dates = initialJob?.importantDates ? (typeof initialJob.importantDates === 'string' ? JSON.parse(initialJob.importantDates) : initialJob.importantDates) : {};
   const [customDates, setCustomDates] = useState<{label: string, value: string}[]>(dates?.customDates || []);
   const [customLinks, setCustomLinks] = useState<{label: string, value: string}[]>(dates?.customLinks || []);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA") {
+      e.preventDefault();
+    }
+  };
 
   return (
     <>
@@ -97,7 +102,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         </div>
       )}
 
-      <form action={formAction} onSubmit={() => setLoading(true)} className="space-y-8">
+      <form action={formAction} onSubmit={() => setLoading(true)} onKeyDown={handleKeyDown} className="space-y-8">
         <input type="hidden" name="id" value={initialJob?.id || ""} />
         <input type="hidden" name="customDatesJson" value={JSON.stringify(customDates)} />
         <input type="hidden" name="customLinksJson" value={JSON.stringify(customLinks)} />

@@ -324,16 +324,16 @@ export default async function Home({ searchParams }: Props) {
             <EntriesSelector currentLimit={limit} />
           </div>
           <div className="overflow-x-auto w-full">
-            <table className="w-full min-w-[1000px] text-left border-collapse table-fixed">
+            <table className="w-full min-w-[1000px] text-left border-collapse">
               <thead>
                 <tr className="text-[11px] font-bold uppercase tracking-wider bg-slate-800 text-white">
                   <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[10%]">Post Date</th>
-                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[35%] min-w-[320px]">Exam / Post Name</th>
-                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[20%] min-w-[160px]">Qualification</th>
-                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[15%]">Advt No</th>
-                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[10%]">Start Date</th>
-                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[10%]">Last Date</th>
-                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap text-center w-[10%]">Action</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[30%] min-w-[320px]">Exam / Post Name</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[18%] min-w-[160px]">Qualification</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[12%]">Advt No</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[15%]">Start Date</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap w-[15%]">Last Date</th>
+                  <th className="px-6 py-4 border border-slate-200 whitespace-nowrap text-center w-[5%]">Action</th>
                 </tr>
               </thead>
               <tbody className="text-xs sm:text-sm">

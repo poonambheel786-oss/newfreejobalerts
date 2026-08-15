@@ -35,13 +35,13 @@ function formatDateString(dateStr: string) {
     if (parts.length === 3) {
       const year = parts[0];
       const monthIndex = parseInt(parts[1], 10) - 1;
-      const day = parseInt(parts[2], 10);
+      const day = parts[2]; // Keep string to preserve leading zero, e.g. "04"
       const months = [
-        "Jan", "Feb", "March", "April", "May", "June",
-        "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
       ];
       if (monthIndex >= 0 && monthIndex < 12) {
-        return `${day} ${months[monthIndex]} ${year}`;
+        return `${day}-${months[monthIndex]} ${year}`;
       }
     }
     return dateStr;

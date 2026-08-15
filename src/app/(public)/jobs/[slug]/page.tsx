@@ -88,6 +88,28 @@ function parseDates(importantDates: any) {
   }
 }
 
+function formatDateString(dateStr: string) {
+  if (!dateStr || dateStr === "N/A" || dateStr.trim() === "") return "N/A";
+  try {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const day = parts[2];
+      const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      if (monthIndex >= 0 && monthIndex < 12) {
+        return `${day}-${months[monthIndex]} ${year}`;
+      }
+    }
+    return dateStr;
+  } catch (e) {
+    return dateStr;
+  }
+}
+
 function parseFaqs(faqSchema: any) {
   if (!faqSchema) return [];
   try {
@@ -296,13 +318,13 @@ export default async function JobDetailPage({ params }: Props) {
                   </div>
                   <div className="flex-1 px-4">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Last Date</p>
-                    <p className="text-lg font-bold text-rose-600">{dates.end || "N/A"}</p>
+                    <p className="text-lg font-bold text-rose-600">{formatDateString(dates.end)}</p>
                   </div>
                 </>
               ) : (
                 <div className="flex-1 px-4">
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Last Date</p>
-                  <p className="text-lg font-bold text-rose-600">{dates.end || "N/A"}</p>
+                  <p className="text-lg font-bold text-rose-600">{formatDateString(dates.end)}</p>
                 </div>
               )}
             </div>
@@ -393,16 +415,16 @@ export default async function JobDetailPage({ params }: Props) {
                       <tbody>
                         <tr className="bg-slate-50 border-b border-slate-200/60">
                           <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Application Start Date</th>
-                          <td className="px-4 py-3 text-slate-800 font-semibold">{dates.start || "N/A"}</td>
+                          <td className="px-4 py-3 text-slate-800 font-semibold">{formatDateString(dates.start)}</td>
                         </tr>
                         <tr className="border-b border-slate-200/60">
                           <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Last Date to Apply</th>
-                          <td className="px-4 py-3 text-rose-600 font-bold">{dates.end || "N/A"}</td>
+                          <td className="px-4 py-3 text-rose-600 font-bold">{formatDateString(dates.end)}</td>
                         </tr>
                         {dates.examDate && (
                           <tr className="bg-slate-50 border-b border-slate-200/60">
                             <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Exam Date</th>
-                            <td className="px-4 py-3 text-slate-800 font-semibold">{dates.examDate}</td>
+                            <td className="px-4 py-3 text-slate-800 font-semibold">{formatDateString(dates.examDate)}</td>
                           </tr>
                         )}
                         {dates.customDates && dates.customDates.map((cd: any, idx: number) => (

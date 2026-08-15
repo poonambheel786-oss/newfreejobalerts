@@ -225,9 +225,19 @@ export default async function JobDetailPage({ params }: Props) {
             </span>
             <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{job.title}</h1>
             <div className="flex flex-wrap gap-4 text-xs font-medium text-slate-500">
-              {isJob && <span className="flex items-center gap-1"><Briefcase className="h-4 w-4 text-slate-400" /> Advt No: {job.advtNumber || "N/A"}</span>}
-              <span className="flex items-center gap-1"><MapPin className="h-4 w-4 text-slate-400" /> State: {job.state?.name || "All India"}</span>
-              {isJob && <span className="flex items-center gap-1"><GraduationCap className="h-4 w-4 text-slate-400" /> Qualification: {job.qualification.name}</span>}
+              {isJob && job.advtNumber && job.advtNumber.trim() !== "" && (
+                <span className="flex items-center gap-1">
+                  <Briefcase className="h-4 w-4 text-slate-400" /> Advt No: {job.advtNumber}
+                </span>
+              )}
+              <span className="flex items-center gap-1">
+                <MapPin className="h-4 w-4 text-slate-400" /> State: {job.state?.name || "All India"}
+              </span>
+              {isJob && job.qualification?.name && job.qualification.name.trim() !== "" && job.qualification.name.trim() !== "General Eligibility" && (
+                <span className="flex items-center gap-1">
+                  <GraduationCap className="h-4 w-4 text-slate-400" /> Qualification: {job.qualification.name}
+                </span>
+              )}
             </div>
 
             {/* Quick Action Links */}

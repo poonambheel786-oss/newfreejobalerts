@@ -138,6 +138,13 @@ body {
   animation: slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.html-content {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Style HTML tables inside rich text content */
 .html-content table {
   width: 100% !important;

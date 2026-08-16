@@ -71,7 +71,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   const [customDates, setCustomDates] = useState<{label: string, value: string}[]>(dates?.customDates || []);
   const [customLinks, setCustomLinks] = useState<{label: string, value: string}[]>(dates?.customLinks || []);
   const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
-    if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA") {
+    if (e.key === "Enter" && (e.target as HTMLElement).tagName === "INPUT") {
       e.preventDefault();
     }
   };

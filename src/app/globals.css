@@ -141,6 +141,7 @@ body {
 /* Style HTML tables inside rich text content */
 .html-content table {
   width: 100% !important;
+  min-width: 650px;
   border-collapse: collapse;
   margin: 1rem 0;
 }

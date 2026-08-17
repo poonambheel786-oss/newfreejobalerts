@@ -25,6 +25,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   const [ageLimitHtml, setAgeLimitHtml] = useState(initialJob?.ageLimit || "");
   const [salaryHtml, setSalaryHtml] = useState(initialJob?.salary || "");
   const [applicationFeesHtml, setApplicationFeesHtml] = useState(initialJob?.applicationFees || "");
+  const [editorialSummaryHtml, setEditorialSummaryHtml] = useState(initialJob?.editorialSummary || "");
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [faqs, setFaqs] = useState<{ q: string; a: string }[]>(() => {
@@ -115,6 +116,8 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         <textarea name="ageLimit" value={ageLimitHtml} onChange={(e) => setAgeLimitHtml(e.target.value)} className="hidden" />
         <textarea name="salary" value={salaryHtml} onChange={(e) => setSalaryHtml(e.target.value)} className="hidden" />
         <textarea name="applicationFees" value={applicationFeesHtml} onChange={(e) => setApplicationFeesHtml(e.target.value)} className="hidden" />
+        <textarea name="editorialSummary" value={editorialSummaryHtml} onChange={(e) => setEditorialSummaryHtml(e.target.value)} className="hidden" />
+
 
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -495,15 +498,26 @@ export default function JobForm({ states, categories, initialJob, initialType }:
             {/* STEP 3: DETAILS & CONTENT */}
             <div className={currentStep === 3 ? "space-y-6 max-h-[70vh] overflow-y-auto pr-2" : "hidden"}>
                 {postType === "Latest Notifications" && (
-                  <div className="space-y-1">
-                    <label className="block text-xs font-semibold text-slate-400 mb-1">Overview (Rich Text)</label>
-                    <RichTextEditor 
-                      value={overviewHtml}
-                      onChange={setOverviewHtml}
-                      placeholder="Enter post overview or summary..."
-                    />
-                  </div>
+                  <>
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-slate-400 mb-1">Editorial Summary (Optional - Custom Dynamic Summary)</label>
+                      <RichTextEditor 
+                        value={editorialSummaryHtml}
+                        onChange={setEditorialSummaryHtml}
+                        placeholder="Enter custom editorial summary (Optional). If left blank, a standard database-driven dynamic summary will be generated automatically."
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-slate-400 mb-1">Overview (Rich Text)</label>
+                      <RichTextEditor 
+                        value={overviewHtml}
+                        onChange={setOverviewHtml}
+                        placeholder="Enter post overview or summary..."
+                      />
+                    </div>
+                  </>
                 )}
+
 
                 {postType === "Latest Notifications" && (
                   <div className="space-y-1">

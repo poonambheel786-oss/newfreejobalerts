@@ -81,6 +81,7 @@ model Job {
   overview            String?        @db.Text
   vacancyDetails      String?        @db.Text
   howToApply          String?        @db.Text
+  editorialSummary    String?        @db.Text
   
   // Links & Attachments
   pdfUrl              String?        // S3 or Wasabi URL

@@ -131,6 +131,36 @@ export default async function JobDetailPage({ params }: Props) {
   const faqs = parseFaqs(job.faqSchema);
   const isJob = job.postType === "Latest Notifications";
 
+  // Dynamic related recruitments
+  const [relatedJobs, sameBoardJobs, sameCategoryJobs] = await Promise.all([
+    prisma.job.findMany({
+      where: {
+        status: "Published",
+        NOT: { id: job.id }
+      },
+      take: 3,
+      orderBy: { createdAt: "desc" }
+    }),
+    prisma.job.findMany({
+      where: {
+        status: "Published",
+        departmentId: job.departmentId,
+        NOT: { id: job.id }
+      },
+      take: 3,
+      orderBy: { createdAt: "desc" }
+    }),
+    prisma.job.findMany({
+      where: {
+        status: "Published",
+        categoryId: job.categoryId,
+        NOT: { id: job.id }
+      },
+      take: 3,
+      orderBy: { createdAt: "desc" }
+    })
+  ]);
+
   let linkLabel = "Apply Link";
   let linkText = "Apply Online";
   let badgeText = "Apply Now";
@@ -213,6 +243,44 @@ export default async function JobDetailPage({ params }: Props) {
   if (baseSalaryObj) {
     jsonLd.baseSalary = baseSalaryObj;
   }
+
+  const formattedEndDate = dates.end ? formatDateString(dates.end) : "the specified last date";
+  const dynamicIntro = `${job.department.name} has announced recruitment for the post of ${job.title} for ${job.vacancy && job.vacancy.trim() !== "0" && job.vacancy.trim() !== "" ? job.vacancy : "various"} posts. Eligible candidates with qualification ${job.qualification.name} can apply through the official application process before ${formattedEndDate}. Candidates should check the official notification for complete eligibility and application requirements.`;
+
+  // Generate programmatic FAQs
+  const generatedFaqs = [];
+  if (job.title) {
+    generatedFaqs.push({
+      q: `What is the last date to apply for ${job.title}?`,
+      a: dates.end ? `The last date to apply is <strong>${formatDateString(dates.end)}</strong>.` : "Please check the official notification or website for the last date."
+    });
+    generatedFaqs.push({
+      q: `How many vacancies are available for ${job.title}?`,
+      a: job.vacancy && job.vacancy.trim() !== "0" && job.vacancy.trim() !== "" ? `There are a total of <strong>${job.vacancy}</strong> vacancies.` : "Please check the official notification for vacancy details."
+    });
+    generatedFaqs.push({
+      q: `What is the qualification required for ${job.title}?`,
+      a: `Candidates must have completed <strong>${job.qualification.name}</strong> or equivalent to apply.`
+    });
+    if (job.salary && job.salary.trim() !== "") {
+      generatedFaqs.push({
+        q: `What is the salary structure for ${job.title}?`,
+        a: `Salary/Pay scale details: ${job.salary}`
+      });
+    } else {
+      generatedFaqs.push({
+        q: `What is the salary for ${job.title}?`,
+        a: "Salary / pay scale details are not explicitly mentioned in the summary. Candidates are advised to refer to the official notification for the complete pay structure."
+      });
+    }
+    if (job.applicationFees && job.applicationFees.trim() !== "") {
+      generatedFaqs.push({
+        q: `What is the application fee for ${job.title}?`,
+        a: `Application fee details: ${job.applicationFees}`
+      });
+    }
+  }
+  const finalFaqs = [...faqs, ...generatedFaqs].slice(0, 8);
 
   return (
     <>
@@ -332,300 +400,309 @@ export default async function JobDetailPage({ params }: Props) {
         </div>
 
         {/* Content Layout */}
-        <div className="space-y-6">
-            {isJob ? (
-              <>
-                {/* 1. Overview */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-primary" /> Overview
-                  </h2>
-                  {job.overview && job.overview.trim() !== "" ? (
-                    <div className="overflow-x-auto">
-                      <div 
-                        className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: job.overview }}
-                      />
-                    </div>
-                  ) : (
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      Government recruitment notification for <strong>{job.vacancy} vacancies</strong> has been announced by <strong>{job.department.name}</strong>. Candidates matching the eligibility criteria can apply online. Check details below.
-                    </p>
-                  )}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-8 space-y-6">
+            
+            {/* 1. Overview and Editorial Summary */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <Briefcase className="h-5 w-5 text-primary" /> Overview & Highlights
+              </h2>
+              {job.editorialSummary && job.editorialSummary.trim() !== "" ? (
+                <div className="overflow-x-auto">
+                  <div 
+                    className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none bg-violet-50/20 p-4 rounded-xl border border-violet-100/50"
+                    dangerouslySetInnerHTML={{ __html: job.editorialSummary }}
+                  />
                 </div>
-
-                {/* 2. Vacancy Details & Eligibility */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5 text-emerald-500" /> Vacancy Details & Eligibility
-                  </h2>
-                  {job.vacancyDetails && job.vacancyDetails.trim() !== "" ? (
-                    <div className="overflow-x-auto">
-                      <div 
-                        className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: job.vacancyDetails }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
-                        <tbody>
-                          <tr className="bg-slate-50 border-b border-slate-200/60">
-                            <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Department Name</th>
-                            <td className="px-4 py-3 text-slate-800 font-semibold">{job.department.name}</td>
-                          </tr>
-                          <tr className="border-b border-slate-200/60">
-                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Post Category</th>
-                            <td className="px-4 py-3 text-slate-800">{job.category.name}</td>
-                          </tr>
-                          {job.vacancy && job.vacancy.trim() !== "0" && job.vacancy.trim() !== "" && (
-                            <tr className="bg-slate-50 border-b border-slate-200/60">
-                              <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Total Vacancies</th>
-                              <td className="px-4 py-3 text-slate-800 font-bold">{job.vacancy} Posts</td>
-                            </tr>
-                          )}
-                          <tr className="border-b border-slate-200/60">
-                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Qualification</th>
-                            <td className="px-4 py-3 text-slate-800 font-semibold">{job.qualification.name}</td>
-                          </tr>
-                          <tr>
-                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Eligibility Details</th>
-                            <td className="px-4 py-3 text-slate-800">
-                              <div className="overflow-x-auto">
-                                <div 
-                                  className="html-content prose prose-sm max-w-none leading-relaxed"
-                                  dangerouslySetInnerHTML={{ __html: job.eligibility }}
-                                />
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+              ) : (
+                <p className="text-sm text-slate-700 leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                  {dynamicIntro}
+                </p>
+              )}
+              {job.overview && job.overview.trim() !== "" && (
+                <div className="overflow-x-auto pt-2">
+                  <div 
+                    className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.overview }}
+                  />
                 </div>
+              )}
+            </div>
 
-                {/* 3. Important Dates */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-blue-500" /> Important Dates
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
-                      <tbody>
-                        <tr className="bg-slate-50 border-b border-slate-200/60">
-                          <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Application Start Date</th>
-                          <td className="px-4 py-3 text-slate-800 font-semibold">{formatDateString(dates.start)}</td>
-                        </tr>
-                        <tr className="border-b border-slate-200/60">
-                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Last Date to Apply</th>
-                          <td className="px-4 py-3 text-rose-600 font-bold">{formatDateString(dates.end)}</td>
-                        </tr>
-                        {dates.examDate && (
-                          <tr className="bg-slate-50 border-b border-slate-200/60">
-                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Exam Date</th>
-                            <td className="px-4 py-3 text-slate-800 font-semibold">{formatDateString(dates.examDate)}</td>
-                          </tr>
-                        )}
-                        {dates.customDates && dates.customDates.map((cd: any, idx: number) => (
-                          <tr key={idx} className={idx % 2 === 0 ? "border-b border-slate-200/60" : "bg-slate-50 border-b border-slate-200/60"}>
-                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">{cd.label}</th>
-                            <td className="px-4 py-3 text-slate-800">{cd.value}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+            {/* 2. Who Can Apply? Eligibility */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-emerald-500" /> Who Can Apply & Eligibility Criteria
+              </h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Educational Qualification</p>
+                    <p className="text-sm font-bold text-slate-800">{job.qualification.name}</p>
                   </div>
-                </div>
-
-                {/* 4. Important Links */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <Download className="h-5 w-5 text-violet-500" /> Important Links
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
-                      <thead>
-                        <tr className="bg-slate-800 text-white text-[11px] uppercase tracking-wider font-bold">
-                          <th className="px-4 py-3 border border-slate-200/60">Link Description</th>
-                          <th className="px-4 py-3 border border-slate-200/60 text-right">Action Link</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {job.applyLink && job.applyLink.trim() !== "" && (
-                          <tr className="border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors">
-                            <td className="px-4 py-3 font-semibold text-slate-700">Apply Online Portal</td>
-                            <td className="px-4 py-3 text-right">
-                              <a href={job.applyLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-bold text-primary hover:underline">
-                                Apply Link <ExternalLink className="h-3.5 w-3.5" />
-                              </a>
-                            </td>
-                          </tr>
-                        )}
-                        {job.pdfUrl && job.pdfUrl.trim() !== "" && (
-                          <tr className="bg-slate-50 border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors">
-                            <td className="px-4 py-3 font-semibold text-slate-700">Official Notification PDF</td>
-                            <td className="px-4 py-3 text-right">
-                              <a href={job.pdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-bold text-rose-600 hover:underline">
-                                Download PDF <Download className="h-3.5 w-3.5" />
-                              </a>
-                            </td>
-                          </tr>
-                        )}
-                        {job.officialWebsite && job.officialWebsite.trim() !== "" && (
-                          <tr className="border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors">
-                            <td className="px-4 py-3 font-semibold text-slate-700">Official Website</td>
-                            <td className="px-4 py-3 text-right">
-                              <a href={job.officialWebsite} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-bold text-amber-600 hover:underline">
-                                Visit Website <ExternalLink className="h-3.5 w-3.5" />
-                              </a>
-                            </td>
-                          </tr>
-                        )}
-                        {dates.customLinks && dates.customLinks.map((cl: any, idx: number) => cl.label && cl.value && cl.value.trim() !== "" && (
-                          <tr key={idx} className={(idx + (job.officialWebsite ? 1 : 0)) % 2 === 0 ? "border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors" : "bg-slate-50 border-b border-slate-200/60 hover:bg-slate-50/50 transition-colors"}>
-                            <td className="px-4 py-3 font-semibold text-slate-700">{cl.label}</td>
-                            <td className="px-4 py-3 text-right">
-                              <a href={cl.value} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-bold text-indigo-600 hover:underline">
-                                Link Details <ExternalLink className="h-3.5 w-3.5" />
-                              </a>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* 5. Age Limit */}
-                {job.ageLimit && job.ageLimit.trim() !== "" && (
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                    <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-amber-500" /> Age Limit
-                    </h2>
-                    <div className="overflow-x-auto">
+                  {job.ageLimit && job.ageLimit.trim() !== "" && (
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Age Limit Specifications</p>
                       <div 
-                        className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                        className="text-xs text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
                         dangerouslySetInnerHTML={{ __html: job.ageLimit }}
                       />
                     </div>
-                  </div>
-                )}
-
-                {/* 6. Selection Process */}
-                {job.selectionProcess && job.selectionProcess.trim() !== "" && (
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                    <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                      <ShieldCheck className="h-5 w-5 text-indigo-500" /> Selection Process
-                    </h2>
-                    <div className="overflow-x-auto">
-                      <div 
-                        className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: job.selectionProcess }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* 7. Salary */}
-                {job.salary && job.salary.trim() !== "" && (
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                    <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                      <Briefcase className="h-5 w-5 text-teal-500" /> Salary / Pay Scale
-                    </h2>
-                    <div className="overflow-x-auto">
-                      <div 
-                        className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: job.salary }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* 8. Application Fee */}
-                {job.applicationFees && job.applicationFees.trim() !== "" && (
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
-                    <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                      <Building2 className="h-5 w-5 text-rose-500" /> Application Fee
-                    </h2>
-                    <div className="overflow-x-auto">
-                      <div 
-                        className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: job.applicationFees }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* 9. How to Apply */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-                  <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                    <ShieldCheck className="h-5 w-5 text-indigo-500" /> How to Apply
-                  </h2>
-                  {job.howToApply && job.howToApply.trim() !== "" ? (
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Detailed Eligibility Description</p>
+                  {job.eligibility && job.eligibility.trim() !== "" ? (
                     <div className="overflow-x-auto">
                       <div 
                         className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: job.howToApply }}
+                        dangerouslySetInnerHTML={{ __html: job.eligibility }}
                       />
                     </div>
                   ) : (
-                    <ol className="list-decimal pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
-                      <li>Read the official notification PDF carefully before applying (Link provided below).</li>
-                      <li>Click on the <strong>Apply Online</strong> link below or visit the official website.</li>
-                      <li>Register yourself on the portal and fill in all the required details accurately.</li>
-                      <li>Upload scanned copies of required documents (photo, signature, educational certificates).</li>
-                      <li>Pay the application fee (if applicable) online.</li>
-                      <li>Review all information in the application form carefully before final submission.</li>
-                      <li>Download and print a copy of the submitted form for future reference.</li>
-                    </ol>
+                    <p className="text-sm text-slate-600 italic">
+                      Candidates should check the official notification for complete educational qualification, experience and category-wise relaxation standards.
+                    </p>
                   )}
                 </div>
+              </div>
+            </div>
 
-                {/* 10. Exam Pattern & Syllabus */}
-                {(job.examPattern || job.syllabus) && (
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
-                    <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                      <ShieldCheck className="h-5 w-5 text-primary" /> Exam Pattern & Syllabus
-                    </h2>
-                    <div className="space-y-4 text-sm leading-relaxed text-slate-700">
-                      {job.examPattern && (
-                        <div>
-                          <h3 className="font-bold text-slate-900 mb-1">Exam Pattern:</h3>
-                          <p className="whitespace-pre-line">{job.examPattern}</p>
-                        </div>
-                      )}
-                      {job.syllabus && (
-                        <div>
-                          <h3 className="font-bold text-slate-900 mb-1">Syllabus Overview:</h3>
-                          <p className="whitespace-pre-line">{job.syllabus}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </>
-            ) : (
-              /* Simplified Layout for Admit Cards and Results rendering Description directly */
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">Overview</h2>
+            {/* 3. Vacancy Details */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <Briefcase className="h-5 w-5 text-indigo-500" /> Vacancy Details
+              </h2>
+              {job.vacancyDetails && job.vacancyDetails.trim() !== "" ? (
                 <div className="overflow-x-auto">
                   <div 
-                    className="text-slate-800 leading-relaxed html-content prose prose-sm max-w-none space-y-3"
-                    dangerouslySetInnerHTML={{ __html: job.eligibility }}
+                    className="text-sm text-slate-850 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.vacancyDetails }}
+                  />
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-slate-700">
+                    A total of <strong>{job.vacancy && job.vacancy !== "0" ? job.vacancy : "various"} vacancies</strong> have been announced. Post-wise distribution details can be referenced below or via the official notification.
+                  </p>
+                  <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
+                    <tbody>
+                      <tr className="bg-slate-50 border-b border-slate-200/60">
+                        <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Department</th>
+                        <td className="px-4 py-3 text-slate-800 font-semibold">{job.department.name}</td>
+                      </tr>
+                      {job.vacancy && job.vacancy !== "0" && (
+                        <tr className="border-b border-slate-200/60">
+                          <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Total Posts</th>
+                          <td className="px-4 py-3 text-slate-850 font-bold">{job.vacancy}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* 4. Salary / Pay Scale Details */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <Briefcase className="h-5 w-5 text-teal-500" /> Salary & Pay Scale
+              </h2>
+              {job.salary && job.salary.trim() !== "" ? (
+                <div className="overflow-x-auto">
+                  <div 
+                    className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.salary }}
+                  />
+                </div>
+              ) : (
+                <p className="text-sm text-slate-600 italic">
+                  Salary scale, grade pay, and allowance details are not explicitly mentioned in the summary data. Candidates should check the official notification for the complete pay matrix.
+                </p>
+              )}
+            </div>
+
+            {/* 5. Selection Process */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-indigo-500" /> Selection Process
+              </h2>
+              {job.selectionProcess && job.selectionProcess.trim() !== "" ? (
+                <div className="overflow-x-auto">
+                  <div 
+                    className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.selectionProcess }}
+                  />
+                </div>
+              ) : (
+                <p className="text-sm text-slate-600">
+                  Selection criteria details should be checked in the official recruitment notice. Standard selection stages typically comprise a written exam/skill test followed by document verification.
+                </p>
+              )}
+            </div>
+
+            {/* 6. Application Fee */}
+            {job.applicationFees && job.applicationFees.trim() !== "" && (
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+                <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-rose-500" /> Application Fee
+                </h2>
+                <div className="overflow-x-auto">
+                  <div 
+                    className="text-sm text-slate-700 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.applicationFees }}
                   />
                 </div>
               </div>
             )}
 
+            {/* 7. Important Dates */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-blue-500" /> Important Dates
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
+                  <tbody>
+                    <tr className="bg-slate-50 border-b border-slate-200/60">
+                      <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Start Date to Apply</th>
+                      <td className="px-4 py-3 text-slate-800 font-semibold">{formatDateString(dates.start)}</td>
+                    </tr>
+                    <tr className="border-b border-slate-200/60">
+                      <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Last Date to Apply</th>
+                      <td className="px-4 py-3 text-rose-600 font-bold">{formatDateString(dates.end)}</td>
+                    </tr>
+                    {dates.examDate && (
+                      <tr className="bg-slate-50 border-b border-slate-200/60">
+                        <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Exam Date</th>
+                        <td className="px-4 py-3 text-slate-800 font-semibold">{formatDateString(dates.examDate)}</td>
+                      </tr>
+                    )}
+                    {dates.customDates && dates.customDates.map((cd: any, idx: number) => (
+                      <tr key={idx} className={idx % 2 === 0 ? "border-b border-slate-200/60" : "bg-slate-50 border-b border-slate-200/60"}>
+                        <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">{cd.label}</th>
+                        <td className="px-4 py-3 text-slate-800">{cd.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 8. How to Apply */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-indigo-500" /> How to Apply
+              </h2>
+              {job.howToApply && job.howToApply.trim() !== "" ? (
+                <div className="overflow-x-auto">
+                  <div 
+                    className="text-sm text-slate-800 leading-relaxed html-content prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.howToApply }}
+                  />
+                </div>
+              ) : (
+                <ol className="list-decimal pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
+                  <li>Visit the official portal {job.officialWebsite ? `(${job.officialWebsite})` : ""}.</li>
+                  <li>Download and read the official recruitment notification carefully.</li>
+                  <li>Complete registration and log in.</li>
+                  <li>Fill in all educational and basic details accurately.</li>
+                  <li>Upload scanned documents (photograph, signature, certificates).</li>
+                  <li>Pay the application fee (if applicable) and submit the form.</li>
+                  <li>Take a printout of the submitted page for references.</li>
+                </ol>
+              )}
+            </div>
+
+            {/* 9. Documents Required Checklist */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-amber-500" /> Documents Required
+              </h2>
+              <p className="text-sm text-slate-600">
+                Candidates should keep the following general documents ready during form submission:
+              </p>
+              <ul className="list-disc pl-5 text-sm text-slate-600 space-y-1">
+                <li>10th/12th / Degree certificates and mark sheets.</li>
+                <li>Valid Photo ID proof (Aadhar Card, PAN Card, Voter ID, etc.).</li>
+                <li>Scanned passport size photograph and signature.</li>
+                <li>Caste certificate (if applying under reserved category).</li>
+              </ul>
+              <p className="text-xs text-slate-500 italic mt-2">
+                * Note: Candidates should check the official notification for the complete and exact document upload specifications.
+              </p>
+            </div>
+
+            {/* 10. Checklist */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-3">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-teal-500" /> Pre-Application Checklist
+              </h2>
+              <ul className="space-y-2 text-sm text-slate-700">
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-500 font-bold">✓</span> Ensure qualifications match <strong>{job.qualification.name}</strong> standards.
+                </li>
+                {dates.end && (
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-500 font-bold">✓</span> Submit before the deadline: <strong>{formatDateString(dates.end)}</strong>.
+                  </li>
+                )}
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-500 font-bold">✓</span> Verify age limits against relaxation guidelines in the PDF.
+                </li>
+              </ul>
+            </div>
+
+            {/* 11. Official Sources */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+              <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-indigo-500" /> Official Sources & Website Links
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
+                  <tbody>
+                    {job.pdfUrl && (
+                      <tr className="bg-slate-50 border-b border-slate-200/60">
+                        <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Official Notification</th>
+                        <td className="px-4 py-3">
+                          <a href={job.pdfUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold inline-flex items-center gap-1">Download PDF <ExternalLink className="h-3 w-3" /></a>
+                        </td>
+                      </tr>
+                    )}
+                    {job.officialWebsite && (
+                      <tr className="border-b border-slate-200/60">
+                        <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Official Website</th>
+                        <td className="px-4 py-3">
+                          <a href={job.officialWebsite} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold inline-flex items-center gap-1">{job.officialWebsite} <ExternalLink className="h-3 w-3" /></a>
+                        </td>
+                      </tr>
+                    )}
+                    {job.applyLink && (
+                      <tr className="bg-slate-50">
+                        <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Apply Online Portal</th>
+                        <td className="px-4 py-3">
+                          <a href={job.applyLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold inline-flex items-center gap-1">Apply Link <ExternalLink className="h-3 w-3" /></a>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-slate-500 italic mt-2">
+                Disclaimer: NewFreeJobAlerts is an informational portal. Please double-check final details, application fees, and deadlines on the official website of the recruiting board.
+              </p>
+            </div>
+
             {/* FAQs */}
-            {faqs.length > 0 && (
+            {finalFaqs.length > 0 && (
               <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
                 <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <HelpCircle className="h-5 w-5 text-indigo-500" /> Frequently Asked Questions (FAQ)
                 </h2>
                 <div className="space-y-4">
-                  {faqs.map((faq: any, index: number) => (
+                  {finalFaqs.map((faq: any, index: number) => (
                     <details 
                       key={index} 
                       className="group border border-slate-100 rounded-xl bg-slate-50/50 overflow-hidden [&_summary::-webkit-details-marker]:hidden"
@@ -665,9 +742,72 @@ export default async function JobDetailPage({ params }: Props) {
               </p>
               <ShareButtons title={job.title} path={`/jobs/${job.slug}`} />
             </div>
+
           </div>
+
+          {/* Sidebar - Related Recruitments */}
+          <aside className="lg:col-span-4 space-y-6">
+            {/* Same Recruitment Board */}
+            {sameBoardJobs.length > 0 && (
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-4">
+                <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
+                  Jobs from {job.department.name}
+                </h3>
+                <div className="space-y-3">
+                  {sameBoardJobs.map((rj) => (
+                    <div key={rj.id} className="space-y-1">
+                      <Link href={`/jobs/${rj.slug}`} className="text-xs font-bold text-slate-800 hover:text-primary transition-colors block line-clamp-2">
+                        {rj.title}
+                      </Link>
+                      <p className="text-[10px] text-slate-400 font-medium">Published: {new Date(rj.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Same Category */}
+            {sameCategoryJobs.length > 0 && (
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-4">
+                <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
+                  Similar {job.category.name}
+                </h3>
+                <div className="space-y-3">
+                  {sameCategoryJobs.map((rj) => (
+                    <div key={rj.id} className="space-y-1">
+                      <Link href={`/jobs/${rj.slug}`} className="text-xs font-bold text-slate-800 hover:text-primary transition-colors block line-clamp-2">
+                        {rj.title}
+                      </Link>
+                      <p className="text-[10px] text-slate-400 font-medium">Published: {new Date(rj.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Latest Alerts */}
+            {relatedJobs.length > 0 && (
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-4">
+                <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
+                  Latest Recruitment Alerts
+                </h3>
+                <div className="space-y-3">
+                  {relatedJobs.map((rj) => (
+                    <div key={rj.id} className="space-y-1">
+                      <Link href={`/jobs/${rj.slug}`} className="text-xs font-bold text-slate-800 hover:text-primary transition-colors block line-clamp-2">
+                        {rj.title}
+                      </Link>
+                      <p className="text-[10px] text-slate-400 font-medium">Published: {new Date(rj.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </aside>
         </div>
-      </>
-    );
-  }
+      </div>
+    </>
+  );
+}
+
 

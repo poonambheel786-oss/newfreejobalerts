@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CampaignIcon, AssignmentIndIcon, VerifiedIcon, DownloadIcon, ArrowForwardIcon, FilterIcon } from "@/app/icons";
 import { prisma } from "@/lib/db";
-import { Search, BookOpen, Clock, User, ArrowRight } from "lucide-react";
+import { Search, BookOpen, Clock, User, ArrowRight, Calculator, Calendar, ShieldCheck, Sparkles, Award } from "lucide-react";
 import { unstable_cache } from "next/cache";
 import EntriesSelector from "@/components/EntriesSelector";
 
@@ -192,7 +192,7 @@ export default async function Home({ searchParams }: Props) {
         </div>
         <div className="marquee-content whitespace-nowrap flex items-center gap-8 pl-44">
           {marqueeJobs.length === 0 ? (
-            <span className="text-sm font-medium">• Welcome to NewFreeJobAlert. Access real-time government recruitment updates.</span>
+            <span className="text-sm font-medium">• Welcome to NewFreeJobAlert. Verified Government Job Notifications & Career Resources.</span>
           ) : (
             marqueeJobs.map((j) => (
               <Link key={j.id} href={`/jobs/${j.slug}`} className="text-sm font-bold text-white hover:underline flex items-center gap-1 cursor-pointer">
@@ -206,10 +206,15 @@ export default async function Home({ searchParams }: Props) {
       <div className="max-w-[1280px] mx-auto w-full px-6 py-8 flex-grow space-y-12">
         {/* Public Hero Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <h1 className="font-extrabold text-3xl md:text-5xl text-on-surface mb-2 tracking-tight">Best Job Portal</h1>
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200/60">
+              <ShieldCheck className="h-3.5 w-3.5 text-blue-600" /> Verified Government Recruitment Intelligence
+            </div>
+            <h1 className="font-extrabold text-3xl md:text-5xl text-on-surface tracking-tight">
+              India's Trusted Job & Exam Portal
+            </h1>
             <p className="text-base text-on-surface-variant max-w-2xl">
-              Access real-time recruitment notifications, official admit cards, and merit lists from all government departments in one place.
+              Access real-time recruitment notifications, official admit cards, exam results, and interactive preparation utilities verified directly from government gazettes.
             </p>
           </div>
           {/* Search bar */}
@@ -234,7 +239,7 @@ export default async function Home({ searchParams }: Props) {
 
         {dbError && (
           <div className="bg-amber-500/10 border border-amber-500/20 text-amber-800 p-4 rounded-xl text-xs font-semibold flex items-center gap-2">
-            ⚠️ The connection to your Supabase database failed. Please verify that the DATABASE_URL environment variable has been correctly configured under "Environment Variables" in your Vercel Project Settings.
+            ⚠️ Database connection notice. If you are experiencing technical difficulties, please reload or verify your connection settings.
           </div>
         )}
 
@@ -247,7 +252,9 @@ export default async function Home({ searchParams }: Props) {
             </div>
             <div className="p-0 flex-grow divide-y divide-slate-100">
               {notifications.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-400 font-medium">No active notifications. Add via Control Panel.</div>
+                <div className="p-8 text-center text-xs text-slate-500 font-medium">
+                  Latest verified notifications are being processed. Check back shortly for new government recruitment releases.
+                </div>
               ) : (
                 notifications.map((n) => (
                   <div key={n.id} className="p-4 hover:bg-slate-50/50 transition-colors">
@@ -269,11 +276,13 @@ export default async function Home({ searchParams }: Props) {
           {/* Admit Cards */}
           <section className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col h-full border border-outline-variant/20 hover:shadow-md transition-shadow">
             <div className="p-5 bg-amber-500 text-white flex justify-between items-center">
-              <h2 className="font-bold text-base">Admit Cards</h2>
+              <h2 className="font-bold text-base">Admit Cards & Hall Tickets</h2>
             </div>
             <div className="p-0 flex-grow divide-y divide-slate-100">
               {admitCards.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-400 font-medium">No active admit cards. Add via Control Panel.</div>
+                <div className="p-8 text-center text-xs text-slate-500 font-medium">
+                  New exam hall tickets and admit cards are updated instantly upon official portal release.
+                </div>
               ) : (
                 admitCards.map((ac) => (
                   <div key={ac.id} className="p-4 hover:bg-slate-50/50 transition-colors">
@@ -286,7 +295,7 @@ export default async function Home({ searchParams }: Props) {
             </div>
             <div className="p-4 border-t border-slate-100">
               <Link href="/jobs?type=admit-cards" className="w-full text-primary font-bold text-xs flex items-center justify-center gap-1 hover:underline cursor-pointer">
-                View admit Card List
+                View Admit Card List
               </Link>
             </div>
           </section>
@@ -294,11 +303,13 @@ export default async function Home({ searchParams }: Props) {
           {/* Results */}
           <section className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col h-full border border-outline-variant/20 hover:shadow-md transition-shadow">
             <div className="p-5 bg-emerald-600 text-white flex justify-between items-center">
-              <h2 className="font-bold text-base">Results</h2>
+              <h2 className="font-bold text-base">Results & Merit Lists</h2>
             </div>
             <div className="p-0 flex-grow divide-y divide-slate-100">
               {results.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-400 font-medium">No active results declared. Add via Control Panel.</div>
+                <div className="p-8 text-center text-xs text-slate-500 font-medium">
+                  Official merit lists and exam scorecards are verified and published here in real time.
+                </div>
               ) : (
                 results.map((r) => (
                   <div key={r.id} className="p-4 hover:bg-slate-50/50 transition-colors">
@@ -316,6 +327,84 @@ export default async function Home({ searchParams }: Props) {
             </div>
           </section>
         </div>
+
+        {/* High-Utility Student Tools Section (Transforms Site Value) */}
+        <section className="bg-gradient-to-r from-blue-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-300">
+                <Sparkles className="h-4 w-4" /> Aspirant Tools & Calculators
+              </div>
+              <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight text-white">
+                Free Candidate Utilities & Eligibility Tools
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+                Calculate your exact age on cut-off dates with category reservation rules, and estimate your 7th CPC take-home salary.
+              </p>
+            </div>
+            <Link
+              href="/tools"
+              className="inline-flex items-center gap-1.5 text-xs font-bold bg-white text-slate-900 hover:bg-slate-100 px-5 py-3 rounded-xl transition-all shrink-0 self-start md:self-auto"
+            >
+              <span>Explore All Tools</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Link
+              href="/tools/age-calculator"
+              className="group bg-white/10 hover:bg-white/15 border border-white/10 rounded-2xl p-6 transition-all flex flex-col justify-between space-y-4"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="p-3 bg-blue-500/20 text-blue-300 rounded-xl">
+                    <Calendar className="h-6 w-6" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-200">
+                    Free Utility
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-white group-hover:text-blue-200 transition-colors">
+                  Govt Job Age & Eligibility Calculator
+                </h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Calculate exact age (years, months, days) on any recruitment cut-off date with official category relaxation for OBC (+3), SC/ST (+5), and PwBD (+10-15).
+                </p>
+              </div>
+              <div className="pt-2 text-xs font-bold text-blue-300 flex items-center gap-1">
+                <span>Calculate Age Online</span>
+                <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            <Link
+              href="/tools/salary-calculator"
+              className="group bg-white/10 hover:bg-white/15 border border-white/10 rounded-2xl p-6 transition-all flex flex-col justify-between space-y-4"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="p-3 bg-emerald-500/20 text-emerald-300 rounded-xl">
+                    <Calculator className="h-6 w-6" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200">
+                    Updated 7th CPC
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-white group-hover:text-emerald-200 transition-colors">
+                  7th Pay Commission Salary Calculator
+                </h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Estimate gross and net in-hand monthly salary across Pay Levels 1 to 14. Includes DA @ 50%+, HRA for Tier X/Y/Z cities, and NPS deductions.
+                </p>
+              </div>
+              <div className="pt-2 text-xs font-bold text-emerald-300 flex items-center gap-1">
+                <span>Calculate In-Hand Salary</span>
+                <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+          </div>
+        </section>
 
         {/* Detailed View Table (Only contains Jobs) */}
         <section className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden">
@@ -339,7 +428,7 @@ export default async function Home({ searchParams }: Props) {
               <tbody className="text-xs sm:text-sm">
                 {consolidatedJobs.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-xs text-slate-400 font-bold border border-slate-200">
+                    <td colSpan={7} className="px-6 py-12 text-center text-xs text-slate-500 font-medium border border-slate-200">
                       No recruitment notices found in the database.
                     </td>
                   </tr>
@@ -471,4 +560,3 @@ export default async function Home({ searchParams }: Props) {
     </div>
   );
 }
-

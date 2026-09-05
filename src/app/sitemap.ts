@@ -4,7 +4,7 @@ import { prisma } from '@/lib/db'
 export const revalidate = 3600; // Cache sitemap for 1 hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://www.newfreejobalerts.com' // Your website domain
+  const baseUrl = 'https://www.newfreejobalerts.com'
 
   let jobs: any[] = []
   try {
@@ -41,6 +41,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticUrls = [
     '',
+    '/tools',
+    '/tools/age-calculator',
+    '/tools/salary-calculator',
     '/about',
     '/contact',
     '/privacy-policy',
@@ -57,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
-    priority: route === '' ? 1.0 : 0.5,
+    priority: route === '' ? 1.0 : route.startsWith('/tools') ? 0.9 : 0.6,
   }))
 
   return [...staticUrls, ...jobUrls, ...blogUrls]

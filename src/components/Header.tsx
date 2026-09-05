@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChevronDown, Award, Newspaper, FileText } from "lucide-react";
+import { Menu, X, ChevronDown, Award, Newspaper, FileText, Calculator, Calendar, Sparkles } from "lucide-react";
 
 interface StateItem {
   id: string;
@@ -45,15 +45,14 @@ export default function Header({ states }: HeaderProps) {
           </div>
 
           {/* Desktop Categories Navigation (Visible on lg and above) */}
-          <div className="hidden lg:flex items-center gap-5 xl:gap-6">
+          <div className="hidden lg:flex items-center gap-4 xl:gap-5">
             <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/">Home</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/blog">Career Blog</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=all-india-govt-jobs">All India Govt Jobs</Link>
+            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=all-india-govt-jobs">All India</Link>
             
             {/* State Govt Jobs Mega Menu */}
             <div className="relative group py-2 shrink-0">
               <div className="flex items-center gap-1 text-on-surface hover:text-primary font-semibold text-sm transition-colors cursor-pointer select-none">
-                State Govt Jobs <span className="text-[10px]">▼</span>
+                State Jobs <span className="text-[10px]">▼</span>
               </div>
               <div className="absolute left-1/2 -translate-x-1/2 top-full w-[900px] xl:w-[1000px] rounded-2xl shadow-2xl bg-white border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-6">
                 <div className="grid grid-cols-4 border-t border-l border-slate-100 rounded-xl overflow-hidden bg-white">
@@ -70,10 +69,40 @@ export default function Header({ states }: HeaderProps) {
               </div>
             </div>
 
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=bank-jobs">Bank Jobs</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=teaching-jobs">Teaching Jobs</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=railway-jobs">Railway Jobs</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=police-defence-jobs">Police/Defence Jobs</Link>
+            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=bank-jobs">Bank</Link>
+            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=teaching-jobs">Teaching</Link>
+            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=railway-jobs">Railway</Link>
+            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/jobs?category=police-defence-jobs">Police/Defence</Link>
+
+            {/* Tools Dropdown */}
+            <div className="relative group py-2 shrink-0">
+              <div className="flex items-center gap-1 text-primary font-bold text-sm transition-colors cursor-pointer select-none bg-primary/5 px-2.5 py-1 rounded-lg">
+                <Calculator className="h-3.5 w-3.5 text-primary" />
+                <span>Tools</span>
+                <span className="text-[10px]">▼</span>
+              </div>
+              <div className="absolute left-0 top-full w-64 rounded-xl shadow-xl bg-white border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 divide-y divide-slate-100 py-1">
+                <Link className="flex items-start gap-2.5 px-4 py-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/tools/age-calculator">
+                  <Calendar className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900">Age & Eligibility Calculator</p>
+                    <p className="text-[10px] text-slate-500 font-normal">Exact age & category relaxation</p>
+                  </div>
+                </Link>
+                <Link className="flex items-start gap-2.5 px-4 py-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors" href="/tools/salary-calculator">
+                  <Calculator className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900">7th CPC Salary Calculator</p>
+                    <p className="text-[10px] text-slate-500 font-normal">In-hand monthly take home</p>
+                  </div>
+                </Link>
+                <Link className="block px-4 py-2 text-center text-xs font-bold text-primary bg-primary/5 hover:bg-primary/10 transition-colors" href="/tools">
+                  View All Tools →
+                </Link>
+              </div>
+            </div>
+
+            <Link className="text-on-surface hover:text-primary font-semibold text-sm transition-colors shrink-0" href="/blog">Career Blog</Link>
 
             {/* More Dropdown */}
             <div className="relative group py-2 shrink-0">
@@ -92,13 +121,13 @@ export default function Header({ states }: HeaderProps) {
           </div>
 
           {/* Mobile Categories Scrollbar (Always visible on mobile below navigation) */}
-          <div className="flex lg:hidden flex-1 items-center gap-4 overflow-x-auto whitespace-nowrap no-scrollbar py-2 max-w-full min-w-0 ml-2">
+          <div className="flex lg:hidden flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap no-scrollbar py-2 max-w-full min-w-0 ml-2">
             <Link className="text-on-surface hover:text-primary font-semibold text-xs transition-colors shrink-0" href="/">Home</Link>
+            <Link className="text-primary font-bold text-xs transition-colors shrink-0 bg-primary/10 px-2 py-0.5 rounded" href="/tools">Tools</Link>
             <Link className="text-on-surface hover:text-primary font-semibold text-xs transition-colors shrink-0" href="/jobs?category=all-india-govt-jobs">All India</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-xs transition-colors shrink-0" href="/jobs?category=state-govt-jobs">State Jobs</Link>
+            <Link className="text-on-surface hover:text-primary font-semibold text-xs transition-colors shrink-0" href="/jobs?category=state-govt-jobs">State</Link>
             <Link className="text-on-surface hover:text-primary font-semibold text-xs transition-colors shrink-0" href="/jobs?category=bank-jobs">Bank</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-xs transition-colors shrink-0" href="/jobs?category=teaching-jobs">Teaching</Link>
-            <Link className="text-on-surface hover:text-primary font-semibold text-xs transition-colors shrink-0" href="/jobs?category=railway-jobs">Railway</Link>
+            <Link className="text-on-surface hover:text-primary font-semibold text-xs transition-colors shrink-0" href="/blog">Blog</Link>
           </div>
         </div>
       </nav>
@@ -137,11 +166,30 @@ export default function Header({ states }: HeaderProps) {
                   <Link href="/" className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg transition-colors">
                     Home
                   </Link>
+                  <Link href="/tools" className="flex items-center gap-3 px-3 py-2 text-sm font-bold text-primary bg-primary/5 rounded-lg transition-colors">
+                    <Calculator className="h-4 w-4 text-primary" />
+                    <span>Candidate Tools & Calculators</span>
+                  </Link>
+                  <Link href="/blog" className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg transition-colors">
+                    Career Blog & Guides
+                  </Link>
                   <Link href="/jobs?category=all-india-govt-jobs" className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg transition-colors">
                     All India Govt Jobs
                   </Link>
-                  <Link href="/blog" className="flex items-center gap-3 px-3 py-2 text-sm font-bold text-primary hover:bg-slate-50 rounded-lg transition-colors">
-                    Career Blog
+                </div>
+              </div>
+
+              {/* Tools Quick List */}
+              <div className="space-y-2">
+                <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Student Utilities</h3>
+                <div className="grid grid-cols-1 gap-1">
+                  <Link href="/tools/age-calculator" className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg transition-colors">
+                    <Calendar className="h-3.5 w-3.5 text-blue-600" />
+                    <span>Age & Eligibility Calculator</span>
+                  </Link>
+                  <Link href="/tools/salary-calculator" className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg transition-colors">
+                    <Calculator className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>7th Pay Commission Calculator</span>
                   </Link>
                 </div>
               </div>

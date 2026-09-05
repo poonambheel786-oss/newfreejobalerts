@@ -1,8 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { ArrowLeft, ArrowRight, ClipboardList } from "lucide-react";
+import { ArrowLeft, ArrowRight, ClipboardList, BookOpen, ShieldCheck, Building2, HelpCircle, Sparkles, CheckCircle2 } from "lucide-react";
 import EntriesSelector from "@/components/EntriesSelector";
+import { getStateGuide, getCategoryGuide, GuideInfo } from "@/lib/guide-data";
 
 export const revalidate = 3600;
 
@@ -35,7 +36,7 @@ function formatDateString(dateStr: string) {
     if (parts.length === 3) {
       const year = parts[0];
       const monthIndex = parseInt(parts[1], 10) - 1;
-      const day = parts[2]; // Keep string to preserve leading zero, e.g. "04"
+      const day = parts[2];
       const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -104,38 +105,56 @@ export default async function JobsListingPage({ searchParams }: Props) {
 
   // Fetch entries
   let jobs: any[] = [];
+  let fallbackJobs: any[] = [];
   let totalCount = 0;
   let categoryName = "";
   let typeLabel = "";
+  let stateName = "";
 
   try {
-    jobs = await prisma.job.findMany({
-      where: whereClause,
-      include: {
-        category: true,
-        state: true,
-        department: true,
-        qualification: true
-      },
-      orderBy: {
-        createdAt: "desc"
-      },
-      skip,
-      take: limit
-    });
+    const [fetchedJobs, count, dbState, dbCat, latestFallback] = await Promise.all([
+      prisma.job.findMany({
+        where: whereClause,
+        include: {
+          category: true,
+          state: true,
+          department: true,
+          qualification: true
+        },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit
+      }),
+      prisma.job.count({ where: whereClause }),
+      stateQuery ? prisma.state.findUnique({ where: { slug: stateQuery } }) : null,
+      categorySlug ? prisma.category.findUnique({ where: { slug: categorySlug } }) : null,
+      prisma.job.findMany({
+        where: { status: "Published" },
+        include: {
+          category: true,
+          state: true,
+          department: true,
+          qualification: true
+        },
+        orderBy: { createdAt: "desc" },
+        take: 6
+      })
+    ]);
 
-    totalCount = await prisma.job.count({
-      where: whereClause
-    });
+    jobs = fetchedJobs;
+    totalCount = count;
+    fallbackJobs = latestFallback;
 
-    if (categorySlug && jobs.length > 0) {
-      categoryName = jobs[0].category.name;
+    if (dbState) {
+      stateName = dbState.name;
+    } else if (stateQuery) {
+      stateName = stateQuery.replace(/-/g, " ");
+    }
+
+    if (dbCat) {
+      categoryName = dbCat.name;
     } else if (categorySlug) {
-      // Fetch category name if list is empty
-      const dbCat = await prisma.category.findUnique({
-        where: { slug: categorySlug }
-      });
-      categoryName = dbCat?.name || categorySlug.replace(/-/g, " ");
+      categoryName = categorySlug.replace(/-/g, " ");
     }
 
     if (postTypeQuery) {
@@ -147,17 +166,12 @@ export default async function JobsListingPage({ searchParams }: Props) {
     console.error("Failed to load listings:", e);
   }
 
-  // Fetch state name if state query is active
-  let stateName = "";
+  // Load rich guide content for State or Category
+  let guide: GuideInfo | null = null;
   if (stateQuery) {
-    try {
-      const dbState = await prisma.state.findUnique({
-        where: { slug: stateQuery }
-      });
-      stateName = dbState?.name || stateQuery.replace(/-/g, " ");
-    } catch (e) {
-      stateName = stateQuery.replace(/-/g, " ");
-    }
+    guide = getStateGuide(stateName || stateQuery, stateQuery);
+  } else if (categorySlug) {
+    guide = getCategoryGuide(categorySlug, categoryName || categorySlug);
   }
 
   const totalPages = Math.ceil(totalCount / limit);
@@ -171,7 +185,7 @@ export default async function JobsListingPage({ searchParams }: Props) {
           ? categoryName.toLowerCase().endsWith("jobs")
             ? categoryName
             : `${categoryName} Jobs`
-          : "All Notifications & Updates";
+          : "All Recruitment Notifications & Updates";
 
   // Build pagination query helper
   const getPageUrl = (pageNumber: number) => {
@@ -190,8 +204,21 @@ export default async function JobsListingPage({ searchParams }: Props) {
       {/* Main Header with Back Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-950 tracking-tight">{titleText}</h1>
-          <p className="text-xs text-slate-500 mt-1">Showing {jobs.length} updates of {totalCount} total entries.</p>
+          <nav className="text-xs font-semibold text-slate-500 flex gap-2 items-center mb-1.5">
+            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+            <span>/</span>
+            <Link href="/jobs" className="hover:text-primary transition-colors">Jobs</Link>
+            {(stateName || categoryName || typeLabel) && (
+              <>
+                <span>/</span>
+                <span className="text-slate-800 font-bold capitalize">
+                  {stateName || categoryName || typeLabel}
+                </span>
+              </>
+            )}
+          </nav>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">{titleText}</h1>
+          <p className="text-xs text-slate-500 mt-1">Showing {jobs.length} active updates of {totalCount} total verified entries.</p>
         </div>
         <Link 
           href="/" 
@@ -201,24 +228,128 @@ export default async function JobsListingPage({ searchParams }: Props) {
         </Link>
       </div>
 
+      {/* Rich Guide Box (Eliminates Thin Content completely) */}
+      {guide && (
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="space-y-2 border-b border-slate-100 pb-4">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/5 px-3 py-1 rounded-full">
+              <BookOpen className="h-3.5 w-3.5" /> Sector Overview & Career Guide
+            </div>
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900">{guide.title}</h2>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{guide.overview}</p>
+          </div>
+
+          {/* Major Boards & Selection Stages */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            <div className="space-y-3">
+              <h3 className="font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <Building2 className="h-4 w-4 text-primary" /> Key Recruiting Bodies & Commissions
+              </h3>
+              <div className="space-y-2">
+                {guide.majorBoards.map((b, idx) => (
+                  <div key={idx} className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <p className="font-bold text-slate-800">{b.name} <span className="text-[10px] font-normal text-slate-500">({b.fullForm})</span></p>
+                    <p className="text-slate-600 text-[11px] mt-0.5">{b.role}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" /> Eligibility & Domicile Norms
+              </h3>
+              <ul className="space-y-2 text-slate-600">
+                {guide.eligibilityHighlights.map((e, idx) => (
+                  <li key={idx} className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>{e}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Table or Informative Active State */}
       {jobs.length === 0 ? (
-        /* Coming Soon premium state */
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-16 text-center shadow-sm max-w-2xl mx-auto space-y-6">
-          <div className="mx-auto w-16 h-16 rounded-full bg-primary/5 flex items-center justify-center text-primary">
-            <ClipboardList className="h-8 w-8" />
+        <div className="space-y-8">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-8 sm:p-12 text-center shadow-sm max-w-2xl mx-auto space-y-4">
+            <div className="mx-auto w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-primary">
+              <ClipboardList className="h-6 w-6" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="text-base font-bold text-slate-900">No Current Openings in this Specific Filter</h3>
+              <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+                All previous recruitment cycles for this category have concluded or new notifications are currently undergoing official editorial verification. Explore active notifications across other sectors below.
+              </p>
+            </div>
+            <div className="pt-2">
+              <Link href="/jobs" className="inline-block bg-primary hover:bg-primary/95 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md shadow-primary/10 transition-all cursor-pointer">
+                View All Live Job Alerts
+              </Link>
+            </div>
           </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-slate-900 font-black">Coming Soon!</h2>
-            <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed font-semibold">
-              We are currently gathering and updating new records for this section. Please check back shortly for official notifications.
-            </p>
-          </div>
-          <Link href="/" className="inline-block bg-primary hover:bg-primary/95 text-white text-xs font-bold px-6 py-3 rounded-xl shadow-md shadow-primary/10 transition-all cursor-pointer">
-            Return to Home
-          </Link>
+
+          {/* Related Active Jobs fallback table to prevent empty screen */}
+          {fallbackJobs.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                Active Government Recruitments Across India
+              </h3>
+              <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[850px] text-left border-collapse">
+                    <thead>
+                      <tr className="text-[11px] font-bold uppercase tracking-wider bg-slate-800 text-white">
+                        <th className="px-6 py-4 border border-slate-200">Posted Date</th>
+                        <th className="px-6 py-4 border border-slate-200">Exam / Post Name</th>
+                        <th className="px-6 py-4 border border-slate-200">Eligibility</th>
+                        <th className="px-6 py-4 border border-slate-200">Last Date</th>
+                        <th className="px-6 py-4 border border-slate-200 text-right">Details</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-xs sm:text-sm">
+                      {fallbackJobs.map((fj) => {
+                        let lastDateStr = "N/A";
+                        try {
+                          const dates = fj.importantDates as any;
+                          if (dates && dates.end) lastDateStr = dates.end;
+                        } catch(e) {}
+
+                        return (
+                          <tr key={fj.id} className="hover:bg-slate-50/40 transition-colors">
+                            <td className="px-6 py-4 text-slate-400 font-semibold text-xs whitespace-nowrap border border-slate-200">
+                              {formatDate(fj.createdAt)}
+                            </td>
+                            <td className="px-6 py-4 font-semibold text-slate-800 border border-slate-200">
+                              <Link href={`/jobs/${fj.slug}`} className="hover:text-primary hover:underline transition-colors block">
+                                {fj.title}
+                              </Link>
+                              <span className="text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded mt-1 inline-block">
+                                {fj.department.name}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-slate-600 border border-slate-200 text-xs">{fj.qualification.name}</td>
+                            <td className="px-6 py-4 text-rose-600 font-semibold border border-slate-200 whitespace-nowrap text-xs">{formatDateString(lastDateStr)}</td>
+                            <td className="px-6 py-4 text-right whitespace-nowrap border border-slate-200">
+                              <Link href={`/jobs/${fj.slug}`} className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1">
+                                More Info <ArrowRight className="h-3 w-3" />
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
-        /* Jobs List Table */
+        /* Standard Jobs List Table */
         <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <EntriesSelector currentLimit={limit} />
@@ -226,18 +357,18 @@ export default async function JobsListingPage({ searchParams }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[850px] text-left border-collapse">
               <thead>
-                <tr className="text-[11px] font-bold uppercase tracking-wider">
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Posted Date</th>
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Notification Title</th>
+                <tr className="text-[11px] font-bold uppercase tracking-wider bg-slate-800 text-white">
+                  <th className="px-6 py-4 border border-slate-200">Posted Date</th>
+                  <th className="px-6 py-4 border border-slate-200">Notification Title</th>
                   {typeLabel === "Latest Notifications" || !typeLabel ? (
                     <>
-                      <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Eligibility</th>
-                      <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Total Posts</th>
-                      <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Start Date</th>
-                      <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200">Last Date</th>
+                      <th className="px-6 py-4 border border-slate-200">Eligibility</th>
+                      <th className="px-6 py-4 border border-slate-200">Total Posts</th>
+                      <th className="px-6 py-4 border border-slate-200">Start Date</th>
+                      <th className="px-6 py-4 border border-slate-200">Last Date</th>
                     </>
                   ) : null}
-                  <th className="px-6 py-4 bg-slate-800 text-white border border-slate-200 text-right">Details</th>
+                  <th className="px-6 py-4 border border-slate-200 text-right">Details</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
@@ -280,8 +411,8 @@ export default async function JobsListingPage({ searchParams }: Props) {
                             {job.qualification.name}
                           </td>
                           <td className="px-6 py-4 text-slate-800 font-bold whitespace-nowrap text-xs border border-slate-200">{job.vacancy}</td>
-                          <td className="px-6 py-4 text-emerald-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(startDateStr)}</td>
-                          <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200 whitespace-nowrap">{formatDateString(lastDateStr)}</td>
+                          <td className="px-6 py-4 text-emerald-600 font-medium border border-slate-200 whitespace-nowrap text-xs">{formatDateString(startDateStr)}</td>
+                          <td className="px-6 py-4 text-rose-600 font-medium border border-slate-200 whitespace-nowrap text-xs">{formatDateString(lastDateStr)}</td>
                         </>
                       ) : null}
                       <td className="px-6 py-4 text-right whitespace-nowrap border border-slate-200">
@@ -330,6 +461,31 @@ export default async function JobsListingPage({ searchParams }: Props) {
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Guide FAQs if available */}
+      {guide && guide.faqs && guide.faqs.length > 0 && (
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <HelpCircle className="h-4 w-4 text-indigo-500" /> Frequently Asked Questions ({guide.title.split(" - ")[0]})
+          </h2>
+          <div className="space-y-3">
+            {guide.faqs.map((f, idx) => (
+              <details key={idx} className="group border border-slate-100 rounded-xl bg-slate-50/50 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex justify-between items-center p-3.5 font-bold text-slate-800 text-xs sm:text-sm cursor-pointer select-none hover:bg-slate-100/50 transition-colors">
+                  <span className="flex items-start gap-1.5 pr-4">
+                    <span className="text-primary font-extrabold">Q.</span>
+                    <span>{f.q}</span>
+                  </span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-xs">▼</span>
+                </summary>
+                <div className="px-4 pb-4 pt-1 border-t border-slate-100/50 text-xs sm:text-sm text-slate-600 leading-relaxed pl-8">
+                  {f.a}
+                </div>
+              </details>
+            ))}
+          </div>
         </div>
       )}
     </div>

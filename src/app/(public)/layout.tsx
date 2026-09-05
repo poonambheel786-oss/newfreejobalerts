@@ -29,14 +29,25 @@ export default async function PublicLayout({
       </main>
 
       {/* Footer */}
-      <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/30 mt-auto py-8">
-        <div className="max-w-[1280px] mx-auto px-6 text-center space-y-4">
+      <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/30 mt-auto py-10">
+        <div className="max-w-[1280px] mx-auto px-6 space-y-6 text-center">
+          {/* Candidate Utilities Line */}
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs font-bold text-primary">
+            <span className="text-slate-400 font-semibold uppercase text-[10px] tracking-wider">Candidate Utilities:</span>
+            <Link href="/tools/age-calculator" className="hover:underline">Age & Eligibility Calculator</Link>
+            <span className="text-slate-300">|</span>
+            <Link href="/tools/salary-calculator" className="hover:underline">7th CPC Salary Calculator</Link>
+            <span className="text-slate-300">|</span>
+            <Link href="/tools" className="hover:underline">All Tools Hub</Link>
+            <span className="text-slate-300">|</span>
+            <Link href="/blog" className="hover:underline">Career Preparation Guides</Link>
+          </div>
+
+          {/* Legal & Compliance Links */}
           <div className="flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-3 gap-y-2 text-xs font-semibold text-slate-500">
             <Link href="/about" className="hover:text-primary transition-colors">About Us</Link>
             <span className="text-slate-300">|</span>
             <Link href="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
-            <span className="text-slate-300">|</span>
-            <Link href="/blog" className="hover:text-primary transition-colors text-primary font-bold">Career Blog</Link>
             <span className="text-slate-300">|</span>
             <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
             <span className="text-slate-300">|</span>
@@ -54,7 +65,13 @@ export default async function PublicLayout({
             <span className="text-slate-300">|</span>
             <Link href="/correction-policy" className="hover:text-primary transition-colors">Correction Policy</Link>
           </div>
-          <p className="text-xs text-on-surface-variant opacity-70">&copy; 2026 PR Deep Solution Pvt. Ltd. All rights reserved.</p>
+
+          <div className="space-y-1 text-xs text-on-surface-variant opacity-75">
+            <p className="max-w-2xl mx-auto text-[11px] leading-relaxed text-slate-500">
+              NewFreeJobAlert is an independent news aggregation and educational analysis platform owned by PR Deep Solution Pvt. Ltd. We are not affiliated with, authorized by, or associated with any Government Ministry, Commission, or Public Service Board.
+            </p>
+            <p className="text-[11px] font-medium pt-2">&copy; 2026 PR Deep Solution Pvt. Ltd. All rights reserved.</p>
+          </div>
         </div>
       </footer>
     </>

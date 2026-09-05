@@ -69,6 +69,9 @@ export async function createJob(state: any, formData: FormData) {
 
     const pdfUrl = formData.get('pdfUrl') as string
     const applyLink = formData.get('applyLink') as string
+    const admitCardLink = (formData.get('admitCardLink') as string) || null
+    const resultLink = (formData.get('resultLink') as string) || null
+    const answerKeyLink = (formData.get('answerKeyLink') as string) || null
     const officialWebsite = formData.get('officialWebsite') as string
     const stateName = formData.get('state') as string || "All India"
     const categoryName = formData.get('category') as string
@@ -131,10 +134,10 @@ export async function createJob(state: any, formData: FormData) {
     let defaultMetaTitle = `${title} - Vacancy Eligibility Apply Details`;
     let defaultMetaDescription = `Apply for ${vacancy} posts in ${finalDepartmentName}. Qualification required: ${finalQualificationName}. Last date to apply: ${endDate || 'N/A'}.`;
 
-    if (postType === "Admit Cards") {
+    if (postType === "Admit Cards" || admitCardLink) {
       defaultMetaTitle = `${title} - Download Admit Card / Hall Ticket`;
       defaultMetaDescription = `Download Admit Card / Hall Ticket for ${title}. Check exam dates, download instructions, and direct link.`;
-    } else if (postType === "Results") {
+    } else if (postType === "Results" || resultLink) {
       defaultMetaTitle = `${title} - Check Score Card & Merit List`;
       defaultMetaDescription = `Check exam results, merit list, cut off marks, and score card details for ${title}. Direct link to download.`;
     }
@@ -166,6 +169,9 @@ export async function createJob(state: any, formData: FormData) {
       },
       pdfUrl,
       applyLink,
+      admitCardLink,
+      resultLink,
+      answerKeyLink,
       officialWebsite,
       advtNumber: advtNumber || null,
       metaTitle: customMetaTitle || defaultMetaTitle,

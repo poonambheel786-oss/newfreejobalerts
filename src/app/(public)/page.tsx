@@ -63,14 +63,26 @@ const getCachedHomeData = unstable_cache(
         select: { id: true, title: true, slug: true, createdAt: true }
       }),
       prisma.job.findMany({
-        where: { postType: "Admit Cards", status: "Published" },
-        orderBy: { createdAt: "desc" },
+        where: {
+          status: "Published",
+          OR: [
+            { postType: "Admit Cards" },
+            { AND: [{ admitCardLink: { not: null } }, { admitCardLink: { not: "" } }] }
+          ]
+        },
+        orderBy: { updatedAt: "desc" },
         take: 2,
         select: { id: true, title: true, slug: true, createdAt: true }
       }),
       prisma.job.findMany({
-        where: { postType: "Results", status: "Published" },
-        orderBy: { createdAt: "desc" },
+        where: {
+          status: "Published",
+          OR: [
+            { postType: "Results" },
+            { AND: [{ resultLink: { not: null } }, { resultLink: { not: "" } }] }
+          ]
+        },
+        orderBy: { updatedAt: "desc" },
         take: 2,
         select: { id: true, title: true, slug: true, createdAt: true }
       }),
@@ -81,16 +93,28 @@ const getCachedHomeData = unstable_cache(
         select: { id: true, title: true, slug: true, category: { select: { name: true } } }
       }),
       prisma.job.findMany({
-        where: { postType: "Admit Cards", status: "Published" },
-        orderBy: { createdAt: "desc" },
+        where: {
+          status: "Published",
+          OR: [
+            { postType: "Admit Cards" },
+            { AND: [{ admitCardLink: { not: null } }, { admitCardLink: { not: "" } }] }
+          ]
+        },
+        orderBy: { updatedAt: "desc" },
         take: 5,
-        select: { id: true, title: true, slug: true, category: { select: { name: true } } }
+        select: { id: true, title: true, slug: true, admitCardLink: true, category: { select: { name: true } } }
       }),
       prisma.job.findMany({
-        where: { postType: "Results", status: "Published" },
-        orderBy: { createdAt: "desc" },
+        where: {
+          status: "Published",
+          OR: [
+            { postType: "Results" },
+            { AND: [{ resultLink: { not: null } }, { resultLink: { not: "" } }] }
+          ]
+        },
+        orderBy: { updatedAt: "desc" },
         take: 5,
-        select: { id: true, title: true, slug: true, category: { select: { name: true } } }
+        select: { id: true, title: true, slug: true, resultLink: true, category: { select: { name: true } } }
       }),
       prisma.job.findMany({
         where: { postType: "Latest Notifications", status: "Published" },
@@ -285,10 +309,13 @@ export default async function Home({ searchParams }: Props) {
                 </div>
               ) : (
                 admitCards.map((ac) => (
-                  <div key={ac.id} className="p-4 hover:bg-slate-50/50 transition-colors">
-                    <Link className="font-bold text-sm text-blue-600 hover:text-blue-800 hover:underline block leading-snug" href={`/jobs/${ac.slug}`}>
+                  <div key={ac.id} className="p-4 hover:bg-slate-50/50 transition-colors flex items-center justify-between gap-3">
+                    <Link className="font-bold text-sm text-slate-800 hover:text-amber-700 hover:underline block leading-snug flex-1" href={`/jobs/${ac.slug}`}>
                       {ac.title}
                     </Link>
+                    <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-700 border border-amber-500/20">
+                      Admit Card
+                    </span>
                   </div>
                 ))
               )}
@@ -312,10 +339,13 @@ export default async function Home({ searchParams }: Props) {
                 </div>
               ) : (
                 results.map((r) => (
-                  <div key={r.id} className="p-4 hover:bg-slate-50/50 transition-colors">
-                    <Link className="font-bold text-sm text-blue-600 hover:text-blue-800 hover:underline block leading-snug" href={`/jobs/${r.slug}`}>
+                  <div key={r.id} className="p-4 hover:bg-slate-50/50 transition-colors flex items-center justify-between gap-3">
+                    <Link className="font-bold text-sm text-slate-800 hover:text-emerald-700 hover:underline block leading-snug flex-1" href={`/jobs/${r.slug}`}>
                       {r.title}
                     </Link>
+                    <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
+                      Result
+                    </span>
                   </div>
                 ))
               )}

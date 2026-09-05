@@ -405,42 +405,74 @@ export default function JobForm({ states, categories, initialJob, initialType }:
 
                 {/* PDF & Apply Links */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-800 pt-4">
-                  {postType === "Latest Notifications" && (
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-400 mb-1">Notification PDF URL</label>
-                      <input 
-                        type="text" 
-                        name="pdfUrl" 
-                        defaultValue={initialJob?.pdfUrl || ""}
-                        placeholder="S3 PDF Link" 
-                        className="w-full h-11 px-4 bg-slate-955 border border-slate-800 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-violet-600 focus:outline-none transition-all"
-                      />
-                    </div>
-                  )}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 mb-1">
-                      {postType === "Latest Notifications" ? "Apply Link (Optional)" : "Download / Results Link (Optional)"}
-                    </label>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">Notification PDF URL</label>
+                    <input 
+                      type="text" 
+                      name="pdfUrl" 
+                      defaultValue={initialJob?.pdfUrl || ""}
+                      placeholder="https://.../notification.pdf" 
+                      className="w-full h-11 px-4 bg-slate-955 border border-slate-800 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-violet-600 focus:outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">Apply Online Portal Link</label>
                     <input 
                       type="text" 
                       name="applyLink" 
                       defaultValue={initialJob?.applyLink || ""}
-                      placeholder="Official Link" 
+                      placeholder="https://.../apply" 
                       className="w-full h-11 px-4 bg-slate-955 border border-slate-800 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-violet-600 focus:outline-none transition-all"
                     />
                   </div>
-                  {postType === "Latest Notifications" && (
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-slate-400 mb-1">Official Website</label>
-                      <input 
-                        type="text" 
-                        name="officialWebsite" 
-                        defaultValue={initialJob?.officialWebsite || ""}
-                        placeholder="https://ssc.gov.in" 
-                        className="w-full h-11 px-4 bg-slate-955 border border-slate-800 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-violet-600 focus:outline-none transition-all"
-                      />
-                    </div>
-                  )}
+                  <div className="bg-emerald-950/20 border border-emerald-800/40 p-3 rounded-xl space-y-1 sm:col-span-1">
+                    <label className="block text-xs font-bold text-emerald-400 flex items-center justify-between">
+                      <span>📥 Admit Card Download Link (Optional)</span>
+                      <span className="text-[10px] text-emerald-500/80 font-normal">When released</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      name="admitCardLink" 
+                      defaultValue={initialJob?.admitCardLink || ""}
+                      placeholder="https://.../admit-card" 
+                      className="w-full h-10 px-3 bg-slate-955 border border-emerald-900/50 rounded-lg text-sm text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-emerald-500 focus:outline-none transition-all"
+                    />
+                    <p className="text-[10px] text-slate-400">Pasting a link here automatically shows the "Download Admit Card" button and lists this job in the Admit Cards section.</p>
+                  </div>
+                  <div className="bg-purple-950/20 border border-purple-800/40 p-3 rounded-xl space-y-1 sm:col-span-1">
+                    <label className="block text-xs font-bold text-purple-400 flex items-center justify-between">
+                      <span>🏆 Result / Score Card Link (Optional)</span>
+                      <span className="text-[10px] text-purple-500/80 font-normal">When declared</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      name="resultLink" 
+                      defaultValue={initialJob?.resultLink || ""}
+                      placeholder="https://.../result" 
+                      className="w-full h-10 px-3 bg-slate-955 border border-purple-900/50 rounded-lg text-sm text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-purple-500 focus:outline-none transition-all"
+                    />
+                    <p className="text-[10px] text-slate-400">Pasting a link here automatically shows the "Check Result" button and lists this job in the Results section.</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">Answer Key Link (Optional)</label>
+                    <input 
+                      type="text" 
+                      name="answerKeyLink" 
+                      defaultValue={initialJob?.answerKeyLink || ""}
+                      placeholder="https://.../answer-key" 
+                      className="w-full h-11 px-4 bg-slate-955 border border-slate-800 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-violet-600 focus:outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">Official Department Website</label>
+                    <input 
+                      type="text" 
+                      name="officialWebsite" 
+                      defaultValue={initialJob?.officialWebsite || ""}
+                      placeholder="https://ssc.gov.in" 
+                      className="w-full h-11 px-4 bg-slate-955 border border-slate-800 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-violet-600 focus:outline-none transition-all"
+                    />
+                  </div>
                 </div>
 
                 {/* Dynamic Custom Links */}

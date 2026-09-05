@@ -29,12 +29,31 @@ export default async function AdminJobsPage({ searchParams }: Props) {
 
   const searchQuery = search.trim();
 
-  const whereClause = {
-    postType: postType,
-    OR: searchQuery ? [
-      { title: { contains: searchQuery, mode: 'insensitive' as const } },
-      { department: { name: { contains: searchQuery, mode: 'insensitive' as const } } }
-    ] : undefined
+  let typeFilter: any = { postType: postType };
+  if (postType === "Admit Cards") {
+    typeFilter = {
+      OR: [
+        { postType: "Admit Cards" },
+        { AND: [{ admitCardLink: { not: null } }, { admitCardLink: { not: "" } }] }
+      ]
+    };
+  } else if (postType === "Results") {
+    typeFilter = {
+      OR: [
+        { postType: "Results" },
+        { AND: [{ resultLink: { not: null } }, { resultLink: { not: "" } }] }
+      ]
+    };
+  }
+
+  const whereClause: any = {
+    ...typeFilter,
+    ...(searchQuery ? {
+      OR: [
+        { title: { contains: searchQuery, mode: 'insensitive' as const } },
+        { department: { name: { contains: searchQuery, mode: 'insensitive' as const } } }
+      ]
+    } : {})
   };
 
   try {
@@ -158,8 +177,20 @@ export default async function AdminJobsPage({ searchParams }: Props) {
                 jobs.map((job) => (
                   <tr key={job.id} className="hover:bg-slate-850/40 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="max-w-md truncate font-bold text-white" title={job.title}>
-                        {job.title}
+                      <div className="flex items-center gap-2 max-w-md">
+                        <span className="truncate font-bold text-white" title={job.title}>
+                          {job.title}
+                        </span>
+                        {job.admitCardLink && (
+                          <span className="shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            Admit Card
+                          </span>
+                        )}
+                        {job.resultLink && (
+                          <span className="shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            Result
+                          </span>
+                        )}
                       </div>
                       {job.department && (
                         <div className="text-[10px] text-slate-500 mt-0.5 font-semibold">

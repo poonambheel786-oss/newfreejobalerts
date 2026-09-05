@@ -78,29 +78,44 @@ export default async function JobsListingPage({ searchParams }: Props) {
     };
   }
 
-  if (postTypeQuery) {
-    let mappedType = "";
-    if (postTypeQuery === "latest-notifications") {
-      mappedType = "Latest Notifications";
-    } else if (postTypeQuery === "admit-cards") {
-      mappedType = "Admit Cards";
-    } else if (postTypeQuery === "results") {
-      mappedType = "Results";
-    }
+  const conditions: any[] = [];
 
-    if (mappedType) {
-      whereClause.postType = mappedType;
+  if (postTypeQuery) {
+    if (postTypeQuery === "latest-notifications") {
+      conditions.push({ postType: "Latest Notifications" });
+    } else if (postTypeQuery === "admit-cards") {
+      conditions.push({
+        OR: [
+          { postType: "Admit Cards" },
+          { AND: [{ admitCardLink: { not: null } }, { admitCardLink: { not: "" } }] }
+        ]
+      });
+    } else if (postTypeQuery === "results") {
+      conditions.push({
+        OR: [
+          { postType: "Results" },
+          { AND: [{ resultLink: { not: null } }, { resultLink: { not: "" } }] }
+        ]
+      });
     }
   }
 
   if (searchQuery) {
-    whereClause.OR = [
-      { title: { contains: searchQuery, mode: "insensitive" } },
-      { department: { name: { contains: searchQuery, mode: "insensitive" } } },
-      { qualification: { name: { contains: searchQuery, mode: "insensitive" } } },
-      { category: { name: { contains: searchQuery, mode: "insensitive" } } },
-      { advtNumber: { contains: searchQuery, mode: "insensitive" } }
-    ];
+    conditions.push({
+      OR: [
+        { title: { contains: searchQuery, mode: "insensitive" } },
+        { department: { name: { contains: searchQuery, mode: "insensitive" } } },
+        { qualification: { name: { contains: searchQuery, mode: "insensitive" } } },
+        { category: { name: { contains: searchQuery, mode: "insensitive" } } },
+        { advtNumber: { contains: searchQuery, mode: "insensitive" } }
+      ]
+    });
+  }
+
+  if (conditions.length === 1) {
+    Object.assign(whereClause, conditions[0]);
+  } else if (conditions.length > 1) {
+    whereClause.AND = conditions;
   }
 
   // Fetch entries

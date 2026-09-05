@@ -87,6 +87,9 @@ model Job {
   pdfUrl              String?        // S3 or Wasabi URL
   officialWebsite     String?
   applyLink           String?
+  admitCardLink       String?
+  resultLink          String?
+  answerKeyLink       String?
   
   // Meta/SEO & Classification
   jobType             JobType        @default(PERMANENT)

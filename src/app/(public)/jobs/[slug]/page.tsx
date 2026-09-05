@@ -440,6 +440,26 @@ export default async function JobDetailPage({ params }: Props) {
                   {linkText} <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               )}
+              {job.admitCardLink && job.admitCardLink.trim() !== "" && (
+                <a 
+                  href={job.admitCardLink} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-4.5 py-2.5 rounded-xl shadow-md shadow-emerald-600/10 transition-all"
+                >
+                  📥 Download Admit Card <Download className="h-3.5 w-3.5" />
+                </a>
+              )}
+              {job.resultLink && job.resultLink.trim() !== "" && (
+                <a 
+                  href={job.resultLink} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 px-4.5 py-2.5 rounded-xl shadow-md shadow-purple-600/10 transition-all"
+                >
+                  🏆 Check Result / Merit List <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              )}
               {job.pdfUrl && job.pdfUrl.trim() !== "" && (
                 <a 
                   href={job.pdfUrl} 
@@ -847,9 +867,47 @@ export default async function JobDetailPage({ params }: Props) {
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm border-collapse border border-slate-200/60 rounded-xl overflow-hidden">
                       <tbody>
+                        {job.applyLink && (
+                          <tr className="bg-slate-50 border-b border-slate-200/60">
+                            <th className="px-4 py-3 font-bold text-slate-700 border-r border-slate-200/60 w-1/3">Apply Online Portal</th>
+                            <td className="px-4 py-3">
+                              <a href={job.applyLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold inline-flex items-center gap-1">Apply Online <ExternalLink className="h-3 w-3" /></a>
+                            </td>
+                          </tr>
+                        )}
+                        {job.admitCardLink && (
+                          <tr className="bg-emerald-50/60 border-b border-emerald-100">
+                            <th className="px-4 py-3 font-bold text-emerald-900 border-r border-emerald-100 w-1/3 flex items-center gap-1.5">
+                              <span>📥 Admit Card / Hall Ticket</span>
+                            </th>
+                            <td className="px-4 py-3">
+                              <a href={job.admitCardLink} target="_blank" rel="noopener noreferrer" className="text-emerald-700 hover:text-emerald-900 hover:underline font-bold inline-flex items-center gap-1">Download Admit Card <ExternalLink className="h-3 w-3" /></a>
+                            </td>
+                          </tr>
+                        )}
+                        {job.resultLink && (
+                          <tr className="bg-purple-50/60 border-b border-purple-100">
+                            <th className="px-4 py-3 font-bold text-purple-900 border-r border-purple-100 w-1/3 flex items-center gap-1.5">
+                              <span>🏆 Exam Result / Score Card</span>
+                            </th>
+                            <td className="px-4 py-3">
+                              <a href={job.resultLink} target="_blank" rel="noopener noreferrer" className="text-purple-700 hover:text-purple-900 hover:underline font-bold inline-flex items-center gap-1">Check Result & Merit List <ExternalLink className="h-3 w-3" /></a>
+                            </td>
+                          </tr>
+                        )}
+                        {job.answerKeyLink && (
+                          <tr className="bg-amber-50/60 border-b border-amber-100">
+                            <th className="px-4 py-3 font-bold text-amber-900 border-r border-amber-100 w-1/3 flex items-center gap-1.5">
+                              <span>🔑 Official Answer Key</span>
+                            </th>
+                            <td className="px-4 py-3">
+                              <a href={job.answerKeyLink} target="_blank" rel="noopener noreferrer" className="text-amber-700 hover:text-amber-900 hover:underline font-bold inline-flex items-center gap-1">Download Answer Key <ExternalLink className="h-3 w-3" /></a>
+                            </td>
+                          </tr>
+                        )}
                         {job.pdfUrl && (
                           <tr className="bg-slate-50 border-b border-slate-200/60">
-                            <th className="px-4 py-3 font-bold text-slate-600 w-1/3 border-r border-slate-200/60">Official Notification</th>
+                            <th className="px-4 py-3 font-bold text-slate-700 w-1/3 border-r border-slate-200/60">Official Notification PDF</th>
                             <td className="px-4 py-3">
                               <a href={job.pdfUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold inline-flex items-center gap-1">Download PDF <ExternalLink className="h-3 w-3" /></a>
                             </td>
@@ -857,20 +915,20 @@ export default async function JobDetailPage({ params }: Props) {
                         )}
                         {job.officialWebsite && (
                           <tr className="border-b border-slate-200/60">
-                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Official Department Portal</th>
+                            <th className="px-4 py-3 font-bold text-slate-700 border-r border-slate-200/60">Official Department Portal</th>
                             <td className="px-4 py-3">
                               <a href={job.officialWebsite} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold inline-flex items-center gap-1">{job.officialWebsite} <ExternalLink className="h-3 w-3" /></a>
                             </td>
                           </tr>
                         )}
-                        {job.applyLink && (
-                          <tr className="bg-slate-50">
-                            <th className="px-4 py-3 font-bold text-slate-600 border-r border-slate-200/60">Apply Online Portal</th>
+                        {dates.customLinks && dates.customLinks.map((cl: any, idx: number) => cl.label && cl.value && cl.value.trim() !== "" && (
+                          <tr key={idx} className="border-b border-slate-200/60">
+                            <th className="px-4 py-3 font-bold text-slate-700 border-r border-slate-200/60">{cl.label}</th>
                             <td className="px-4 py-3">
-                              <a href={job.applyLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold inline-flex items-center gap-1">Apply Link <ExternalLink className="h-3 w-3" /></a>
+                              <a href={cl.value} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold inline-flex items-center gap-1">Click Here <ExternalLink className="h-3 w-3" /></a>
                             </td>
                           </tr>
-                        )}
+                        ))}
                       </tbody>
                     </table>
                   </div>

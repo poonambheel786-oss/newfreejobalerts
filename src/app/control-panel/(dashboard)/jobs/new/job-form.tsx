@@ -4,10 +4,8 @@ import React, { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { 
   ArrowLeft, Save, AlertCircle, CheckCircle2, Plus, Trash2, Loader2,
-  Sparkles, FileText, Calendar, Link2, HelpCircle, Search, Eye,
-  Building, GraduationCap, MapPin, Download, ExternalLink, Zap,
-  Layers, CheckSquare, Clock, DollarSign, Award, ChevronRight,
-  RefreshCw, Copy, Check
+  Sparkles, FileText, Calendar, HelpCircle, Search, Eye,
+  Layers
 } from "lucide-react";
 import { createJob } from "../../../actions";
 import RichTextEditor from "../../../../../components/RichTextEditor/RichTextEditor";
@@ -115,58 +113,6 @@ export default function JobForm({ states, categories, initialJob, initialType }:
   const handleFormKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.key === "Enter" && (e.target as HTMLElement).tagName === "INPUT") {
       e.preventDefault();
-    }
-  };
-
-  // Quick Preset Inserters for Popular Exams
-  const applyPreset = (type: string) => {
-    if (type === "ssc") {
-      setTitle("SSC Combined Graduate Level (CGL) Examination 2026 Online Form");
-      setDepartment("Staff Selection Commission (SSC)");
-      setAdvtNumber("SSC/CGL/2026-HQ");
-      setQualification("Bachelor's Degree in Any Discipline");
-      setVacancy("17,727 (Tentative)");
-      setSelectedCategory("SSC");
-      setSelectedState("All India");
-      setOfficialWebsite("https://ssc.gov.in");
-      setApplicationFeesHtml("<p><strong>General / OBC / EWS:</strong> ₹100/-</p><p><strong>SC / ST / PwBD / Female:</strong> Exempted (Nil)</p><p><strong>Payment Mode:</strong> Online via UPI, Net Banking, Debit/Credit Card.</p>");
-      setSelectionProcessHtml("<ol><li><strong>Tier 1 Exam:</strong> Computer Based Test (CBT) - Qualifying in nature</li><li><strong>Tier 2 Exam:</strong> Computer Based Test (Objective + Descriptive + Typing)</li><li><strong>Document Verification:</strong> Conducted by User Departments</li><li><strong>Final Merit List:</strong> Based on Tier 2 Performance</li></ol>");
-      setAgeLimitHtml("<p><strong>Age Limit (as on 01/08/2026):</strong> 18 to 30 / 32 Years (Post-wise)</p><p><strong>Age Relaxation:</strong> OBC: +3 Years, SC/ST: +5 Years, PwBD: +10-15 Years as per DoPT rules.</p>");
-      setSalaryHtml("<p><strong>Pay Matrix:</strong> Pay Level 4 to Level 8 (₹25,500 to ₹1,51,100)</p><p><strong>Allowances:</strong> Dearness Allowance (DA @ 50%), HRA, Transport Allowance, and Medical benefits.</p>");
-    } else if (type === "railway") {
-      setTitle("RRB NTPC (Graduate & Under Graduate) Recruitment 2026 Online Form");
-      setDepartment("Railway Recruitment Boards (RRB)");
-      setAdvtNumber("CEN 05/2026");
-      setQualification("12th Pass / Graduate (Post-wise)");
-      setVacancy("11,558 Posts");
-      setSelectedCategory("Railway");
-      setSelectedState("All India");
-      setOfficialWebsite("https://rrbapply.gov.in");
-      setApplicationFeesHtml("<p><strong>General / OBC / EWS:</strong> ₹500/- (₹400 refunded on appearing in CBT 1)</p><p><strong>SC / ST / Ex-SM / PwBD / Female:</strong> ₹250/- (Full refunded on appearing in CBT 1)</p>");
-      setSelectionProcessHtml("<ol><li><strong>1st Stage CBT:</strong> Screening Test (100 Marks)</li><li><strong>2nd Stage CBT:</strong> Main Exam (120 Marks)</li><li><strong>Skill Test:</strong> Typing / CBAT (Post-wise)</li><li><strong>Document Verification & Medical Exam</strong></li></ol>");
-      setAgeLimitHtml("<p><strong>Age Limit (as on 01/07/2026):</strong> 18 to 33 / 36 Years</p><p><strong>Age Relaxation:</strong> OBC: +3 Years, SC/ST: +5 Years as per Railway Board guidelines.</p>");
-    } else if (type === "banking") {
-      setTitle("IBPS PO / Management Trainee (CRP PO/MT-XIV) Recruitment 2026");
-      setDepartment("Institute of Banking Personnel Selection (IBPS)");
-      setAdvtNumber("IBPS/PO/2026");
-      setQualification("Graduate in Any Stream");
-      setVacancy("3,955 Posts");
-      setSelectedCategory("Banking");
-      setSelectedState("All India");
-      setOfficialWebsite("https://www.ibps.in");
-      setApplicationFeesHtml("<p><strong>General / OBC / EWS:</strong> ₹850/- (Inclusive of GST)</p><p><strong>SC / ST / PwBD:</strong> ₹175/-</p>");
-      setSelectionProcessHtml("<ol><li><strong>Online Preliminary Exam:</strong> 100 Marks (1 Hour)</li><li><strong>Online Mains Exam:</strong> 225 Marks (Objective + Descriptive)</li><li><strong>Common Interview:</strong> 100 Marks (Conducted by Participating Banks)</li></ol>");
-    } else if (type === "upsc") {
-      setTitle("UPSC Civil Services (Preliminary) Examination 2026 Online Application");
-      setDepartment("Union Public Service Commission (UPSC)");
-      setAdvtNumber("05/2026-CSP");
-      setQualification("Degree in Any Discipline from Recognized University");
-      setVacancy("1,056 Posts");
-      setSelectedCategory("UPSC");
-      setSelectedState("All India");
-      setOfficialWebsite("https://upsconline.nic.in");
-      setApplicationFeesHtml("<p><strong>General / OBC / EWS Male:</strong> ₹100/-</p><p><strong>SC / ST / PwBD / All Females:</strong> Nil (Exempted)</p>");
-      setSelectionProcessHtml("<ol><li><strong>Civil Services (Preliminary) Exam:</strong> GS Paper 1 + CSAT Paper 2 (Qualifying 33%)</li><li><strong>Civil Services (Main) Written Exam:</strong> 9 Papers (1750 Marks)</li><li><strong>Personality Test / Interview:</strong> 275 Marks</li></ol>");
     }
   };
 
@@ -285,42 +231,6 @@ export default function JobForm({ states, categories, initialJob, initialType }:
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-            {!initialJob && (
-              <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-xl p-1 text-xs">
-                <span className="text-[11px] font-bold text-blue-700 px-2 flex items-center gap-1">
-                  <Zap className="h-3 w-3" /> Quick Pre-fill:
-                </span>
-                <button
-                  type="button"
-                  onClick={() => applyPreset("ssc")}
-                  className="px-2 py-1 rounded-lg text-[11px] font-bold text-slate-700 hover:text-blue-700 hover:bg-white transition-all cursor-pointer"
-                >
-                  SSC
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyPreset("railway")}
-                  className="px-2 py-1 rounded-lg text-[11px] font-bold text-slate-700 hover:text-blue-700 hover:bg-white transition-all cursor-pointer"
-                >
-                  RRB
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyPreset("banking")}
-                  className="px-2 py-1 rounded-lg text-[11px] font-bold text-slate-700 hover:text-blue-700 hover:bg-white transition-all cursor-pointer"
-                >
-                  Bank
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyPreset("upsc")}
-                  className="px-2 py-1 rounded-lg text-[11px] font-bold text-slate-700 hover:text-blue-700 hover:bg-white transition-all cursor-pointer"
-                >
-                  UPSC
-                </button>
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={loading}

@@ -185,7 +185,7 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         action={formAction} 
         onSubmit={() => setLoading(true)} 
         onKeyDown={handleFormKeyDown} 
-        className="space-y-8 max-w-5xl mx-auto pb-16"
+        className="space-y-6 max-w-5xl mx-auto pb-16"
       >
         <input type="hidden" name="id" value={initialJob?.id || ""} />
         <input type="hidden" name="customDatesJson" value={JSON.stringify(customDates)} />
@@ -203,38 +203,43 @@ export default function JobForm({ states, categories, initialJob, initialType }:
         <textarea name="applicationFees" value={applicationFeesHtml} onChange={(e) => setApplicationFeesHtml(e.target.value)} className="hidden" />
         <textarea name="editorialSummary" value={editorialSummaryHtml} onChange={(e) => setEditorialSummaryHtml(e.target.value)} className="hidden" />
 
-        {/* Top Sticky Header */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sticky top-20 z-30">
-          <div className="flex items-center gap-3">
-            <Link 
-              href="/control-panel/dashboard" 
-              className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-colors border border-slate-200"
-              title="Back to Dashboard"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base font-bold text-slate-900 truncate max-w-xs sm:max-w-md">
-                  {title || (initialJob ? "Edit Job Notification" : "New Job Notification Entry")}
-                </h1>
-                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                  jobStatus === "Published" 
-                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
-                    : "bg-amber-50 text-amber-700 border border-amber-200"
-                }`}>
-                  {jobStatus}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500">Fill in the fields below and click Publish (or press Ctrl+S)</p>
+        {/* Top Breadcrumb & Heading Action Bar */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+              <Link href="/control-panel/dashboard" className="hover:text-blue-600 transition-colors">Dashboard</Link>
+              <span>/</span>
+              <Link href={`/control-panel/dashboard/jobs?type=${encodeURIComponent(postType)}`} className="hover:text-blue-600 transition-colors">{postType}</Link>
+              <span>/</span>
+              <span className="text-slate-900 font-bold">{initialJob ? "Edit Entry" : "New Entry"}</span>
             </div>
+            <div className="flex items-center gap-2.5 mt-1">
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight truncate max-w-md sm:max-w-xl">
+                {title || (initialJob ? "Edit Job Notification" : "New Job Notification Entry")}
+              </h1>
+              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full shrink-0 ${
+                jobStatus === "Published" 
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
+                  : "bg-amber-50 text-amber-700 border border-amber-200"
+              }`}>
+                {jobStatus}
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">Fill in the fields below and click Publish (or press Ctrl+S)</p>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-end">
+            <Link 
+              href="/control-panel/dashboard" 
+              className="px-3.5 py-2.5 bg-white hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold transition-colors border border-slate-200 shadow-2xs flex items-center gap-1.5"
+            >
+              <ArrowLeft className="h-4 w-4" /> Cancel
+            </Link>
+
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-md shadow-blue-600/10 flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50 shrink-0"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-md shadow-blue-600/10 flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50"
             >
               {loading ? (
                 <>

@@ -35,7 +35,7 @@ export default async function EditJobPage({ params }: Props) {
   const categories = dbCategories.map((c) => c.name);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-fade-in">
+    <div className="max-w-5xl mx-auto space-y-6">
       <JobForm 
         states={states} 
         categories={categories} 

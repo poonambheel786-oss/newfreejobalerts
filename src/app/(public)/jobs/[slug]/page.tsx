@@ -374,32 +374,6 @@ export default async function JobDetailPage({ params }: Props) {
           </Link>
         </div>
 
-        {/* Verified Editorial Fact-Check Notice (E-E-A-T) */}
-        <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-emerald-950">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-emerald-600 text-white rounded-lg shrink-0">
-              <ShieldCheck className="h-4 w-4" />
-            </div>
-            <div>
-              <p className="font-bold text-slate-900">
-                Fact-Checked & Verified by Government Examination Editorial Board
-              </p>
-              <p className="text-[11px] text-slate-600">
-                Last Reviewed & Verified: <strong>{formattedUpdatedDate}</strong> | Sourced from Official Gazette & Departmental Circulars
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <Link href="/editorial-policy" className="text-[11px] font-bold text-primary hover:underline">
-              Editorial Policy
-            </Link>
-            <span className="text-slate-300">•</span>
-            <Link href="/fact-check-policy" className="text-[11px] font-bold text-primary hover:underline">
-              Fact Check Process
-            </Link>
-          </div>
-        </div>
-
         {/* Hero Details Block */}
         <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
           <div className="space-y-3">

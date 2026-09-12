@@ -958,7 +958,11 @@ export default async function JobDetailPage({ params }: Props) {
                 <Share2 className="h-4 w-4 text-slate-400" />
                 <span>Share this Alert with Friends:</span>
               </p>
-              <ShareButtons title={job.title} path={`/jobs/${job.slug}`} />
+              <ShareButtons 
+                title={job.title} 
+                path={`/jobs/${job.slug}`} 
+                shortPath={`/j/${job.id.slice(0, 8)}`} 
+              />
             </div>
 
           </div>

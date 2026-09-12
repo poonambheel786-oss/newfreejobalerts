@@ -354,7 +354,11 @@ export default async function BlogPostDetailPage({ params }: Props) {
                 <Share2 className="h-4 w-4 text-slate-400" />
                 <span>Share this Career Guide:</span>
               </p>
-              <ShareButtons title={post.title} path={`/blog/${post.slug}`} />
+              <ShareButtons 
+                title={post.title} 
+                path={`/blog/${post.slug}`} 
+                shortPath={`/j/${post.id.slice(0, 8)}`}
+              />
             </div>
           </article>
 
